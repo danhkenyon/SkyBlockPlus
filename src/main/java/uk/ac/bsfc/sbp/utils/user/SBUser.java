@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.utils.SBColourUtils;
 import uk.ac.bsfc.sbp.utils.SBLogger;
-import uk.ac.bsfc.sbp.utils.data.UserDatabase;
+import uk.ac.bsfc.sbp.utils.data.database.tables.UserTable;
 
 import java.util.UUID;
 
@@ -41,7 +41,7 @@ public abstract class SBUser {
         }
 
         SBLogger.raw(uuid.toString());
-        SBUser user = UserDatabase.fetchUser(uuid);
+        SBUser user = UserTable.getInstance().getRow("uuid", uuid);
         if (user == null) {
             SBLogger.err("&cCould not find user! UUID["+uuid+"]");
             throw new NullPointerException();
@@ -53,7 +53,7 @@ public abstract class SBUser {
             return new SBConsole();
         }
 
-        SBUser user = UserDatabase.fetchUser(name);
+        SBUser user = UserTable.getInstance().getRow("name", name);
         if (user == null) {
             SBLogger.err("&cCould not find user! Name["+name+"]");
             throw new NullPointerException();

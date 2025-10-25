@@ -18,3 +18,4 @@ public class TestCommand extends SBCommand {
         SBServer.broadcast(super.getUser(), "&aTest command executed!");
     }
 }
+

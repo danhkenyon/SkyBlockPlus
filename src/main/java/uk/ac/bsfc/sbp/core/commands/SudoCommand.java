@@ -3,11 +3,9 @@ package uk.ac.bsfc.sbp.core.commands;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
-import uk.ac.bsfc.sbp.utils.data.UserDatabase;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class SudoCommand extends SBCommand {

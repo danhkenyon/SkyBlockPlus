@@ -44,7 +44,6 @@ public class SBConfig {
             throw new RuntimeException("[ERR] Error loading file: " + file, e);
         }
     }
-
     private SBConfig() {
         this(SBFiles.get(SBConstants.CONFIG_FILE));
     }
@@ -55,7 +54,6 @@ public class SBConfig {
         }
         return instance;
     }
-
     private void reloadData() {
         try (FileInputStream in = new FileInputStream(configFile)) {
             data = yaml.load(in);
@@ -64,7 +62,6 @@ public class SBConfig {
             throw new RuntimeException("Failed to reload config", e);
         }
     }
-
     private void save() {
         try (FileWriter writer = new FileWriter(configFile)) {
             yaml.dump(data, writer);
@@ -78,7 +75,6 @@ public class SBConfig {
     public static void reload() {
         SBConfig.getInstance().reloadData();
     }
-
     public static void set(String key, Object value) {
         SBConfig cfg = SBConfig.getInstance();
         SBConfig.setNestedValue(cfg.data, key, value);
@@ -122,6 +118,27 @@ public class SBConfig {
     public static float getFloat(String key) {
         return (float) SBConfig.getOrDefault(key, 0.0f);
     }
+
+    public static String getString(String key, String val) {
+        return String.valueOf(SBConfig.getOrDefault(key, val));
+    }
+    public static boolean getBoolean(String key, boolean val) {
+        return (boolean) SBConfig.getOrDefault(key, val);
+    }
+    public static int getInt(String key, int val) {
+        return (int) SBConfig.getOrDefault(key, val);
+    }
+    public static long getLong(String key, long val) {
+        return (long) SBConfig.getOrDefault(key, val);
+    }
+    public static double getDouble(String key, double val) {
+        return (double) SBConfig.getOrDefault(key, val);
+    }
+    public static float getFloat(String key, float val) {
+        return (float) SBConfig.getOrDefault(key, val);
+    }
+
+    // ------------------- Helper Methods ------------------- //
 
     @SuppressWarnings("unchecked")
     private static Object getNestedValue(Map<String, Object> map, String path) {

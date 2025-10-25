@@ -5,7 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
-import uk.ac.bsfc.sbp.utils.data.UserDatabase;
+import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
 
 public final class Main extends JavaPlugin {
@@ -32,7 +32,7 @@ public final class Main extends JavaPlugin {
             eventRegister = SBEventRegister.getInstance();
             eventRegister.register();
 
-            UserDatabase.ensureTable();
+            DatabaseTable.getAllTables().forEach(DatabaseTable::ensureTableExists);
 
             SBLogger.info("&aPlugin enabled!");
         } catch (Exception e) {
