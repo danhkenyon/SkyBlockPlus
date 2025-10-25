@@ -1,10 +1,9 @@
 package uk.ac.bsfc.sbp.utils.data.database;
 
+import uk.ac.bsfc.sbp.utils.SBLogger;
+
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class QueryExecutor {
     private final ConnectionPool pool;
@@ -28,7 +27,6 @@ public final class QueryExecutor {
              ResultSet rs = stmt.executeQuery()) {
 
             getResultSetMD(results, rs);
-
         } catch (SQLException e) {
             throw new RuntimeException("[ERR] Query failed: " + sql, e);
         }
@@ -37,17 +35,27 @@ public final class QueryExecutor {
     public int update(String sql, Object... params) {
         try (Connection conn = pool.getConnection();
              PreparedStatement stmt = prepareStatement(conn, sql, params)) {
-            return stmt.executeUpdate();
+
+            SBLogger.newLine();
+            SBLogger.info("&a<------> &b&lDatabase Update &a<------>");
+            SBLogger.info("SQL Script: " + sql);
+            SBLogger.info("Parameters: " + Arrays.toString(params));
+            SBLogger.newLine();
+
+            int affected = stmt.executeUpdate();
+            conn.commit();
+            return affected;
         } catch (SQLException e) {
             throw new RuntimeException("[ERR] Update failed: " + sql, e);
         }
     }
-    public long insert(String sql, Object... params) {
+    public @SuppressWarnings("unsafe") long insert(String sql, Object... params) {
         try (Connection conn = pool.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             bindParameters(stmt, params);
             stmt.executeUpdate();
+            conn.commit();
 
             try (ResultSet keys = stmt.getGeneratedKeys()) {
                 if (keys.next()) return keys.getLong(1);

@@ -1,5 +1,6 @@
 package uk.ac.bsfc.sbp.utils.data;
 
+import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.ConnectionPool;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseConfig;
 import uk.ac.bsfc.sbp.utils.data.database.QueryExecutor;
@@ -12,7 +13,7 @@ public class SBDatabase implements AutoCloseable {
     private final QueryExecutor executor;
 
     private SBDatabase(DatabaseConfig config) {
-        this.pool = ConnectionPool.getInstance(config);
+        this.pool = ConnectionPool.getInstance(true, config);
         this.executor = QueryExecutor.getInstance(pool);
     }
     private SBDatabase() {
@@ -25,6 +26,17 @@ public class SBDatabase implements AutoCloseable {
             INSTANCE = new SBDatabase();
         }
         return INSTANCE;
+    }
+    public static SBDatabase getInstance(boolean createNew) {
+        if (createNew) {
+            return new SBDatabase();
+        }
+        return SBDatabase.getInstance();
+    }
+
+    public static void reload() {
+        SBDatabase.getInstance().close();
+        SBDatabase.getInstance(true);
     }
 
     public ConnectionPool getPool() {
@@ -39,13 +51,28 @@ public class SBDatabase implements AutoCloseable {
     }
 
     public static List<Map<String, Object>> query(String sql, Object... params) {
-        return SBDatabase.getInstance().getExecutor().query(sql, params);
+        try {
+            return SBDatabase.getInstance().getExecutor().query(sql, params);
+        } catch (RuntimeException e) {
+            SBLogger.err("[SBDatabase] RuntimeException occurred during SQL query! Message: " + e.getMessage());
+            throw new RuntimeException();
+        }
     }
     public static int update(String sql, Object... params) {
-        return SBDatabase.getInstance().getExecutor().update(sql, params);
+        try {
+            return SBDatabase.getInstance().getExecutor().update(sql, params);
+        } catch (RuntimeException e) {
+            SBLogger.err("[SBDatabase] RuntimeException occurred during SQL update! Message: " + e.getMessage());
+            throw new RuntimeException();
+        }
     }
     public static long insert(String sql, Object... params) {
-        return SBDatabase.getInstance().getExecutor().insert(sql, params);
+        try {
+            return SBDatabase.getInstance().getExecutor().insert(sql, params);
+        } catch (RuntimeException e) {
+            SBLogger.err("[SBDatabase] RuntimeException occurred during SQL insert! Message: " + e.getMessage());
+            throw new RuntimeException();
+        }
     }
 
     public static List<String> getAllColumnValues(String table, String column) {
@@ -54,6 +81,7 @@ public class SBDatabase implements AutoCloseable {
 
     @Override
     public void close() {
+        SBLogger.info("[Database] &cClosing database connection!");
         pool.close();
     }
 }

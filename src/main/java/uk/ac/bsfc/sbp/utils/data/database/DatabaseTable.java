@@ -1,8 +1,10 @@
 package uk.ac.bsfc.sbp.utils.data.database;
 
+import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.SBReflectionUtils;
 import uk.ac.bsfc.sbp.utils.data.SBDatabase;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -79,18 +81,26 @@ public abstract class DatabaseTable<T> {
     public static List<DatabaseTable<?>> getAllTables() {
         List<DatabaseTable<?>> tables = new ArrayList<>();
 
-        for (Class<?> clazz : SBReflectionUtils.find("uk.ac.bsfc.sbp.utils.data.database.tables", DatabaseTable.class)) {
+        for (Class<?> clazz : SBReflectionUtils.find("uk.ac.bsfc.sbp.utils.data.database", DatabaseTable.class)) {
+            SBLogger.info("&eFound class: &b"+clazz.getSimpleName());
             try {
-                if (!clazz.isInterface() && !java.lang.reflect.Modifier.isAbstract(clazz.getModifiers())) {
+                if (!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers())) {
+                    SBLogger.info("&b"+clazz.getSimpleName()+" &eis a valid DatabaseTable implementation.");
                     Object instance = clazz.getDeclaredConstructor().newInstance();
-                    if (instance instanceof DatabaseTable<?> table) {
-                        tables.add(table);
+                    if (instance instanceof DatabaseTable) {
+                        tables.add((DatabaseTable<?>) instance);
+                        SBLogger.info("&b"+instance+" &eadded to table list.");
                     }
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                SBLogger.err("&cFailed to instantiate class &b" + clazz.getSimpleName() + "&c: " + e.getMessage());
             }
         }
 
+        SBLogger.info("[Database] &aFound &b"+tables.size()+" &aTable.");
+        for (DatabaseTable<?> table : tables) {
+            SBLogger.info("[Database] &a-| Table: &b"+table.getTableName());
+        }
         return tables;
     }
 

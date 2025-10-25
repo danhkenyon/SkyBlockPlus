@@ -1,6 +1,7 @@
 package uk.ac.bsfc.sbp.utils.event.player;
 
 import uk.ac.bsfc.sbp.utils.SBLogger;
+import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.event.SBEvent;
 import uk.ac.bsfc.sbp.utils.game.SBServer;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
@@ -15,7 +16,7 @@ public class UserJoinEvent extends SBEvent {
         this.user(user);
 
         this.cancelled = false;
-        this.message = DEFAULT_JOIN_MESSAGE;
+        this.message = SBConfig.getString("messages.join", DEFAULT_JOIN_MESSAGE);
     }
 
     public void setMessage(String message) {

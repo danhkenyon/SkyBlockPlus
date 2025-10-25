@@ -19,8 +19,7 @@ public class SudoCommand extends SBCommand {
         super.aliases("sudo");
     }
 
-    @Override
-    public void execute() {
+    public @Override void execute() {
         if (args.length < 2) {
             getUser().sendMessage("&cUsage: &f" + usage());
             return;
@@ -62,14 +61,25 @@ public class SudoCommand extends SBCommand {
 
         target.sudo(getUser(), command, amt);
     }
-
-    @Override
-    public List<String> tabComplete() {
-        List<String> suggestions = new ArrayList<>();
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            suggestions.add(p.getName());
+    public @Override List<String> suggestions(int index) {
+        switch (index) {
+            case 0 -> {
+                List<String> names = new ArrayList<>(Bukkit.getOnlinePlayers().size() + 1);
+                names.add("CONSOLE");
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    names.add(player.getName());
+                }
+                return names;
+            }
+            case 1 -> {
+                return List.of("1", "5", "10", "25", "50", "100");
+            }
+            case 2 -> {
+                return List.of("<command/chat message>");
+            }
+            default -> {
+                return List.of();
+            }
         }
-        suggestions.add("CONSOLE");
-        return suggestions;
     }
 }

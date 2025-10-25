@@ -2,6 +2,8 @@ package uk.ac.bsfc.sbp.utils.data.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import uk.ac.bsfc.sbp.utils.SBConstants;
+import uk.ac.bsfc.sbp.utils.SBLogger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,6 +21,7 @@ public final class ConnectionPool implements AutoCloseable {
         hikari.setAutoCommit(false);
 
         this.source = new HikariDataSource(hikari);
+        SBLogger.info("[Database] &aConnected to database.");
     }
 
     private static ConnectionPool INSTANCE;
@@ -27,6 +30,12 @@ public final class ConnectionPool implements AutoCloseable {
             INSTANCE = new ConnectionPool(config);
         }
         return INSTANCE;
+    }
+    public static ConnectionPool getInstance(boolean createNew, DatabaseConfig config) {
+        if (createNew) {
+            return new ConnectionPool(config);
+        }
+        return ConnectionPool.getInstance(config);
     }
     public static ConnectionPool getInstance() {
         if (INSTANCE == null) {

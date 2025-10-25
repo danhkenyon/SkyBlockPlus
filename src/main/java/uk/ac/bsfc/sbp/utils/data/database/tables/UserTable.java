@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class UserTable extends DatabaseTable<SBUser> {
-    private UserTable() {
+    public UserTable() {
         super(SBConstants.Database.TABLE_USERS);
     }
 
@@ -34,6 +34,7 @@ public class UserTable extends DatabaseTable<SBUser> {
                 user.getName(),
                 user.getName()
         );
+        SBLogger.info("[UserTable] &aInserted &b"+user.getName()+"&a into the database.");
     }
     public void insert(SBUser user) {
         if (user == null) {
@@ -46,14 +47,22 @@ public class UserTable extends DatabaseTable<SBUser> {
                 user.username(),
                 user.username()
         );
+        SBLogger.info("[UserTable] &aInserted &b"+user.username()+"&a into the database.");
     }
     public void insert(UUID uuid, String username) {
-        SBDatabase.update(
-                "INSERT INTO " + this.getTableName() + " (uuid, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?;",
-                uuid.toString(),
-                username,
-                username
-        );
+        try {
+            SBDatabase.update(
+                    "INSERT INTO " + this.getTableName() + " (uuid, name) VALUES (?, ?) " +
+                        "ON DUPLICATE KEY UPDATE name = ?;",
+                    uuid.toString(),
+                    username,
+                    username
+            );
+            SBLogger.info("[UserTable] &aInserted &b"+username+"&a into the database.");
+        } catch (RuntimeException e) {
+            SBLogger.err("[UserTable] RuntimeException occurred for &b" + username + "&c: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -64,6 +73,7 @@ public class UserTable extends DatabaseTable<SBUser> {
                     "name VARCHAR(16) NOT NULL" +
                     ");"
         );
+        SBLogger.info("[UserTable] &aRan table creation script.");
     }
 
     @Override

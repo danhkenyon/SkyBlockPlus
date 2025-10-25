@@ -1,9 +1,11 @@
 package uk.ac.bsfc.sbp.utils.command;
 
 import org.jetbrains.annotations.NotNull;
+import uk.ac.bsfc.sbp.utils.SBColourUtils;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SBCommand {
@@ -62,6 +64,27 @@ public abstract class SBCommand {
 
     public void execute() {}
     public List<String> tabComplete() {
+        String[] array = args;
+        if (args == null || array.length == 0) {
+            return List.of();
+        }
+        int index = array.length - 1;
+        String prefix = array[index].toLowerCase();
+
+        List<String> suggestions = this.suggestions(index);
+        if (suggestions.isEmpty()) {
+            return List.of();
+        }
+
+        List<String> results = new ArrayList<>();
+        for (String suggestion : suggestions) {
+            if (suggestion.toLowerCase().startsWith(prefix)) {
+                results.add(SBColourUtils.format(suggestion));
+            }
+        }
+        return results;
+    }
+    public List<String> suggestions(int index) {
         return List.of();
     }
 }

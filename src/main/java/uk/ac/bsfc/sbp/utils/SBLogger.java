@@ -20,6 +20,10 @@ public class SBLogger {
     private static final Plugin plugin = Main.of();
     private static final PrintStream printStream = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
+    public static void newLine() {
+        if (bukkitLogging) plugin.getLogger().info("");
+        else SBLogger.printStream.println();
+    }
     public static void raw(String s) {
         String timeStamp = "";
         if (timeStamps) {
