@@ -15,7 +15,7 @@ public class SkyBlockCommand extends SBCommand {
         super.usage("/skyblock <subcommand>");
         super.permission(null);
 
-        super.aliases("sb", "island");
+        super.aliases("sb");
     }
 
     public @Override void execute() {

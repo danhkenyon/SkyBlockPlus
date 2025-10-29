@@ -58,4 +58,9 @@ public class SBPlayer extends SBUser {
             SBLogger.info("&a" + this.username() + " is now &e" + (flying() ? "flying" : "not flying") + "!");
         }
     }
+
+    @Override
+    public String toString() {
+        return "SBPlayer[username=" + this.username() + ", uuid=" + this.uuid()+"]";
+    }
 }
