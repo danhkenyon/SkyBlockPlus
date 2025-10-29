@@ -14,6 +14,10 @@ public class Region {
         this.corner2 = start.clone().add(island.getSize(), 256, island.getSize());
     }
 
+    public static Region of(Island island, Location start) {
+        return new Region(island, start);
+    }
+
     public boolean isInside(Location loc) {
         if (!loc.getWorld().equals(corner1.getWorld())) {
             return false;
@@ -24,5 +28,14 @@ public class Region {
         return x >= corner1.getX() && x <= corner2.getX()
                 && y >= corner1.getY() && y <= corner2.getY()
                 && z >= corner1.getZ() && z <= corner2.getZ();
+    }
+    public Island getIsland() {
+        return island;
+    }
+    public Location getLoc1() {
+        return corner1;
+    }
+    public Location getLoc2() {
+        return corner2;
     }
 }

@@ -2,6 +2,7 @@ package uk.ac.bsfc.sbp.core;
 
 import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.utils.SBLogger;
+import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 import javax.annotation.Nullable;
@@ -63,5 +64,6 @@ public class Member extends SBPlayer {
     }
     public void setIsland(@NotNull Island island) {
         this.island = island;
+        IslandMemberTable.getInstance().insert(island.getId(), this);
     }
 }

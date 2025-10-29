@@ -4,8 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import uk.ac.bsfc.sbp.core.Island;
 import uk.ac.bsfc.sbp.utils.SBConstants;
+import uk.ac.bsfc.sbp.utils.SBLogger;
+import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -29,6 +32,26 @@ public class IslandUtils {
         return islands;
     }
 
+    public void initIslands() {
+        List<Island> rows = IslandTable.getInstance().getRows();
+
+        for (Island island : rows) {
+            islands.put(island.getId(), island);
+            COUNTER.updateAndGet(prev -> Math.max(prev, island.getId()));
+            SBLogger.info("&aLoaded island &b" + island.getName() + " &7(ID: " + island.getId() + ")");
+        }
+
+        SBLogger.info("&aLoaded &b" + islands.size() + " &aislands from database.");
+    }
+
+    public Island getIsland(long id) {
+        for (long islandId : islands.keySet()) {
+            if (id == islandId) {
+                return islands.get(islandId);
+            }
+        }
+        return null;
+    }
     public Island getIsland(String name) {
         for (Island island : islands.values()) {
             if (island.getName().equalsIgnoreCase(name)) {

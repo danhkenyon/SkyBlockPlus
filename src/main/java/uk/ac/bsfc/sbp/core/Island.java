@@ -2,6 +2,7 @@ package uk.ac.bsfc.sbp.core;
 
 import org.bukkit.Location;
 import uk.ac.bsfc.sbp.utils.SBConstants;
+import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
 import java.util.ArrayList;
@@ -17,17 +18,24 @@ public class Island {
 
     private final Region region;
 
+    protected Island(long id, String name, Location loc1, List<Member> members) {
+        this.id = id;
+        this.name = name;
+        this.region = Region.of(this, loc1);
+        this.members = members;
+    }
     protected Island(String name, List<Member> members) {
-        this.id = IslandUtils.generateId();
         this.name = name;
         this.members = members;
         this.region = new Region(this, IslandUtils.nextLocation());
 
-        members.forEach(m -> m.setIsland(this));
+        this.id = IslandTable.getInstance().insert(this, region.getLoc1());
+
         IslandUtils.getInstance().registerIsland(this);
+        members.forEach(m -> m.setIsland(this));
     }
     protected Island(Member member) {
-        this(SBConstants.Island.DEFAULT_ISLAND_NAME, new ArrayList<>(){{
+        this(SBConstants.Island.DEFAULT_ISLAND_NAME.replace("%leader%", member.username()), new ArrayList<>(){{
             add(member);
         }});
     }
@@ -37,6 +45,9 @@ public class Island {
     }
     public static Island createIsland(Member member) {
         return new Island(member);
+    }
+    public static Island createIsland(long id, String name, Location loc1, List<Member> members) {
+        return new Island(id, name, loc1, members);
     }
 
     public long getId() {

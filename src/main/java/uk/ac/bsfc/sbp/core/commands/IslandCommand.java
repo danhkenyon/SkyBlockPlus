@@ -6,6 +6,8 @@ import uk.ac.bsfc.sbp.core.commands.subcommands.CreateSubcommand;
 import uk.ac.bsfc.sbp.core.commands.subcommands.HelpSubcommand;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
+import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
+import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 import uk.ac.bsfc.sbp.utils.user.SBConsole;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
@@ -29,7 +31,7 @@ public class IslandCommand extends SBCommand {
         }
 
         assert super.getUser() instanceof SBPlayer;
-        Member member = Member.of((SBPlayer) super.getUser());
+        Member member = IslandMemberTable.getInstance().getRow("player_uuid", super.getUser().uuid());
 
         if (args.length == 0) {
             if (member.getIsland() != null) {
@@ -45,6 +47,10 @@ public class IslandCommand extends SBCommand {
         } else if (args[0].equalsIgnoreCase("create")) {
             CreateSubcommand.execute(this);
         } else if (args[0].equalsIgnoreCase("info")) {
+            if (member == null) {
+                user.sendMessage("&cYou do not have an island! Use &e&l/island create &cto make one.");
+                return;
+            }
             Island island = member.getIsland();
             if (island == null) {
                 member.sendMessage("&cYou do not have an island! Use &e&l/island create &cto make one.");
@@ -75,12 +81,12 @@ public class IslandCommand extends SBCommand {
         } else if (args[0].equalsIgnoreCase("kick")) {
             // /island kick <player>
             member.sendMessage("&cThe kick subcommand is not yet implemented.");
-        } else if (args[0].equalsIgnoreCase("setspawn")) {
-            // /island setspawn
-            member.sendMessage("&cThe sethome subcommand is not yet implemented.");
         } else if (args[0].equalsIgnoreCase("spawn")) {
             // /island spawn
             member.sendMessage("&cThe home subcommand is not yet implemented.");
+        } else if (args[0].equalsIgnoreCase("setspawn")) {
+            // /island setspawn
+            member.sendMessage("&cThe sethome subcommand is not yet implemented.");
         }
         else {
             member.sendMessage("&cUnknown subcommand. Use &e&l/island help &cfor assistance.");
@@ -90,6 +96,9 @@ public class IslandCommand extends SBCommand {
     }
     @Override
     public List<String> suggestions(int index) {
-        return List.of();
+        return switch(index) {
+            case 0 -> List.of("help", "create", "info", "delete", "invite", "kick", "spawn", "setspawn");
+            default -> List.of();
+        };
     }
 }

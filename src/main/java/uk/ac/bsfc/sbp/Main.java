@@ -7,6 +7,7 @@ import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
+import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
 public final class Main extends JavaPlugin {
     private static Main instance;
@@ -33,6 +34,7 @@ public final class Main extends JavaPlugin {
             eventRegister.register();
 
             DatabaseTable.getAllTables().forEach(DatabaseTable::ensureTableExists);
+            IslandUtils.getInstance().initIslands();
 
             SBLogger.info("&aPlugin enabled!");
         } catch (Exception e) {

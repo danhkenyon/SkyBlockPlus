@@ -6,6 +6,7 @@ import uk.ac.bsfc.sbp.utils.data.SBDatabase;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -13,10 +14,16 @@ public abstract class DatabaseTable<T> {
     protected final SBDatabase database = SBDatabase.getInstance();
     protected final String tableName;
     protected final String primaryKey;
+    protected final int weight;
 
     protected DatabaseTable(String tableName) {
+        this(tableName, 0);
+    }
+    protected DatabaseTable(String tableName, int weight) {
         this.tableName = tableName;
         this.primaryKey = this.findPrimaryKey();
+
+        this.weight = weight;
     }
 
     private String findPrimaryKey() {
@@ -41,6 +48,13 @@ public abstract class DatabaseTable<T> {
         );
         return results.isEmpty() ? null : mapRow(results.getFirst());
     }
+    public boolean exists(String fieldName, Object value) {
+        List<Map<String, Object>> results = SBDatabase.getInstance().getExecutor().query(
+                "SELECT 1 FROM " + this.getTableName() + " WHERE " + fieldName + " = ? LIMIT 1;",
+                value
+        );
+        return !results.isEmpty();
+    }
     public T getRow(String column, Object value) {
         List<Map<String, Object>> results = SBDatabase.query(
                 "SELECT * FROM " + tableName + " WHERE " + column + " = ? LIMIT 1;",
@@ -63,7 +77,7 @@ public abstract class DatabaseTable<T> {
     }
     public int delete(Object value) {
         return SBDatabase.update(
-                "DELETE FROM " + tableName + " WHERE " + primaryKey + " = ?;",
+                "DELETE FROM " + this.tableName + " WHERE " + this.primaryKey + " = ?;",
                 value
         );
     }
@@ -72,24 +86,27 @@ public abstract class DatabaseTable<T> {
     public abstract void ensureTableExists();
 
     public String getPrimaryKey() {
-        return primaryKey;
+        return this.primaryKey;
     }
     public String getTableName() {
-        return tableName;
+        return this.tableName;
+    }
+    public int getWeight() {
+        return this.weight;
     }
 
     public static List<DatabaseTable<?>> getAllTables() {
         List<DatabaseTable<?>> tables = new ArrayList<>();
 
         for (Class<?> clazz : SBReflectionUtils.find("uk.ac.bsfc.sbp.utils.data.database", DatabaseTable.class)) {
-            SBLogger.info("&eFound class: &b"+clazz.getSimpleName());
+            SBLogger.info("&eFound class: &b" + clazz.getSimpleName());
             try {
                 if (!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers())) {
-                    SBLogger.info("&b"+clazz.getSimpleName()+" &eis a valid DatabaseTable implementation.");
+                    SBLogger.info("&b" + clazz.getSimpleName() + " &eis a valid DatabaseTable implementation.");
                     Object instance = clazz.getDeclaredConstructor().newInstance();
-                    if (instance instanceof DatabaseTable) {
-                        tables.add((DatabaseTable<?>) instance);
-                        SBLogger.info("&b"+instance+" &eadded to table list.");
+                    if (instance instanceof DatabaseTable<?> table) {
+                        tables.add(table);
+                        SBLogger.info("&b" + instance + " &eadded to table list.");
                     }
                 }
             } catch (Exception e) {
@@ -97,11 +114,15 @@ public abstract class DatabaseTable<T> {
             }
         }
 
-        SBLogger.info("[Database] &aFound &b"+tables.size()+" &aTable.");
+        tables.sort(Comparator.comparingInt(DatabaseTable::getWeight));
+
+        SBLogger.info("[Database] &aFound &b" + tables.size() + " &aTable(s).");
         for (DatabaseTable<?> table : tables) {
-            SBLogger.info("[Database] &a-| Table: &b"+table.getTableName());
+            SBLogger.info("[Database] &a-| Table: &b" + table.getTableName() + " &7(Weight: " + table.getWeight() + ")");
         }
+
         return tables;
     }
+
 
 }

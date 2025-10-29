@@ -14,11 +14,10 @@ import java.util.UUID;
 
 public class IslandMemberTable extends DatabaseTable<Member> {
     public IslandMemberTable() {
-        super("island_members");
+        super("island_members", 3);
     }
 
     private static IslandMemberTable INSTANCE;
-
     public static IslandMemberTable getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new IslandMemberTable();
@@ -33,13 +32,13 @@ public class IslandMemberTable extends DatabaseTable<Member> {
             UUID uuid = UUID.fromString((String) row.get("player_uuid"));
             String name = (String) row.get("player_name");
             String rankStr = (String) row.get("rank");
+
             Rank rank = Rank.valueOf(rankStr);
-
             Member member = Member.of((SBPlayer) SBPlayer.from(uuid, name), rank);
-
-            Island island = IslandUtils.getInstance().getIslandById(islandId); // TODO
+            Island island = IslandUtils.getInstance().getIsland(islandId);
             if (island != null) {
-                island.getMembers().add(member);
+                member.setIsland(island);
+                member.setRank(rank);
             }
 
             return member;
@@ -84,18 +83,22 @@ public class IslandMemberTable extends DatabaseTable<Member> {
         SBLogger.info("[IslandMemberTable] &aSaved member &b" + member.username() + "&a for island ID &b" + islandId);
     }
 
-    public List<Member> getMembersForIsland(long islandId) {
-        return super.database.getExecutor().query( // TODO: Fix (Add way to return List<Member>.class (maybe add class type as param))
-                "SELECT * FROM " + this.getTableName() + " WHERE island_id = ?",
-                islandId
-        );
+    public List<Member> getIslandMembers(long islandId) {
+        return getRows("island_id", islandId);
     }
 
-    public void deleteMembersForIsland(long islandId) {
+    public void deleteIslandMembers(long islandId) {
         super.database.getExecutor().update(
                 "DELETE FROM " + this.getTableName() + " WHERE island_id = ?",
                 islandId
         );
         SBLogger.info("[IslandMemberTable] &cDeleted all members for island ID &b" + islandId);
+    }
+
+    public boolean exists(UUID id) {
+        return super.exists("player_uuid", id);
+    }
+    public boolean exists(String name) {
+        return super.exists("player_name", name);
     }
 }

@@ -18,7 +18,7 @@ public class SBConstants {
     public static final class Island {
         public static final String DEFAULT_ISLAND_NAME = "%leader%'s Island";
         public static final int BASE_ISLAND_SIZE = 100;
-        public static final World ISLAND_WORLD = Bukkit.getWorld("islands");
+        public static final World ISLAND_WORLD = Bukkit.getWorld("world");
     }
 
     public static final class Database {

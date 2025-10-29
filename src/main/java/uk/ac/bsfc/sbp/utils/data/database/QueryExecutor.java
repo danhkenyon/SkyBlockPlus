@@ -32,6 +32,41 @@ public final class QueryExecutor {
         }
         return results;
     }
+    public <T> List<T> query(String sql, Class<T> type, Object... params) {
+        List<Map<String, Object>> rows = query(sql, params);
+        List<T> result = new ArrayList<>();
+
+        for (Map<String, Object> row : rows) {
+            try {
+                if (Number.class.isAssignableFrom(type)
+                        || type == String.class
+                        || type == Boolean.class
+                        || type.isPrimitive()) {
+                    row.values().stream().findFirst().ifPresent(value -> result.add(type.cast(value)));
+                    continue;
+                }
+
+                T instance = type.getDeclaredConstructor().newInstance();
+                for (Map.Entry<String, Object> entry : row.entrySet()) {
+                    try {
+                        String fieldName = entry.getKey();
+                        Object value = entry.getValue();
+
+                        var field = type.getDeclaredField(fieldName);
+                        field.setAccessible(true);
+                        field.set(instance, value);
+                    } catch (NoSuchFieldException ignored) {
+                    }
+                }
+                result.add(instance);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to map row to " + type.getSimpleName(), e);
+            }
+        }
+
+        return result;
+    }
+
     public int update(String sql, Object... params) {
         try (Connection conn = pool.getConnection();
              PreparedStatement stmt = prepareStatement(conn, sql, params)) {

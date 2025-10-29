@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class UserTable extends DatabaseTable<SBUser> {
     public UserTable() {
-        super(SBConstants.Database.TABLE_USERS);
+        super(SBConstants.Database.TABLE_USERS, 1);
     }
 
     private static UserTable INSTANCE;
@@ -63,6 +63,13 @@ public class UserTable extends DatabaseTable<SBUser> {
             SBLogger.err("[UserTable] RuntimeException occurred for &b" + username + "&c: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public boolean exists(UUID uuid) {
+        return super.exists("uuid", uuid);
+    }
+    public boolean exists(String name) {
+        return super.exists("name", name);
     }
 
     @Override
