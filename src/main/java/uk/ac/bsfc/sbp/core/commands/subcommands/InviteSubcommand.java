@@ -6,7 +6,6 @@ import uk.ac.bsfc.sbp.core.skyblock.Rank;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
-import uk.ac.bsfc.sbp.utils.data.database.tables.UserTable;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 public class InviteSubcommand {

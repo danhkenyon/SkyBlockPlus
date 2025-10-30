@@ -2,7 +2,6 @@ package uk.ac.bsfc.sbp.utils.data.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 
 import java.sql.Connection;

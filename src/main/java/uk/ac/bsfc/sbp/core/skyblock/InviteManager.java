@@ -1,10 +1,12 @@
 package uk.ac.bsfc.sbp.core.skyblock;
 
 import org.bukkit.Bukkit;
-import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.Main;
+import uk.ac.bsfc.sbp.utils.SBLogger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InviteManager {

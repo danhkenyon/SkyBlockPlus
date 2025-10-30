@@ -1,10 +1,10 @@
 package uk.ac.bsfc.sbp.core.commands;
 
-import uk.ac.bsfc.sbp.core.skyblock.Member;
 import uk.ac.bsfc.sbp.core.commands.subcommands.CreateSubcommand;
 import uk.ac.bsfc.sbp.core.commands.subcommands.DeleteSubcommand;
 import uk.ac.bsfc.sbp.core.commands.subcommands.HelpSubcommand;
 import uk.ac.bsfc.sbp.core.commands.subcommands.InfoSubcommand;
+import uk.ac.bsfc.sbp.core.skyblock.Member;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
