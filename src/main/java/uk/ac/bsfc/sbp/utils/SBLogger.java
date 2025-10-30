@@ -17,7 +17,7 @@ public class SBLogger {
     private static final boolean timeStamps = SBConfig.getBoolean("log-timestamp");
     private static final SBTimeFormat timeFormat = SBTimeFormat.of(SBConfig.getString("log-timestamp-format"));
 
-    private static final Plugin plugin = Main.of();
+    private static final Plugin plugin = Main.getInstance();
     private static final PrintStream printStream = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
     public static void newLine() {

@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.utils.SBColourUtils;
+import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.tables.UserTable;
 
@@ -108,6 +109,23 @@ public abstract class SBUser {
     public void sendMessage(String ... messages) {
         for (String message : messages) {
             this.sendMessage(message);
+        }
+    }
+
+    public void sendMessage(final boolean prefix, String message) {
+        String formatted = SBColourUtils.format(((prefix) ? SBConstants.PLUGIN_PREFIX : "") + message);
+        if (console()) {
+            Bukkit.getConsoleSender().sendMessage(formatted);
+        } else {
+            Player player = toBukkit();
+            if (player != null && player.isOnline()) {
+                player.sendMessage(formatted);
+            }
+        }
+    }
+    public void sendMessage(final boolean prefix, String ... messages) {
+        for (String message : messages) {
+            this.sendMessage(prefix, message);
         }
     }
 

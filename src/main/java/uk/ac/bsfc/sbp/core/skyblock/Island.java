@@ -1,12 +1,15 @@
-package uk.ac.bsfc.sbp.core;
+package uk.ac.bsfc.sbp.core.skyblock;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Island {
@@ -33,6 +36,10 @@ public class Island {
 
         IslandUtils.getInstance().registerIsland(this);
         members.forEach(m -> m.setIsland(this));
+
+        Objects.requireNonNull(Bukkit.getWorld(region.getLoc1().getWorld().getUID())).
+                getBlockAt(region.getLoc1()).setType(Material.BEDROCK);
+        // paste island
     }
     protected Island(Member member) {
         this(SBConstants.Island.DEFAULT_ISLAND_NAME.replace("%leader%", member.username()), new ArrayList<>(){{
@@ -103,9 +110,16 @@ public class Island {
     }
     public void addMember(Member member) {
         this.members.add(member);
+        member.setIsland(this);
     }
     public void removeMember(Member member) {
         this.members.remove(member);
+    }
+
+    public void delete() {
+        IslandTable.getInstance().delete(this.id);
+        IslandUtils.getInstance().getIslands().remove(this.id);
+        // TODO: Remove island schematic
     }
 
     @Override

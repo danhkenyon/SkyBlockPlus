@@ -55,7 +55,7 @@ public class SBEventRegister {
             SBLogger.err("&cException occurred while registering events!\n" + e.getMessage());
         }
 
-        Main.of().getServer().getPluginManager().registerEvents(new EventBridge(), Main.of());
+        Main.getInstance().getServer().getPluginManager().registerEvents(new EventBridge(), Main.getInstance());
     }
 
     public void fire(SBEvent eventInstance) {

@@ -1,4 +1,4 @@
-package uk.ac.bsfc.sbp.core;
+package uk.ac.bsfc.sbp.core.skyblock;
 
 public enum Rank {
     LEADER,

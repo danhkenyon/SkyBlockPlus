@@ -1,0 +1,42 @@
+package uk.ac.bsfc.sbp.core.commands.subcommands;
+
+import uk.ac.bsfc.sbp.core.skyblock.InviteManager;
+import uk.ac.bsfc.sbp.core.skyblock.Member;
+import uk.ac.bsfc.sbp.core.skyblock.Rank;
+import uk.ac.bsfc.sbp.utils.command.SBCommand;
+import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
+import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
+import uk.ac.bsfc.sbp.utils.data.database.tables.UserTable;
+import uk.ac.bsfc.sbp.utils.user.SBPlayer;
+
+public class InviteSubcommand {
+    public static void execute(SBCommand cmd) {
+        var args = cmd.args();
+
+        if (args[1].equals("accept")) InviteSubcommand.acceptInvite(cmd, args[2]);
+        else if (args[1].equals("deny")) InviteSubcommand.declineInvite(cmd, args[2]);
+        else if (!args[1].isEmpty()) InviteSubcommand.sendInvite(cmd);
+    }
+
+    private static void acceptInvite(SBCommand cmd, String islandName) {
+        InviteManager.getInstance().acceptInvite(
+                IslandTable.getInstance().getRow("name", islandName),
+                Member.of((SBPlayer) cmd.getUser())
+        );
+    }
+    private static void declineInvite(SBCommand cmd, String islandName) {
+        InviteManager.getInstance().denyInvite(
+                IslandTable.getInstance().getRow("name", islandName),
+                Member.of((SBPlayer) cmd.getUser())
+        );
+    }
+    private static void sendInvite(SBCommand cmd) {
+        String playerName = cmd.args()[1];
+        Rank rankName = Rank.valueOf(cmd.args().length >= 3 ? cmd.args()[2] : "RECRUIT");
+
+        InviteManager.getInstance().sendInvite(
+                Member.of((SBPlayer) cmd.getUser()).getIsland(),
+                IslandMemberTable.getInstance().getRow("player_name", playerName)
+        );
+    }
+}

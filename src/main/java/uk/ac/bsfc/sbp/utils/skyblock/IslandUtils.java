@@ -2,7 +2,7 @@ package uk.ac.bsfc.sbp.utils.skyblock;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import uk.ac.bsfc.sbp.core.Island;
+import uk.ac.bsfc.sbp.core.skyblock.Island;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
@@ -72,12 +72,30 @@ public class IslandUtils {
     private static int index = 0;
     public static Location nextLocation() {
         World world = SBConstants.Island.ISLAND_WORLD;
-        int spacing = SBConstants.Island.BASE_ISLAND_SIZE;
+        int spacing = SBConstants.Island.BASE_ISLAND_SIZE + 1000;
 
-        int x = (index % 10) * spacing;
-        int z = (index / 10) * spacing;
+        int layer = (int) Math.ceil((Math.sqrt(index + 1) - 1) / 2);
+        int legLen = 2 * layer + 1;
+        int legStart = (legLen - 2) * (legLen - 2);
+        int pos = index - legStart;
+
+        int x, z;
+
+        if (pos < legLen - 1) {
+            x = layer;
+            z = -layer + 1 + pos;
+        } else if (pos < 2 * (legLen - 1)) {
+            x = layer - 1 - (pos - (legLen - 1));
+            z = layer;
+        } else if (pos < 3 * (legLen - 1)) {
+            x = -layer;
+            z = layer - 1 - (pos - 2 * (legLen - 1));
+        } else {
+            x = -layer + 1 + (pos - 3 * (legLen - 1));
+            z = -layer;
+        }
 
         index++;
-        return new Location(world, x, 100, z);
+        return new Location(world, x * spacing, 100, z * spacing);
     }
 }

@@ -1,8 +1,8 @@
 package uk.ac.bsfc.sbp.utils.data.database.tables;
 
-import uk.ac.bsfc.sbp.core.Island;
-import uk.ac.bsfc.sbp.core.Member;
-import uk.ac.bsfc.sbp.core.Rank;
+import uk.ac.bsfc.sbp.core.skyblock.Island;
+import uk.ac.bsfc.sbp.core.skyblock.Member;
+import uk.ac.bsfc.sbp.core.skyblock.Rank;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
@@ -81,6 +81,22 @@ public class IslandMemberTable extends DatabaseTable<Member> {
         );
 
         SBLogger.info("[IslandMemberTable] &aSaved member &b" + member.username() + "&a for island ID &b" + islandId);
+    }
+    public void update(long islandId, Member member) {
+        if (member == null) {
+            SBLogger.err("[IslandMemberTable] Null member provided to update()");
+            return;
+        }
+
+        super.database.getExecutor().update(
+                "UPDATE " + this.getTableName() + " SET player_name = ?, rank = ? WHERE island_id = ? AND player_uuid = ?;",
+                member.username(),
+                member.getRank().name(),
+                islandId,
+                member.uuid().toString()
+        );
+
+        SBLogger.info("[IslandMemberTable] &aUpdated member &b" + member.username() + "&a for island ID &b" + islandId);
     }
 
     public List<Member> getIslandMembers(long islandId) {

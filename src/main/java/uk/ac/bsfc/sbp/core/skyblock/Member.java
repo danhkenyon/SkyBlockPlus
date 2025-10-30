@@ -1,4 +1,4 @@
-package uk.ac.bsfc.sbp.core;
+package uk.ac.bsfc.sbp.core.skyblock;
 
 import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.utils.SBLogger;
@@ -15,6 +15,7 @@ public class Member extends SBPlayer {
     protected Member(String name, UUID uuid, Rank rank) {
         super(name, uuid);
         this.rank = rank;
+        IslandMemberTable.getInstance().insert(island.getId(), this);
     }
     protected Member(String name, UUID uuid) {
         this(name, uuid, Rank.RECRUIT);
@@ -22,6 +23,7 @@ public class Member extends SBPlayer {
     protected Member(SBPlayer player, Rank rank) {
         super(player.username(), player.uuid());
         this.rank = rank;
+        IslandMemberTable.getInstance().insert(island.getId(), this);
     }
     protected Member(SBPlayer player) {
         this(player, Rank.RECRUIT);
@@ -64,6 +66,6 @@ public class Member extends SBPlayer {
     }
     public void setIsland(@NotNull Island island) {
         this.island = island;
-        IslandMemberTable.getInstance().insert(island.getId(), this);
+        IslandMemberTable.getInstance().update(island.getId(), this);
     }
 }

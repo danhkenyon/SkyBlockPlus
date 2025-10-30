@@ -10,7 +10,7 @@ public class SBFiles {
 
     @NotNull
     public static File get(String name) {
-        File file = new File(Main.of().getDataFolder(), name);
+        File file = new File(Main.getInstance().getDataFolder(), name);
         try {
             File parent = file.getParentFile();
             if (parent != null && !parent.exists()) {

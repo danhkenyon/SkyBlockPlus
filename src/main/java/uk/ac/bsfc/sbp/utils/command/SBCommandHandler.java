@@ -87,7 +87,7 @@ public class SBCommandHandler {
             }
         };
 
-        Bukkit.getCommandMap().register(Main.of().getName().toLowerCase(), bukkitCmd);
+        Bukkit.getCommandMap().register(Main.getInstance().getName().toLowerCase(), bukkitCmd);
         commands.add(command);
     }
 

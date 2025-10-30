@@ -11,7 +11,7 @@ import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
 public final class Main extends JavaPlugin {
     private static Main instance;
-    public static Main of() {
+    public static Main getInstance() {
         return instance;
     }
 

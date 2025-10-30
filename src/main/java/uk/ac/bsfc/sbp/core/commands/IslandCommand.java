@@ -1,13 +1,13 @@
 package uk.ac.bsfc.sbp.core.commands;
 
-import uk.ac.bsfc.sbp.core.Island;
-import uk.ac.bsfc.sbp.core.Member;
+import uk.ac.bsfc.sbp.core.skyblock.Member;
 import uk.ac.bsfc.sbp.core.commands.subcommands.CreateSubcommand;
+import uk.ac.bsfc.sbp.core.commands.subcommands.DeleteSubcommand;
 import uk.ac.bsfc.sbp.core.commands.subcommands.HelpSubcommand;
+import uk.ac.bsfc.sbp.core.commands.subcommands.InfoSubcommand;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
-import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 import uk.ac.bsfc.sbp.utils.user.SBConsole;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
@@ -34,46 +34,19 @@ public class IslandCommand extends SBCommand {
         Member member = IslandMemberTable.getInstance().getRow("player_uuid", super.getUser().uuid());
 
         if (args.length == 0) {
-            if (member.getIsland() != null) {
-                member.sendMessage("&e/island info &7| &fView information about your island.");
+            if (member == null) {
+                user.sendMessage("&e/island info &7| &fView information about your island.");
                 return;
             }
             member.sendMessage("&e/island create &7| &fCreate a new island.");
             return;
         }
 
-        if (args[0].equalsIgnoreCase("help")) {
-            HelpSubcommand.execute(this);
-        } else if (args[0].equalsIgnoreCase("create")) {
-            CreateSubcommand.execute(this);
-        } else if (args[0].equalsIgnoreCase("info")) {
-            if (member == null) {
-                user.sendMessage("&cYou do not have an island! Use &e&l/island create &cto make one.");
-                return;
-            }
-            Island island = member.getIsland();
-            if (island == null) {
-                member.sendMessage("&cYou do not have an island! Use &e&l/island create &cto make one.");
-                return;
-            }
-            member.sendMessage("&6&l=== &e&lIsland Info &6&l===");
-            member.sendMessage("&eName: &b" + island.getName());
-            member.sendMessage("&eID: &b" + island.getId());
-            member.sendMessage("&eLeader: &b" + island.getLeader().username());
-            member.sendMessage("&eMembers: &b" + island.getMembers().size());
-        } else if (args[0].equalsIgnoreCase("delete")) {
-            Island island = member.getIsland();
-            if (island == null) {
-                member.sendMessage("&cYou do not have an island to delete!");
-                return;
-            }
-            if (!island.getLeader().uuid().equals(member.uuid())) {
-                member.sendMessage("&cOnly the island leader can delete the island.");
-                return;
-            }
-            // TODO: Add deletion code.
-            member.sendMessage("&aSuccessfully deleted your island.");
-        } else if (args[0].equalsIgnoreCase("invite")) {
+        if (args[0].equalsIgnoreCase("help")) HelpSubcommand.execute(this);
+        else if (args[0].equalsIgnoreCase("create")) CreateSubcommand.execute(this);
+        else if (args[0].equalsIgnoreCase("info")) InfoSubcommand.execute(this);
+        else if (args[0].equalsIgnoreCase("delete")) DeleteSubcommand.execute(this);
+        else if (args[0].equalsIgnoreCase("invite")) {
             // /island invite <player> [player_rank]
             // /island invite accept <island_name>
             // /island invite deny <island_name>

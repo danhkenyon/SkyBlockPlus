@@ -2,17 +2,15 @@ package uk.ac.bsfc.sbp.utils.data.database.tables;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import uk.ac.bsfc.sbp.core.Island;
-import uk.ac.bsfc.sbp.core.Member;
+import uk.ac.bsfc.sbp.core.skyblock.Island;
+import uk.ac.bsfc.sbp.core.skyblock.Member;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class IslandTable extends DatabaseTable<Island> {
     public IslandTable() {

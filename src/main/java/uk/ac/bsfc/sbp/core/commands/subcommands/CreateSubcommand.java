@@ -1,12 +1,11 @@
 package uk.ac.bsfc.sbp.core.commands.subcommands;
 
-import uk.ac.bsfc.sbp.core.Island;
-import uk.ac.bsfc.sbp.core.Member;
-import uk.ac.bsfc.sbp.core.Rank;
+import uk.ac.bsfc.sbp.core.skyblock.Island;
+import uk.ac.bsfc.sbp.core.skyblock.Member;
+import uk.ac.bsfc.sbp.core.skyblock.Rank;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
-import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 import uk.ac.bsfc.sbp.utils.user.SBConsole;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
