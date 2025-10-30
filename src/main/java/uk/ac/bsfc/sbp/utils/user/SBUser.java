@@ -105,6 +105,11 @@ public abstract class SBUser {
             }
         }
     }
+    public void sendMessage(String ... messages) {
+        for (String message : messages) {
+            this.sendMessage(message);
+        }
+    }
 
     public void sudo(SBUser user, String content) {
         this.sudo(user, content, 1);

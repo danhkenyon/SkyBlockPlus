@@ -75,8 +75,8 @@ public class IslandCommand extends SBCommand {
             member.sendMessage("&aSuccessfully deleted your island.");
         } else if (args[0].equalsIgnoreCase("invite")) {
             // /island invite <player> [player_rank]
-            // /island invite <island_name> accept
-            // /island invite <island_name> deny
+            // /island invite accept <island_name>
+            // /island invite deny <island_name>
             member.sendMessage("&cThe invite subcommand is not yet implemented.");
         } else if (args[0].equalsIgnoreCase("kick")) {
             // /island kick <player>
