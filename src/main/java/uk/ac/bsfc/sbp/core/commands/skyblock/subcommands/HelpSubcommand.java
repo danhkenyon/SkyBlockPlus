@@ -1,4 +1,4 @@
-package uk.ac.bsfc.sbp.core.commands.subcommands;
+package uk.ac.bsfc.sbp.core.commands.skyblock.subcommands;
 
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.user.SBUser;

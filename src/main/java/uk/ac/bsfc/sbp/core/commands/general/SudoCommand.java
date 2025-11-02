@@ -1,4 +1,4 @@
-package uk.ac.bsfc.sbp.core.commands;
+package uk.ac.bsfc.sbp.core.commands.general;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

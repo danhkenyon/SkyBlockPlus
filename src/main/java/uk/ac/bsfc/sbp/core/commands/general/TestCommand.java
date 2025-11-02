@@ -1,4 +1,4 @@
-package uk.ac.bsfc.sbp.core.commands;
+package uk.ac.bsfc.sbp.core.commands.general;
 
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.game.SBServer;

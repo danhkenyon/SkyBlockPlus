@@ -1,6 +1,7 @@
 package uk.ac.bsfc.sbp.core.skyblock;
 
 import org.jetbrains.annotations.NotNull;
+import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
@@ -9,13 +10,13 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class Member extends SBPlayer {
-    private @Nullable Island island;
+    private UUID islandId;
     private Rank rank;
 
     protected Member(String name, UUID uuid, Rank rank) {
         super(name, uuid);
         this.rank = rank;
-        IslandMemberTable.getInstance().insert(island.getId(), this);
+        this.islandId = SBConstants.Island.UNKNOWN_ISLAND_UUID;
     }
     protected Member(String name, UUID uuid) {
         this(name, uuid, Rank.RECRUIT);
@@ -23,7 +24,7 @@ public class Member extends SBPlayer {
     protected Member(SBPlayer player, Rank rank) {
         super(player.username(), player.uuid());
         this.rank = rank;
-        IslandMemberTable.getInstance().insert(island.getId(), this);
+        this.islandId = SBConstants.Island.UNKNOWN_ISLAND_UUID;
     }
     protected Member(SBPlayer player) {
         this(player, Rank.RECRUIT);
@@ -56,16 +57,40 @@ public class Member extends SBPlayer {
 
     public void setRank(Rank rank) {
         this.rank = rank;
+        // persist change
+        IslandMemberTable.getInstance().insertOrUpdate(this);
     }
     public Rank getRank() {
         return rank;
     }
 
-    public @Nullable Island getIsland() {
-        return island;
-    }
     public void setIsland(@NotNull Island island) {
-        this.island = island;
-        IslandMemberTable.getInstance().update(island.getId(), this);
+        this.islandId = island.uuid();
+        IslandMemberTable.getInstance().insertOrUpdate(this);
+    }
+    public void setIsland(@NotNull UUID id) {
+        this.islandId = id;
+        IslandMemberTable.getInstance().insertOrUpdate(this);
+    }
+
+    public void setIslandWithoutSave(@Nullable Island island) {
+        this.islandId = (island == null) ? SBConstants.Island.UNKNOWN_ISLAND_UUID : island.uuid();
+    }
+    public void setIslandWithoutSave(UUID id) {
+        this.islandId = (id == null) ? SBConstants.Island.UNKNOWN_ISLAND_UUID : id;
+    }
+
+
+    public UUID getIslandId() {
+        return islandId;
+    }
+
+    public void save() {
+        IslandMemberTable.getInstance().insertOrUpdate(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Member[name=" + username() + ", uuid=" + uuid() + ", rank=" + rank + ", islandId=" + islandId + "]";
     }
 }

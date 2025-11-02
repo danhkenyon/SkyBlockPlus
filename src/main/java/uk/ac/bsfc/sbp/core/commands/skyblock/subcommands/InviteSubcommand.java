@@ -1,4 +1,4 @@
-package uk.ac.bsfc.sbp.core.commands.subcommands;
+package uk.ac.bsfc.sbp.core.commands.skyblock.subcommands;
 
 import uk.ac.bsfc.sbp.core.skyblock.InviteManager;
 import uk.ac.bsfc.sbp.core.skyblock.Member;
@@ -6,7 +6,6 @@ import uk.ac.bsfc.sbp.core.skyblock.Rank;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
-import uk.ac.bsfc.sbp.utils.data.database.tables.UserTable;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 public class InviteSubcommand {
@@ -35,7 +34,10 @@ public class InviteSubcommand {
         Rank rankName = Rank.valueOf(cmd.args().length >= 3 ? cmd.args()[2] : "RECRUIT");
 
         InviteManager.getInstance().sendInvite(
-                Member.of((SBPlayer) cmd.getUser()).getIsland(),
+                IslandTable.getInstance().getRow(
+                        "id",
+                        IslandMemberTable.getInstance().getRow("player_uuid", cmd.getUser().uuid()).getIslandId()
+                ),
                 IslandMemberTable.getInstance().getRow("player_name", playerName)
         );
     }

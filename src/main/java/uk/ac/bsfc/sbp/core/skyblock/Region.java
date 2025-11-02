@@ -11,7 +11,7 @@ public class Region {
         this.island = island;
 
         this.corner1 = start.clone();
-        this.corner2 = start.clone().add(island.getSize(), 256, island.getSize());
+        this.corner2 = start.clone().add(island.size(), 256, island.size());
     }
 
     public static Region of(Island island, Location start) {

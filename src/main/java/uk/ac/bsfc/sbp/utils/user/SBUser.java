@@ -41,7 +41,6 @@ public abstract class SBUser {
             return new SBConsole();
         }
 
-        SBLogger.raw(uuid.toString());
         SBUser user = UserTable.getInstance().getRow("uuid", uuid);
         if (user == null) {
             SBLogger.err("&cCould not find user! UUID["+uuid+"]");
@@ -179,5 +178,15 @@ public abstract class SBUser {
                 this.toBukkit().performCommand(SBColourUtils.format(command));
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "SBUser[" +
+                "name=" + name +
+                ", uuid=" + uuid +
+                ", console=" + console +
+                ", userType=" + userType +
+                ']';
     }
 }

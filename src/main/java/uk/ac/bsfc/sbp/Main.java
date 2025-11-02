@@ -34,7 +34,7 @@ public final class Main extends JavaPlugin {
             eventRegister.register();
 
             DatabaseTable.getAllTables().forEach(DatabaseTable::ensureTableExists);
-            IslandUtils.getInstance().initIslands();
+            IslandUtils.getInstance().init();
 
             SBLogger.info("&aPlugin enabled!");
         } catch (Exception e) {
