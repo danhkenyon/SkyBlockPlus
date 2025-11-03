@@ -1,12 +1,12 @@
 package uk.ac.bsfc.sbp.utils.schematic;
 
 import com.google.gson.Gson;
+import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTBlock;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.block.data.*;
-import org.bukkit.block.data.type.Bed;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -128,10 +128,27 @@ public class SchematicPlacer {
         if (nbtMap == null || nbtMap.isEmpty()) return;
 
         try {
-            String nbtJson = GSON.toJson(nbtMap);
-            NBTContainer container = new NBTContainer(nbtJson);
+            StringBuilder snbt = new StringBuilder("{");
+            for (Map.Entry<String, Object> entry : nbtMap.entrySet()) {
+                String value = entry.getValue().toString()
+                        .replace("\\", "\\\\")
+                        .replace("\"", "\\\"");
+                snbt.append(entry.getKey())
+                        .append(":\"")
+                        .append(value)
+                        .append("\",");
+            }
+            snbt.deleteCharAt(snbt.length() - 1); // remove trailing comma
+            snbt.append("}");
+
+            NBTContainer container = (NBTContainer) NBT.parseNBT(String.valueOf(snbt));
+            System.out.println(container);
+
             NBTBlock nbtBlock = new NBTBlock(block);
-            nbtBlock.getData().mergeCompound(container);
+
+            //nbtBlock.getData().mergeCompound(container);
+            nbtBlock.getData().addCompound(container.asNBTString());
+            System.out.println(nbtBlock.getData());
         } catch (Exception e) {
             Bukkit.getLogger().severe("Failed to apply NBT to block at " + block.getLocation() + ": " + e);
         }

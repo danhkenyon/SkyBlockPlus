@@ -1,5 +1,6 @@
 package uk.ac.bsfc.sbp;
 
+import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.ac.bsfc.sbp.utils.SBLogger;
@@ -23,6 +24,12 @@ public final class Main extends JavaPlugin {
         instance = this;
         this.setNaggable(SBConfig.getBoolean("bukkit-logging"));
         SBLogger.info("&aLoading plugin...");
+
+        if (!NBT.preloadApi()) {
+            SBLogger.warn("NBT-API wasn't initialized properly, disabling the plugin");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
     }
 
     @Override

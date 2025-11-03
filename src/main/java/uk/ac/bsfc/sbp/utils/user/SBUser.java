@@ -1,6 +1,7 @@
 package uk.ac.bsfc.sbp.utils.user;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -82,6 +83,18 @@ public abstract class SBUser {
     }
     public SBUserType userType() {
         return userType;
+    }
+
+    public World getWorld() {
+        if (console()) {
+            SBLogger.err("&cAttempted to retrieve a World from CommandSender!");
+            throw new NullPointerException();
+        }
+        Player player = this.toBukkit();
+        if (player != null && player.isOnline()) {
+            return player.getWorld();
+        }
+        return null;
     }
 
     public Player toBukkit() {

@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id("com.gradleup.shadow") version "8.3.9"
 }
 
 group = 'uk.ac.bsfc'
@@ -15,7 +15,8 @@ repositories {
         url = "https://repo.papermc.io/repository/maven-public/"
     }
     maven {
-        url = 'https://repo.codemc.io/repository/maven-public/'
+        name = "CodeMC"
+        url = uri("https://repo.codemc.io/repository/maven-public/")
     }
 }
 
@@ -33,7 +34,7 @@ dependencies {
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
     implementation 'com.zaxxer:HikariCP:6.3.0'
 
-    implementation 'de.tr7zw:item-nbt-api:2.12.2'
+    implementation 'de.tr7zw:item-nbt-api:2.15.3'
 }
 
 tasks {
@@ -48,7 +49,20 @@ tasks {
         dependencies {
             include(dependency("org.mariadb.jdbc:mariadb-java-client:3.4.1"))
             include(dependency("com.zaxxer:HikariCP:6.3.0"))
+            include(dependency("de.tr7zw:item-nbt-api:2.15.3"))
         }
+
+        into('META-INF') {
+            from {
+                def temp = file("${buildDir}/tmp/.mojang-mapped")
+                temp.parentFile.mkdirs()
+                temp.text = "" // empty content
+                temp
+            }
+            rename { '.mojang-mapped' }
+        }
+
+        relocate("de.tr7zw.changeme.nbtapi", "uk.ac.bsfc.libs.nbtapi")
     }
 
     build {
