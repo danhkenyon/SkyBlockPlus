@@ -4,7 +4,7 @@ import org.bukkit.plugin.Plugin;
 import uk.ac.bsfc.sbp.Main;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.time.SBTimeFormat;
-import uk.ac.bsfc.sbp.utils.time.SBTimestamp;
+import uk.ac.bsfc.sbp.utils.time.SBTime;
 
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
@@ -27,7 +27,7 @@ public class SBLogger {
     public static void raw(String s) {
         String timeStamp = "";
         if (timeStamps) {
-            timeStamp = SBTimestamp.now().get(timeFormat);
+            timeStamp = SBTime.format(timeFormat);
         }
 
         if (bukkitLogging) {

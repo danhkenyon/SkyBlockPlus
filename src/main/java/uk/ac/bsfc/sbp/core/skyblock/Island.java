@@ -19,18 +19,18 @@ public class Island {
     private String name;
     private final List<Member> members;
 
-    private final Region region;
+    private final IslandRegion region;
 
     protected Island(UUID id, String name, Location loc1, List<Member> members) {
         this.id = id;
         this.name = name;
-        this.region = Region.of(this, loc1);
+        this.region = IslandRegion.of(loc1);
         this.members = members;
     }
     protected Island(String name, List<Member> members) {
         this.name = name;
         this.members = members;
-        this.region = new Region(this, IslandUtils.nextLocation());
+        this.region = new IslandRegion(IslandUtils.nextLocation());
 
         this.id = IslandTable.getInstance().insert(this, region.getLoc1());
 
@@ -93,7 +93,7 @@ public class Island {
         }
         return null;
     }
-    public Region region() {
+    public IslandRegion region() {
         return region;
     }
     public boolean hasMember(UUID uuid) {

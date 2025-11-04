@@ -20,13 +20,13 @@ public class InviteSubcommand {
     private static void acceptInvite(SBCommand cmd, String islandName) {
         InviteManager.getInstance().acceptInvite(
                 IslandTable.getInstance().getRow("name", islandName),
-                Member.of((SBPlayer) cmd.getUser())
+                Member.of(cmd.getUser().to(SBPlayer.class))
         );
     }
     private static void declineInvite(SBCommand cmd, String islandName) {
         InviteManager.getInstance().denyInvite(
                 IslandTable.getInstance().getRow("name", islandName),
-                Member.of((SBPlayer) cmd.getUser())
+                Member.of(cmd.getUser().to(SBPlayer.class))
         );
     }
     private static void sendInvite(SBCommand cmd) {

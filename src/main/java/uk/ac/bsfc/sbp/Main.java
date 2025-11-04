@@ -3,6 +3,7 @@ package uk.ac.bsfc.sbp;
 import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
@@ -44,6 +45,7 @@ public final class Main extends JavaPlugin {
             IslandUtils.getInstance().init();
 
             SBLogger.info("&aPlugin enabled!");
+            SBLogger.raw(SBConstants.Schematics.DEFAULT_SCHEMATIC_NAME);
         } catch (Exception e) {
             SBLogger.info("&cDisabling plugin...");
             Bukkit.getPluginManager().disablePlugin(this);

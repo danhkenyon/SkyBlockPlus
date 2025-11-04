@@ -8,6 +8,7 @@ import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.block.data.*;
 import org.bukkit.util.Vector;
+import uk.ac.bsfc.sbp.utils.SBLogger;
 
 import java.util.List;
 import java.util.Map;
@@ -146,11 +147,10 @@ public class SchematicPlacer {
 
             NBTBlock nbtBlock = new NBTBlock(block);
 
-            //nbtBlock.getData().mergeCompound(container);
-            nbtBlock.getData().addCompound(container.asNBTString());
+            nbtBlock.getData().addCompound(container.toString());
             System.out.println(nbtBlock.getData());
         } catch (Exception e) {
-            Bukkit.getLogger().severe("Failed to apply NBT to block at " + block.getLocation() + ": " + e);
+            SBLogger.err("Failed to apply NBT to block at " + block.getLocation() + ": " + e);
         }
     }
 }

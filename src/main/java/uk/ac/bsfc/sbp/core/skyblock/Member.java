@@ -57,7 +57,6 @@ public class Member extends SBPlayer {
 
     public void setRank(Rank rank) {
         this.rank = rank;
-        // persist change
         IslandMemberTable.getInstance().insertOrUpdate(this);
     }
     public Rank getRank() {

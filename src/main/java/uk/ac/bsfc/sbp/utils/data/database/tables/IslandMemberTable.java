@@ -36,7 +36,7 @@ public class IslandMemberTable extends DatabaseTable<Member> {
             String rankStr = (String) row.get("rank");
 
             Rank rank = Rank.valueOf(rankStr);
-            Member member = Member.of((SBPlayer) SBPlayer.from(uuid), rank);
+            Member member = Member.of(SBPlayer.from(uuid).to(SBPlayer.class), rank);
 
             if (!UNKNOWN_ISLAND_UUID.equals(islandId)) {
                 member.setIsland(islandId);

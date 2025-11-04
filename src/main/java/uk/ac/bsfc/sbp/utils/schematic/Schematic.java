@@ -1,11 +1,34 @@
 package uk.ac.bsfc.sbp.utils.schematic;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 import java.util.List;
 
-public record Schematic(
-        String name,
-        Vector origin,
-        List<BlockEntry> blocks
-) {}
+public class Schematic extends BlockSet {
+    private final String name;
+    private final Vector origin;
+    private final List<BlockEntry> blocks;
+
+    public Schematic(String name, Vector origin, List<BlockEntry> blocks) {
+        this.name = name;
+        this.origin = origin;
+        this.blocks = blocks;
+    }
+
+    public String name() {
+        return name;
+    }
+    public Vector origin() {
+        return origin;
+    }
+    public List<BlockEntry> blocks() {
+        return blocks;
+    }
+
+    @Override
+    public void paste(Location loc) {
+        SchematicPlacer.place(this, loc.getWorld(), loc, Rotation.NONE, Mirror.NONE);
+    }
+}

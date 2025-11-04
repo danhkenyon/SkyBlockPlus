@@ -1,18 +1,29 @@
 package uk.ac.bsfc.sbp.utils.schematic;
 
 import com.google.gson.*;
+import de.tr7zw.changeme.nbtapi.NBTBlock;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.TileState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.util.Vector;
+import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
+import uk.ac.bsfc.sbp.utils.user.SBUser;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.*;
 
 public class SchematicParser {
-    private static final Gson GSON = new Gson();
+    static final Gson GSON = new Gson();
 
     @SuppressWarnings("unchecked")
     public static Schematic load(File file) {
@@ -51,6 +62,151 @@ public class SchematicParser {
             e.printStackTrace();
             return null;
         }
+    }
+    public static void save(Region region, @Nullable String name) {
+        try {
+            Location loc1 = region.getLoc1();
+            Location loc2 = region.getLoc2();
+            World world = loc1.getWorld();
+            if (world == null) {
+                SBLogger.warn("Region world is null. Cannot save schematic.");
+                return;
+            }
+
+            String schematicName = name != null ? name : SBConstants.Schematics.DEFAULT_SCHEMATIC_NAME;
+
+            int minX = (int) Math.min(loc1.getX(), loc2.getX());
+            int maxX = (int) Math.max(loc1.getX(), loc2.getX());
+            int minY = (int) Math.min(loc1.getY(), loc2.getY());
+            int maxY = (int) Math.max(loc1.getY(), loc2.getY());
+            int minZ = (int) Math.min(loc1.getZ(), loc2.getZ());
+            int maxZ = (int) Math.max(loc1.getZ(), loc2.getZ());
+
+            JsonArray blockArray = new JsonArray();
+
+            for (int x = minX; x <= maxX; x++) {
+                for (int y = minY; y <= maxY; y++) {
+                    for (int z = minZ; z <= maxZ; z++) {
+                        Block block = world.getBlockAt(x, y, z);
+                        Material mat = block.getType();
+
+                        if (mat == Material.AIR) continue;
+                        JsonObject blockObj = new JsonObject();
+
+                        JsonArray pos = new JsonArray();
+                        pos.add(x - minX);
+                        pos.add(y - minY);
+                        pos.add(z - minZ);
+                        blockObj.add("pos", pos);
+
+                        blockObj.addProperty("type", "minecraft:" + mat.name().toLowerCase(Locale.ROOT));
+
+                        String dataStr = block.getBlockData().getAsString();
+                        int bracketIndex = dataStr.indexOf('[');
+                        if (bracketIndex != -1) {
+                            String stateStr = dataStr.substring(bracketIndex);
+                            blockObj.addProperty("blockData", stateStr);
+                        }
+
+                        BlockState state = block.getState();
+                        if (state instanceof TileState) {
+                            try {
+                                NBTBlock nbtBlock = new NBTBlock(block);
+                                NBTCompound data = nbtBlock.getData();
+                                if (data != null && !data.getKeys().isEmpty()) {
+                                    JsonObject nbtJson = JsonParser.parseString(data.toString()).getAsJsonObject();
+                                    blockObj.add("nbt", nbtJson);
+                                }
+                            } catch (Exception e) {
+                                SBLogger.warn("Failed to get NBT for " + block.getType() + " at " + x + "," + y + "," + z);
+                            }
+                        }
+
+                        blockArray.add(blockObj);
+                    }
+                }
+            }
+            JsonObject root = new JsonObject();
+            root.addProperty("name", schematicName);
+
+            JsonArray origin = new JsonArray();
+            origin.add(0);
+            origin.add((int) loc1.getY());
+            origin.add(0);
+
+            root.add("origin", origin);
+            root.add("blocks", blockArray);
+
+            File dir = new File("plugins/SkyBlockPlus/schematics");
+            if (!dir.exists()) dir.mkdirs();
+
+            File outFile = new File(dir, schematicName + ".json");
+            try (FileWriter writer = new FileWriter(outFile)) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                gson.toJson(root, writer);
+                writer.flush();
+            }
+
+            SBLogger.info("Saved schematic '" + schematicName + "' with " + blockArray.size() + " blocks at " + outFile.getPath());
+        } catch (Exception e) {
+            SBLogger.err("Failed to save schematic: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static Schematic asyncLoad(File file) {
+        final Schematic[] schematic = new Schematic[1];
+        Thread thread = new Thread(() -> schematic[0] = load(file), "Schematic-Loader");
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return schematic[0];
+    }
+    public static Schematic asyncLoad(SBUser user, File file) {
+        System.out.println(file);
+        final Schematic[] schematic = new Schematic[1];
+        Thread thread = new Thread(() -> schematic[0] = load(file), "Schematic-Loader");
+        user.sendMessage("&eLoading schematic...");
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        user.sendMessage("&aLoaded schematic!");
+        return schematic[0];
+    }
+    public static void asyncSave(Region region, @Nullable String name) {
+        new Thread(() -> {
+            try {
+                SBLogger.info("Starting async save for schematic '" + name + "'...");
+                save(region, name);
+                SBLogger.info("Finished async save for schematic '" + name + "'.");
+            } catch (Exception e) {
+                SBLogger.err("Async schematic save failed: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }, "SchematicSaveThread-" + name).start();
+    }
+    public static void asyncSave(SBUser user, Region region, String name) {
+        if (name == null || name.isEmpty()) {
+            name = SBConstants.Schematics.DEFAULT_SCHEMATIC_NAME;
+        }
+
+        String finalName = name;
+        new Thread(() -> {
+            try {
+                user.sendMessage("&eSaving schematic...");
+                save(region, finalName);
+                user.sendMessage("&aSaved schematic! [&f&o"+ finalName +"&a]");
+            } catch (Exception e) {
+                SBLogger.err("Async schematic save failed: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }, "SchematicSaveThread-" + name).start();
     }
 
     private static Vector parseVector(JsonArray arr) {

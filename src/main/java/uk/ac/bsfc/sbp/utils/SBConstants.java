@@ -3,6 +3,7 @@ package uk.ac.bsfc.sbp.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
+import uk.ac.bsfc.sbp.utils.time.SBTime;
 
 import java.util.UUID;
 
@@ -24,8 +25,7 @@ public class SBConstants {
 
         public static final UUID UNKNOWN_ISLAND_UUID = new UUID(0, 0);
 
-        public static final String SCHEMATIC_FOLDER = "schematics/";
-        public static final String DEFAULT_ISLAND_SCHEMATIC = SCHEMATIC_FOLDER + SBConfig.getString("island-schematics.default", "default_island.schem");
+        public static final String DEFAULT_ISLAND_SCHEMATIC = Schematics.SCHEMATIC_FOLDER + SBConfig.getString("island-schematics.default", "default_island.schem");
     }
 
     public static final class Database {
@@ -38,5 +38,10 @@ public class SBConstants {
         public static final String TABLE_USERS = "users";
         public static final String TABLE_ISLANDS = "islands";
         public static final String TABLE_ISLAND_MEMBERS = "island_members";
+    }
+
+    public static final class Schematics {
+        public static final String SCHEMATIC_FOLDER = "schematics/";
+        public static final String DEFAULT_SCHEMATIC_NAME = SBTime.format("HHmmss_ddMMyyyy") + ".schem";
     }
 }
