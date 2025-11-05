@@ -1,7 +1,7 @@
 package uk.ac.bsfc.sbp.utils.event;
 
 import org.jetbrains.annotations.NotNull;
-import uk.ac.bsfc.sbp.utils.time.SBTimestamp;
+import uk.ac.bsfc.sbp.utils.time.SBTime;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
 import java.time.Instant;
@@ -17,8 +17,8 @@ public abstract class SBEvent {
     }
 
     // ====== Getters ======
-    public SBTimestamp timestamp() {
-        return SBTimestamp.now();
+    public SBTime timestamp() {
+        return SBTime.now();
     }
     public SBUser user() {
         return user;

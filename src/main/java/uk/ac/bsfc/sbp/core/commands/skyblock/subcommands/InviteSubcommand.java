@@ -1,4 +1,4 @@
-package uk.ac.bsfc.sbp.core.commands.subcommands;
+package uk.ac.bsfc.sbp.core.commands.skyblock.subcommands;
 
 import uk.ac.bsfc.sbp.core.skyblock.InviteManager;
 import uk.ac.bsfc.sbp.core.skyblock.Member;
@@ -20,13 +20,13 @@ public class InviteSubcommand {
     private static void acceptInvite(SBCommand cmd, String islandName) {
         InviteManager.getInstance().acceptInvite(
                 IslandTable.getInstance().getRow("name", islandName),
-                Member.of((SBPlayer) cmd.getUser())
+                Member.of(cmd.getUser().to(SBPlayer.class))
         );
     }
     private static void declineInvite(SBCommand cmd, String islandName) {
         InviteManager.getInstance().denyInvite(
                 IslandTable.getInstance().getRow("name", islandName),
-                Member.of((SBPlayer) cmd.getUser())
+                Member.of(cmd.getUser().to(SBPlayer.class))
         );
     }
     private static void sendInvite(SBCommand cmd) {
@@ -34,7 +34,10 @@ public class InviteSubcommand {
         Rank rankName = Rank.valueOf(cmd.args().length >= 3 ? cmd.args()[2] : "RECRUIT");
 
         InviteManager.getInstance().sendInvite(
-                Member.of((SBPlayer) cmd.getUser()).getIsland(),
+                IslandTable.getInstance().getRow(
+                        "id",
+                        IslandMemberTable.getInstance().getRow("player_uuid", cmd.getUser().uuid()).getIslandId()
+                ),
                 IslandMemberTable.getInstance().getRow("player_name", playerName)
         );
     }

@@ -1,6 +1,7 @@
 package uk.ac.bsfc.sbp.utils.user;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -10,6 +11,7 @@ import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.tables.UserTable;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class SBUser {
@@ -28,7 +30,6 @@ public abstract class SBUser {
 
     // ---------- FACTORY ---------- //
 
-    @Contract("null -> new")
     public static @NotNull SBUser from(CommandSender sender) {
         if (sender instanceof Player p) {
             return new SBPlayer(p.getName(), p.getUniqueId());
@@ -41,7 +42,6 @@ public abstract class SBUser {
             return new SBConsole();
         }
 
-        SBLogger.raw(uuid.toString());
         SBUser user = UserTable.getInstance().getRow("uuid", uuid);
         if (user == null) {
             SBLogger.err("&cCould not find user! UUID["+uuid+"]");
@@ -85,12 +85,37 @@ public abstract class SBUser {
         return userType;
     }
 
-    public Player toBukkit() {
+    public World getWorld() {
         if (console()) {
-            SBLogger.err("&cAttempted to retrieve a Player from CommandSender!");
+            SBLogger.err("&cAttempted to retrieve a World from CommandSender!");
             throw new NullPointerException();
         }
-        return Bukkit.getPlayer(uuid);
+        Player player = this.toBukkit(Player.class);
+        if (player != null && player.isOnline()) {
+            return player.getWorld();
+        }
+        return null;
+    }
+
+    public <T extends SBUser> T to(Class<T> clazz) {
+        if (clazz.isInstance(this)) return clazz.cast(this);
+        if (clazz == SBConsole.class && console()) return clazz.cast(new SBConsole());
+        if (clazz == SBPlayer.class && !console()) return clazz.cast(new SBPlayer(this.name, this.uuid));
+        if (clazz == SBUser.class) return clazz.cast(this);
+
+        SBLogger.err("&cCannot convert " + this.getClass().getSimpleName() + " to " + clazz.getSimpleName());
+        return null;
+    }
+
+    public <T extends CommandSender> T toBukkit(Class<T> clazz) {
+        if (clazz.isInstance(Bukkit.getConsoleSender()) && console()) return clazz.cast(Bukkit.getConsoleSender());
+        if (clazz.isInstance(Bukkit.getPlayer(uuid)) && !console()) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null && player.isOnline()) return clazz.cast(player);
+        }
+
+        SBLogger.err("&cCannot convert " + this.getClass().getSimpleName() + " to " + clazz.getSimpleName());
+        return null;
     }
 
     // ---------- MESSAGING ---------- //
@@ -100,7 +125,7 @@ public abstract class SBUser {
         if (console()) {
             Bukkit.getConsoleSender().sendMessage(formatted);
         } else {
-            Player player = toBukkit();
+            Player player = this.toBukkit(Player.class);
             if (player != null && player.isOnline()) {
                 player.sendMessage(formatted);
             }
@@ -117,7 +142,7 @@ public abstract class SBUser {
         if (console()) {
             Bukkit.getConsoleSender().sendMessage(formatted);
         } else {
-            Player player = toBukkit();
+            Player player = this.toBukkit(Player.class);
             if (player != null && player.isOnline()) {
                 player.sendMessage(formatted);
             }
@@ -167,7 +192,7 @@ public abstract class SBUser {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + SBColourUtils.format("[CONSOLE] " + chat));
                 continue;
             }
-            this.toBukkit().chat(SBColourUtils.format(chat));
+            this.toBukkit(Player.class).chat(SBColourUtils.format(chat));
         }
     }
     private void forceCommand(@NotNull SBUser user, String command, int amt) {
@@ -176,8 +201,28 @@ public abstract class SBUser {
             if (this.userType() == SBUserType.CONSOLE) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), SBColourUtils.format(command));
             } else {
-                this.toBukkit().performCommand(SBColourUtils.format(command));
+                this.toBukkit(Player.class).performCommand(SBColourUtils.format(command));
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "SBUser[" +
+                "name=" + name +
+                ", uuid=" + uuid +
+                ", console=" + console +
+                ", userType=" + userType +
+                ']';
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SBUser that)) return false;
+        return Objects.equals(uuid, that.uuid);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
     }
 }

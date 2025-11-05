@@ -1,9 +1,6 @@
-package uk.ac.bsfc.sbp.core.commands;
+package uk.ac.bsfc.sbp.core.commands.skyblock;
 
-import uk.ac.bsfc.sbp.core.commands.subcommands.CreateSubcommand;
-import uk.ac.bsfc.sbp.core.commands.subcommands.DeleteSubcommand;
-import uk.ac.bsfc.sbp.core.commands.subcommands.HelpSubcommand;
-import uk.ac.bsfc.sbp.core.commands.subcommands.InfoSubcommand;
+import uk.ac.bsfc.sbp.core.commands.skyblock.subcommands.*;
 import uk.ac.bsfc.sbp.core.skyblock.Member;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
@@ -50,6 +47,7 @@ public class IslandCommand extends SBCommand {
             // /island invite <player> [player_rank]
             // /island invite accept <island_name>
             // /island invite deny <island_name>
+            InviteSubcommand.execute(this);
             member.sendMessage("&cThe invite subcommand is not yet implemented.");
         } else if (args[0].equalsIgnoreCase("kick")) {
             // /island kick <player>

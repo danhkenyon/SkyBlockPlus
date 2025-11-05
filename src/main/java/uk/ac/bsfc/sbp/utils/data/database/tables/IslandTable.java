@@ -9,10 +9,13 @@ import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static uk.ac.bsfc.sbp.utils.SBConstants.Island.*;
 
 public class IslandTable extends DatabaseTable<Island> {
+    private static final ThreadLocal<Set<UUID>> loading = ThreadLocal.withInitial(HashSet::new);
+
     public IslandTable() {
         super(SBConstants.Database.TABLE_ISLANDS, 2);
     }
@@ -28,9 +31,13 @@ public class IslandTable extends DatabaseTable<Island> {
     @Override
     public Island mapRow(Map<String, Object> row) {
         try {
-            long id = ((Number) row.get("id")).longValue();
+            UUID id = UUID.fromString((String) row.get("id"));
+
+            //if (!loading.get().add(id)) {
+            //    return null;
+            //}
+
             String name = (String) row.get("name");
-            int size = ((Number) row.get("size")).intValue();
             String worldName = (String) row.get("world");
             double x = ((Number) row.get("x")).doubleValue();
             double y = ((Number) row.get("y")).doubleValue();
@@ -54,9 +61,9 @@ public class IslandTable extends DatabaseTable<Island> {
     public void ensureTableExists() {
         super.database.getExecutor().update(
                 "CREATE TABLE IF NOT EXISTS " + this.getTableName() + " (" +
-                        "id BIGINT PRIMARY KEY AUTO_INCREMENT," +
+                        "id CHAR(36) PRIMARY KEY," +
                         "name VARCHAR(64) NOT NULL UNIQUE," +
-                        "size INT NOT NULL DEFAULT " + SBConstants.Island.BASE_ISLAND_SIZE + "," +
+                        "size INT NOT NULL DEFAULT " + BASE_ISLAND_SIZE + "," +
                         "world VARCHAR(64) NOT NULL," +
                         "x DOUBLE NOT NULL," +
                         "y DOUBLE NOT NULL," +
@@ -65,49 +72,50 @@ public class IslandTable extends DatabaseTable<Island> {
                         "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" +
                         ");"
         );
-        SBLogger.info("[IslandTable] &aEnsured table &b" + this.getTableName() + "&a exists.");
     }
 
-    public long insert(Island island, Location baseLocation) {
+    public UUID insert(Island island, Location baseLocation) {
         if (island == null) {
             SBLogger.err("[IslandTable] Null island provided to insert()");
-            return -1;
+            return UNKNOWN_ISLAND_UUID;
         }
         if (baseLocation == null || baseLocation.getWorld() == null) {
             SBLogger.err("[IslandTable] Invalid location provided to insert()");
-            return -1;
+            return UNKNOWN_ISLAND_UUID;
         }
+        String id = UUID.randomUUID().toString();
 
         super.database.getExecutor().insert(
-                "INSERT INTO " + this.getTableName() + " (name, size, world, x, y, z) VALUES (?, ?, ?, ?, ?, ?) " +
+                "INSERT INTO " + this.getTableName() + " (id, name, size, world, x, y, z) VALUES (?, ?, ?, ?, ?, ?, ?) " +
                         "ON DUPLICATE KEY UPDATE size = VALUES(size), world = VALUES(world), x = VALUES(x), y = VALUES(y), z = VALUES(z);",
-                island.getName(),
-                island.getSize(),
+                id,
+                island.name(),
+                island.size(),
                 baseLocation.getWorld().getName(),
                 baseLocation.getX(),
                 baseLocation.getY(),
                 baseLocation.getZ()
         );
 
-        long id = super.database.getExecutor().query(
+        UUID retrieved = UUID.fromString(super.database.getExecutor().query(
                 "SELECT id FROM " + this.getTableName() + " WHERE name = ? LIMIT 1;",
-                Long.class,
-                island.getName()
-        ).stream().findFirst().orElse(-1L);
+                String.class,
+                island.name()
+        ).stream().findFirst().orElse(UNKNOWN_ISLAND_UUID.toString()));
 
-        if (id == -1) {
-            SBLogger.err("[IslandTable] Failed to retrieve ID for island " + island.getName());
-            return -1;
+        if (UNKNOWN_ISLAND_UUID.equals(retrieved)) {
+            SBLogger.err("[IslandTable] Failed to retrieve ID for island " + island.name());
+            return UNKNOWN_ISLAND_UUID;
         }
 
-        SBLogger.info("[IslandTable] &aSaved island &b" + island.getName() + "&a (ID: " + id + ")");
-        return id;
+        SBLogger.info("[IslandTable] &aSaved island &b" + island.name() + "&a (ID: " + retrieved + ")");
+        return retrieved;
     }
 
-    public boolean exists(long id) {
+    public boolean exists(UUID id) {
         return super.exists("id", id);
     }
-    public boolean exists(String name) {
+    public boolean existsByName(String name) {
         return super.exists("name", name);
     }
 }

@@ -15,22 +15,22 @@ import java.util.UUID;
 public class Island {
     private final int size = SBConstants.Island.BASE_ISLAND_SIZE;
 
-    private final long id;
+    private final UUID id;
     private String name;
     private final List<Member> members;
 
-    private final Region region;
+    private final IslandRegion region;
 
-    protected Island(long id, String name, Location loc1, List<Member> members) {
+    protected Island(UUID id, String name, Location loc1, List<Member> members) {
         this.id = id;
         this.name = name;
-        this.region = Region.of(this, loc1);
+        this.region = IslandRegion.of(loc1);
         this.members = members;
     }
     protected Island(String name, List<Member> members) {
         this.name = name;
         this.members = members;
-        this.region = new Region(this, IslandUtils.nextLocation());
+        this.region = new IslandRegion(IslandUtils.nextLocation());
 
         this.id = IslandTable.getInstance().insert(this, region.getLoc1());
 
@@ -53,23 +53,23 @@ public class Island {
     public static Island createIsland(Member member) {
         return new Island(member);
     }
-    public static Island createIsland(long id, String name, Location loc1, List<Member> members) {
+    public static Island createIsland(UUID id, String name, Location loc1, List<Member> members) {
         return new Island(id, name, loc1, members);
     }
 
-    public long getId() {
+    public UUID uuid() {
         return id;
     }
-    public int getSize() {
+    public int size() {
         return size;
     }
-    public String getName() {
+    public String name() {
         return name;
     }
-    public List<Member> getMembers() {
+    public List<Member> members() {
         return members;
     }
-    public Member getLeader() {
+    public Member leader() {
         for (Member member : members) {
             if (member.getRank() == Rank.LEADER) {
                 return member;
@@ -93,7 +93,7 @@ public class Island {
         }
         return null;
     }
-    public Region getRegion() {
+    public IslandRegion region() {
         return region;
     }
     public boolean hasMember(UUID uuid) {
@@ -114,6 +114,8 @@ public class Island {
     }
     public void removeMember(Member member) {
         this.members.remove(member);
+        member.setIslandWithoutSave(SBConstants.Island.UNKNOWN_ISLAND_UUID);
+        member.setRank(Rank.RECRUIT);
     }
 
     public void delete() {
@@ -124,6 +126,6 @@ public class Island {
 
     @Override
     public String toString() {
-        return "Island[id="+this.getId()+", name="+this.getName()+", members=" + this.getMembers() + "]";
+        return "Island[id="+this.uuid()+", name="+this.name()+", members=" + this.members() + "]";
     }
 }

@@ -99,14 +99,11 @@ public abstract class DatabaseTable<T> {
         List<DatabaseTable<?>> tables = new ArrayList<>();
 
         for (Class<?> clazz : SBReflectionUtils.find("uk.ac.bsfc.sbp.utils.data.database", DatabaseTable.class)) {
-            SBLogger.info("&eFound class: &b" + clazz.getSimpleName());
             try {
                 if (!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers())) {
-                    SBLogger.info("&b" + clazz.getSimpleName() + " &eis a valid DatabaseTable implementation.");
                     Object instance = clazz.getDeclaredConstructor().newInstance();
                     if (instance instanceof DatabaseTable<?> table) {
                         tables.add(table);
-                        SBLogger.info("&b" + instance + " &eadded to table list.");
                     }
                 }
             } catch (Exception e) {
@@ -123,6 +120,4 @@ public abstract class DatabaseTable<T> {
 
         return tables;
     }
-
-
 }

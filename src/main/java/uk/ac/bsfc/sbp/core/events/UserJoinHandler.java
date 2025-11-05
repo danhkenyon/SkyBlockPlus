@@ -19,14 +19,10 @@ public class UserJoinHandler extends SBEventHandler {
                     event.user().username()
             );
         }
+
         if (IslandMemberTable.getInstance().getRow("player_uuid", event.user().uuid()) == null) {
-            IslandMemberTable.getInstance().insert(
-                    -1L,
-                    Member.of(
-                            (SBPlayer) event.user(),
-                            Rank.RECRUIT
-                    )
-            );
+            Member member = Member.of(event.user().to(SBPlayer.class), Rank.RECRUIT);
+            IslandMemberTable.getInstance().insertOrUpdate(member);
         }
     }
 }

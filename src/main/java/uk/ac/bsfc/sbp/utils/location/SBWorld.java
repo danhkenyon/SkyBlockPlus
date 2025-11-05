@@ -1,0 +1,81 @@
+package uk.ac.bsfc.sbp.utils.location;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
+import java.io.File;
+import java.io.FileReader;
+import java.lang.reflect.Type;
+import java.util.List;
+
+public class SBWorld {
+    private final String name;
+    private final File worldFolder;
+    private World bukkitWorld;
+
+    private static final Gson gson = new Gson();
+
+    private SBWorld(String name, World bukkitWorld) {
+        this.name = name;
+        this.bukkitWorld = bukkitWorld;
+        this.worldFolder = bukkitWorld.getWorldFolder();
+    }
+    private SBWorld(String name, File worldFolder) {
+        this.name = name;
+        this.worldFolder = worldFolder;
+    }
+
+    public static SBWorld of(String name, World bukkitWorld) {
+        return new SBWorld(name, bukkitWorld);
+    }
+    public static SBWorld of(String name, File worldFolder) {
+        return new SBWorld(name, worldFolder);
+    }
+    public static SBWorld of(String name) {
+        File pluginFolder = new File("plugins/SkyBlockPlus");
+        File jsonFile = new File(pluginFolder, "worlds.json");
+
+        if (!jsonFile.exists()) {
+            throw new IllegalStateException("worlds.json does not exist in plugin folder: " + jsonFile.getAbsolutePath());
+        }
+
+        try (FileReader reader = new FileReader(jsonFile)) {
+            Type listType = new TypeToken<List<String>>() {}.getType();
+            List<String> worldNames = gson.fromJson(reader, listType);
+
+            if (worldNames == null || !worldNames.contains(name)) {
+                throw new IllegalArgumentException("World '" + name + "' not found in worlds.json!");
+            }
+
+            World bukkitWorld = Bukkit.getWorld(name);
+            if (bukkitWorld != null) {
+                return new SBWorld(name, bukkitWorld);
+            }
+
+            File worldFolder = new File(Bukkit.getWorldContainer(), name);
+            if (!worldFolder.exists()) {
+                throw new IllegalStateException("World folder not found: " + worldFolder.getAbsolutePath());
+            }
+
+            return new SBWorld(name, worldFolder);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load SBWorld for " + name, e);
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+    public File getWorldFolder() {
+        return worldFolder;
+    }
+    public World getBukkitWorld() {
+        return bukkitWorld;
+    }
+    public void setBukkitWorld(World world) {
+        this.bukkitWorld = world;
+    }
+}

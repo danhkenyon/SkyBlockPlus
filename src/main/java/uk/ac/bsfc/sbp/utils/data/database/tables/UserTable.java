@@ -80,7 +80,6 @@ public class UserTable extends DatabaseTable<SBUser> {
                     "name VARCHAR(16) NOT NULL" +
                     ");"
         );
-        SBLogger.info("[UserTable] &aRan table creation script.");
     }
 
     @Override

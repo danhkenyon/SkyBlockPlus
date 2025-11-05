@@ -3,6 +3,9 @@ package uk.ac.bsfc.sbp.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
+import uk.ac.bsfc.sbp.utils.time.SBTime;
+
+import java.util.UUID;
 
 public class SBConstants {
     public static final String DEFAULT_PLUGIN_PREFIX = "&b&lSkyBlock&3&l+ &8&l➤ &r";
@@ -19,6 +22,10 @@ public class SBConstants {
         public static final String DEFAULT_ISLAND_NAME = "%leader%'s Island";
         public static final int BASE_ISLAND_SIZE = 500;
         public static final World ISLAND_WORLD = Bukkit.getWorld("world");
+
+        public static final UUID UNKNOWN_ISLAND_UUID = new UUID(0, 0);
+
+        public static final String DEFAULT_ISLAND_SCHEMATIC = Schematics.SCHEMATIC_FOLDER + SBConfig.getString("island-schematics.default", "default_island.schem");
     }
 
     public static final class Database {
@@ -30,5 +37,11 @@ public class SBConstants {
 
         public static final String TABLE_USERS = "users";
         public static final String TABLE_ISLANDS = "islands";
+        public static final String TABLE_ISLAND_MEMBERS = "island_members";
+    }
+
+    public static final class Schematics {
+        public static final String SCHEMATIC_FOLDER = "schematics/";
+        public static final String DEFAULT_SCHEMATIC_NAME = SBTime.format("HHmmss_ddMMyyyy") + ".schem";
     }
 }

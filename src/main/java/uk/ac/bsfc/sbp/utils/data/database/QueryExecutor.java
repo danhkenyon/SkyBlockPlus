@@ -73,8 +73,10 @@ public final class QueryExecutor {
 
             SBLogger.newLine();
             SBLogger.info("&a<------> &b&lDatabase Update &a<------>");
-            SBLogger.info("SQL Script: " + sql);
-            SBLogger.info("Parameters: " + Arrays.toString(params));
+            SBLogger.info("SQL: " + sql);
+            if (params != null) {
+                SBLogger.info("Parameters: " + Arrays.toString(params));
+            }
             SBLogger.newLine();
 
             int affected = stmt.executeUpdate();

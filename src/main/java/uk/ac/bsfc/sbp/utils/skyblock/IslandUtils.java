@@ -10,11 +10,10 @@ import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
 
 public class IslandUtils {
-    private final Map<Long, Island> islands;
-    private static final AtomicLong COUNTER = new AtomicLong(0);
+    private final Map<UUID, Island> islands;
 
     private IslandUtils() {
         this.islands = new HashMap<>();
@@ -28,33 +27,33 @@ public class IslandUtils {
         return INSTANCE;
     }
 
-    public Map<Long, Island> getIslands() {
+    public Map<UUID, Island> getIslands() {
         return islands;
     }
 
-    public void initIslands() {
+    public void init() {
         List<Island> rows = IslandTable.getInstance().getRows();
 
         for (Island island : rows) {
-            islands.put(island.getId(), island);
-            COUNTER.updateAndGet(prev -> Math.max(prev, island.getId()));
-            SBLogger.info("&aLoaded island &b" + island.getName() + " &7(ID: " + island.getId() + ")");
+            islands.put(island.uuid(), island);
+            SBLogger.info("&aLoaded island &b" + island.name() + " &7(ID: " + island.uuid() + ")");
         }
 
         SBLogger.info("&aLoaded &b" + islands.size() + " &aislands from database.");
     }
 
-    public Island getIsland(long id) {
-        for (long islandId : islands.keySet()) {
-            if (id == islandId) {
-                return islands.get(islandId);
+    public Island getIsland(UUID id) {
+        for (UUID uuid : islands.keySet()) {
+            if (id == uuid) {
+                return islands.get(uuid);
             }
         }
+
         return null;
     }
     public Island getIsland(String name) {
         for (Island island : islands.values()) {
-            if (island.getName().equalsIgnoreCase(name)) {
+            if (island.name().equalsIgnoreCase(name)) {
                 return island;
             }
         }
@@ -62,11 +61,7 @@ public class IslandUtils {
     }
 
     public void registerIsland(Island island) {
-        islands.put(island.getId(), island);
-    }
-
-    public static long generateId() {
-        return COUNTER.incrementAndGet();
+        islands.put(island.uuid(), island);
     }
 
     private static int index = 0;
