@@ -3,11 +3,14 @@ package uk.ac.bsfc.sbp.utils.user;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.game.SBGameMode;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class SBPlayer extends SBUser {
     protected SBPlayer(String name, UUID uuid) {
         super(name, uuid, false);
+
+        skinUrl = Objects.requireNonNull(super.toBukkit().getPlayerProfile().getTextures().getSkin()).toString();
     }
 
     private String skinUrl;
