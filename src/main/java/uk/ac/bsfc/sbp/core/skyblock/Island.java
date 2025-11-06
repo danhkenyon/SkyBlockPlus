@@ -1,10 +1,10 @@
 package uk.ac.bsfc.sbp.core.skyblock;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
+import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class Island {
 
     private final IslandRegion region;
 
-    protected Island(UUID id, String name, Location loc1, List<Member> members) {
+    protected Island(UUID id, String name, SBLocation loc1, List<Member> members) {
         this.id = id;
         this.name = name;
         this.region = IslandRegion.of(loc1);
@@ -32,17 +32,17 @@ public class Island {
         this.members = members;
         this.region = new IslandRegion(IslandUtils.nextLocation());
 
-        this.id = IslandTable.getInstance().insert(this, region.getLoc1());
+        this.id = IslandTable.getInstance().insert(this, region.getLoc1().toBukkit());
 
         IslandUtils.getInstance().registerIsland(this);
         members.forEach(m -> m.setIsland(this));
 
-        Objects.requireNonNull(Bukkit.getWorld(region.getLoc1().getWorld().getUID())).
-                getBlockAt(region.getLoc1()).setType(Material.BEDROCK);
+        Objects.requireNonNull(Bukkit.getWorld(region.getLoc1().getWorld().toBukkit().getUID())).
+                getBlockAt(region.getLoc1().toBukkit()).setType(Material.BEDROCK);
         // paste island
     }
     protected Island(Member member) {
-        this(SBConstants.Island.DEFAULT_ISLAND_NAME.replace("%leader%", member.username()), new ArrayList<>(){{
+        this(SBConstants.Island.DEFAULT_ISLAND_NAME.replace("%leader%", member.getName()), new ArrayList<>(){{
             add(member);
         }});
     }
@@ -53,7 +53,7 @@ public class Island {
     public static Island createIsland(Member member) {
         return new Island(member);
     }
-    public static Island createIsland(UUID id, String name, Location loc1, List<Member> members) {
+    public static Island createIsland(UUID id, String name, SBLocation loc1, List<Member> members) {
         return new Island(id, name, loc1, members);
     }
 
@@ -79,7 +79,7 @@ public class Island {
     }
     public Member getMember(UUID uuid) {
         for (Member member : members) {
-            if (member.uuid().equals(uuid)) {
+            if (member.getUniqueID().equals(uuid)) {
                 return member;
             }
         }
@@ -87,7 +87,7 @@ public class Island {
     }
     public Member getMember(String name) {
         for (Member member : members) {
-            if (member.username().equalsIgnoreCase(name)) {
+            if (member.getName().equalsIgnoreCase(name)) {
                 return member;
             }
         }
@@ -98,7 +98,7 @@ public class Island {
     }
     public boolean hasMember(UUID uuid) {
         for (Member member : members) {
-            if (member.uuid().equals(uuid)) {
+            if (member.getUniqueID().equals(uuid)) {
                 return true;
             }
         }

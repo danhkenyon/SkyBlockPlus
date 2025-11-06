@@ -3,7 +3,6 @@ package uk.ac.bsfc.sbp.core.skyblock;
 import org.bukkit.Bukkit;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.Main;
-import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 
 import java.util.*;
@@ -26,14 +25,14 @@ public class InviteManager {
         }
 
         invites.computeIfAbsent(island.uuid(), id -> new ArrayList<>()).add(member);
-        SBLogger.info("&b" + member.username() + " &ahas been invited to island &b" + island.name()+"&a.");
+        SBLogger.info("&b" + member.getName() + " &ahas been invited to island &b" + island.name()+"&a.");
 
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             if (this.isInvited(island, member)) {
                 this.revokeInvite(island, member);
 
                 member.sendMessage("&cInvite from &b" + island.name() + "&c expired!");
-                SBLogger.info("&7(&b" + member.username() + "&7) &cIsland invite from &b" + island.name() + "&c expired.");
+                SBLogger.info("&7(&b" + member.getName() + "&7) &cIsland invite from &b" + island.name() + "&c expired.");
             }
         }, 20L * 60);
     }
@@ -57,7 +56,7 @@ public class InviteManager {
             this.revokeInvite(island, member);
             island.addMember(member);
             member.sendMessage("&aAccepted invite from &b" + island.name() + "&a!");
-            SBLogger.info("&7(&b" + member.username() + "&7) &aJoined island &b" + island.name());
+            SBLogger.info("&7(&b" + member.getName() + "&7) &aJoined island &b" + island.name());
         } else {
             member.sendMessage("&cYou don't have a invite from that island!");
         }
@@ -66,7 +65,7 @@ public class InviteManager {
         if (this.isInvited(island, member)) {
             this.revokeInvite(island, member);
             member.sendMessage("&cYou denied the invite from &b" + island.name());
-            SBLogger.info("&7(&b" + member.username() + "&7) &aDeclined invite from &b" + island.name());
+            SBLogger.info("&7(&b" + member.getName() + "&7) &aDeclined invite from &b" + island.name());
         } else {
             member.sendMessage("&cYou don't have a invite from that island!");
         }

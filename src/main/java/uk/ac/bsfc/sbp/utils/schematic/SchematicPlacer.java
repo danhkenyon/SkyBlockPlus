@@ -9,6 +9,8 @@ import org.bukkit.block.*;
 import org.bukkit.block.data.*;
 import org.bukkit.util.Vector;
 import uk.ac.bsfc.sbp.utils.SBLogger;
+import uk.ac.bsfc.sbp.utils.location.SBLocation;
+import uk.ac.bsfc.sbp.utils.location.SBWorld;
 
 import java.util.List;
 import java.util.Map;
@@ -16,14 +18,14 @@ import java.util.Map;
 public class SchematicPlacer {
     private static final Gson GSON = new Gson();
 
-    public static void place(Schematic schematic, World world, Location base, Rotation rotation, Mirror mirror) {
+    public static void place(Schematic schematic, SBWorld world, SBLocation base, Rotation rotation, Mirror mirror) {
         List<BlockEntry> blocks = schematic.blocks();
 
         for (BlockEntry entry : blocks) {
             Vector transformedPos = transform(entry.pos(), rotation, mirror);
-            Location loc = base.clone().add(transformedPos);
+            Location loc = base.clone().toBukkit().add(transformedPos);
 
-            Block block = world.getBlockAt(loc);
+            Block block = world.toBukkit().getBlockAt(loc);
             block.setType(entry.type(), false);
 
             BlockData data = entry.blockData();
@@ -139,7 +141,7 @@ public class SchematicPlacer {
                         .append(value)
                         .append("\",");
             }
-            snbt.deleteCharAt(snbt.length() - 1); // remove trailing comma
+            snbt.deleteCharAt(snbt.length() - 1);
             snbt.append("}");
 
             NBTContainer container = (NBTContainer) NBT.parseNBT(String.valueOf(snbt));

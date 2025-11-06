@@ -3,6 +3,7 @@ package uk.ac.bsfc.sbp.utils.schematic;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
+import uk.ac.bsfc.sbp.utils.location.SBLocation;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class Schematic extends BlockSet {
     }
 
     @Override
-    public void paste(Location loc) {
+    public void paste(SBLocation loc) {
         SchematicPlacer.place(this, loc.getWorld(), loc, Rotation.NONE, Mirror.NONE);
     }
 }

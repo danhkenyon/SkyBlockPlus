@@ -22,7 +22,7 @@ public class SBLogger {
 
     public static void newLine() {
         if (bukkitLogging) plugin.getLogger().info("");
-        else SBLogger.printStream.println();
+        else new PrintStream(new FileOutputStream(FileDescriptor.out)).println();
     }
     public static void raw(String s) {
         String timeStamp = "";
@@ -33,7 +33,7 @@ public class SBLogger {
         if (bukkitLogging) {
             plugin.getLogger().info(SBColourUtils.format(s));
         } else {
-            SBLogger.printStream.println(SBColourUtils.ansi("&f[&7&o"+timeStamp+"&f] ["+PLUGIN_TITLE+"] "+s));
+            new PrintStream(new FileOutputStream(FileDescriptor.out)).println(SBColourUtils.ansi("&f[&7&o"+timeStamp+"&f] ["+PLUGIN_TITLE+"] "+s));
         }
     }
     public static void info(String message) {

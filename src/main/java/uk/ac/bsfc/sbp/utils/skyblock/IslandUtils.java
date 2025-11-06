@@ -6,6 +6,8 @@ import uk.ac.bsfc.sbp.core.skyblock.Island;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
+import uk.ac.bsfc.sbp.utils.location.SBLocation;
+import uk.ac.bsfc.sbp.utils.location.SBWorld;
 
 import java.util.HashMap;
 import java.util.List;
@@ -65,8 +67,8 @@ public class IslandUtils {
     }
 
     private static int index = 0;
-    public static Location nextLocation() {
-        World world = SBConstants.Island.ISLAND_WORLD;
+    public static SBLocation nextLocation() {
+        SBWorld world = SBConstants.Island.ISLAND_WORLD;
         int spacing = SBConstants.Island.BASE_ISLAND_SIZE + 1000;
 
         int layer = (int) Math.ceil((Math.sqrt(index + 1) - 1) / 2);
@@ -91,6 +93,6 @@ public class IslandUtils {
         }
 
         index++;
-        return new Location(world, x * spacing, 100, z * spacing);
+        return SBLocation.of(world, x * spacing, 100, z * spacing);
     }
 }

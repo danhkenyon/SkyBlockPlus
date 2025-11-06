@@ -1,6 +1,7 @@
 package uk.ac.bsfc.sbp.utils.schematic;
 
 import org.bukkit.Location;
+import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 import java.util.*;
@@ -29,10 +30,10 @@ public class RegionUtils {
         return regions.get(player);
     }
 
-    public void inputLoc1(SBPlayer player, Location location) {
+    public void inputLoc1(SBPlayer player, SBLocation location) {
         regions.merge(player, new Region(location, null), (old, n) -> new Region(location, old.getLoc2()));
     }
-    public void inputLoc2(SBPlayer player, Location location) {
+    public void inputLoc2(SBPlayer player, SBLocation location) {
         regions.merge(player, new Region(null, location), (old, n) -> new Region(old.getLoc1(), location));
     }
 

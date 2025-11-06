@@ -43,11 +43,11 @@ public class UserTable extends DatabaseTable<SBUser> {
         }
         super.database.getExecutor().insert(
                 "INSERT INTO " + this.getTableName() + " (uuid, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?;",
-                user.uuid().toString(),
-                user.username(),
-                user.username()
+                user.getUniqueID().toString(),
+                user.getName(),
+                user.getName()
         );
-        SBLogger.info("[UserTable] &aInserted &b"+user.username()+"&a into the database.");
+        SBLogger.info("[UserTable] &aInserted &b"+user.getName()+"&a into the database.");
     }
     public void insert(UUID uuid, String username) {
         try {

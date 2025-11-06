@@ -28,7 +28,7 @@ public class IslandCommand extends SBCommand {
         }
 
         assert super.getUser() instanceof SBPlayer;
-        Member member = IslandMemberTable.getInstance().getRow("player_uuid", super.getUser().uuid());
+        Member member = IslandMemberTable.getInstance().getRow("player_uuid", super.getUser().getUniqueID());
 
         if (args.length == 0) {
             if (member == null) {

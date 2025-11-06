@@ -4,9 +4,7 @@ import com.google.gson.*;
 import de.tr7zw.changeme.nbtapi.NBTBlock;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
@@ -14,6 +12,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.util.Vector;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
+import uk.ac.bsfc.sbp.utils.location.SBLocation;
+import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
 import javax.annotation.Nullable;
@@ -45,6 +45,7 @@ public class SchematicParser {
                     SBLogger.warn("Unknown material: " + obj.get("type").getAsString());
                     continue;
                 }
+                if (mat == Material.AIR) continue;
 
                 BlockData data = null;
                 if (obj.has("blockData"))
@@ -65,38 +66,35 @@ public class SchematicParser {
     }
     public static void save(Region region, @Nullable String name) {
         try {
-            Location loc1 = region.getLoc1();
-            Location loc2 = region.getLoc2();
-            World world = loc1.getWorld();
+            SBLocation loc1 = region.getLoc1();
+            SBLocation loc2 = region.getLoc2();
+
+            assert loc1 != null;
+            assert loc2 != null;
+
+            SBWorld world = loc1.getWorld();
             if (world == null) {
                 SBLogger.warn("Region world is null. Cannot save schematic.");
                 return;
             }
 
             String schematicName = name != null ? name : SBConstants.Schematics.DEFAULT_SCHEMATIC_NAME;
-
-            int minX = (int) Math.min(loc1.getX(), loc2.getX());
-            int maxX = (int) Math.max(loc1.getX(), loc2.getX());
-            int minY = (int) Math.min(loc1.getY(), loc2.getY());
-            int maxY = (int) Math.max(loc1.getY(), loc2.getY());
-            int minZ = (int) Math.min(loc1.getZ(), loc2.getZ());
-            int maxZ = (int) Math.max(loc1.getZ(), loc2.getZ());
-
+            int[] values = SchematicParser.getCoordinates(loc1, loc2);
             JsonArray blockArray = new JsonArray();
 
-            for (int x = minX; x <= maxX; x++) {
-                for (int y = minY; y <= maxY; y++) {
-                    for (int z = minZ; z <= maxZ; z++) {
-                        Block block = world.getBlockAt(x, y, z);
+            for (int x = values[0]; x <= values[1]; x++) {
+                for (int y = values[2]; y <= values[3]; y++) {
+                    for (int z = values[4]; z <= values[5]; z++) {
+                        Block block = world.getBlock(x, y, z);
                         Material mat = block.getType();
 
                         if (mat == Material.AIR) continue;
                         JsonObject blockObj = new JsonObject();
 
                         JsonArray pos = new JsonArray();
-                        pos.add(x - minX);
-                        pos.add(y - minY);
-                        pos.add(z - minZ);
+                        pos.add(x - values[0]);
+                        pos.add(y - values[2]);
+                        pos.add(z - values[4]);
                         blockObj.add("pos", pos);
 
                         blockObj.addProperty("type", "minecraft:" + mat.name().toLowerCase(Locale.ROOT));
@@ -166,7 +164,6 @@ public class SchematicParser {
         return schematic[0];
     }
     public static Schematic asyncLoad(SBUser user, File file) {
-        System.out.println(file);
         final Schematic[] schematic = new Schematic[1];
         Thread thread = new Thread(() -> schematic[0] = load(file), "Schematic-Loader");
         user.sendMessage("&eLoading schematic...");
@@ -176,7 +173,6 @@ public class SchematicParser {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        user.sendMessage("&aLoaded schematic!");
         return schematic[0];
     }
     public static void asyncSave(Region region, @Nullable String name) {
@@ -184,7 +180,6 @@ public class SchematicParser {
             try {
                 SBLogger.info("Starting async save for schematic '" + name + "'...");
                 save(region, name);
-                SBLogger.info("Finished async save for schematic '" + name + "'.");
             } catch (Exception e) {
                 SBLogger.err("Async schematic save failed: " + e.getMessage());
                 e.printStackTrace();
@@ -201,7 +196,6 @@ public class SchematicParser {
             try {
                 user.sendMessage("&eSaving schematic...");
                 save(region, finalName);
-                user.sendMessage("&aSaved schematic! [&f&o"+ finalName +"&a]");
             } catch (Exception e) {
                 SBLogger.err("Async schematic save failed: " + e.getMessage());
                 e.printStackTrace();
@@ -215,5 +209,15 @@ public class SchematicParser {
                 arr.get(1).getAsDouble(),
                 arr.get(2).getAsDouble()
         );
+    }
+    protected static int[] getCoordinates(SBLocation loc1, SBLocation loc2) {
+        return new int[]{
+                (int) Math.min(loc1.getX(), loc2.getX()),
+                (int) Math.max(loc1.getX(), loc2.getX()),
+                (int) Math.min(loc1.getY(), loc2.getY()),
+                (int) Math.max(loc1.getY(), loc2.getY()),
+                (int) Math.min(loc1.getZ(), loc2.getZ()),
+                (int) Math.max(loc1.getZ(), loc2.getZ()),
+        };
     }
 }

@@ -1,6 +1,5 @@
 package uk.ac.bsfc.sbp.utils.data.database.tables;
 
-import uk.ac.bsfc.sbp.core.skyblock.Island;
 import uk.ac.bsfc.sbp.core.skyblock.Member;
 import uk.ac.bsfc.sbp.core.skyblock.Rank;
 import uk.ac.bsfc.sbp.utils.SBConstants;
@@ -72,7 +71,7 @@ public class IslandMemberTable extends DatabaseTable<Member> {
                 "INSERT INTO " + this.getTableName() +
                         " (player_uuid, island_id, rank) VALUES (?, ?, ?) " +
                         "ON DUPLICATE KEY UPDATE island_id = VALUES(island_id), rank = VALUES(rank);",
-                member.uuid().toString(),
+                member.getUniqueID().toString(),
                 member.getIslandId(),
                 member.getRank().name()
         );

@@ -46,7 +46,7 @@ public final class Main extends JavaPlugin {
             DatabaseTable.getAllTables().forEach(DatabaseTable::ensureTableExists);
             IslandUtils.getInstance().init();
 
-            WorldManager.init(super.getDataFolder());
+            WorldManager.getInstance();
 
             SBLogger.info("&aPlugin enabled!");
             SBLogger.raw(SBConstants.Schematics.DEFAULT_SCHEMATIC_NAME);
@@ -58,7 +58,6 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        WorldManager.getInstance().saveWorldsToFile();
         SBLogger.info("&cPlugin Disabled!");
     }
 

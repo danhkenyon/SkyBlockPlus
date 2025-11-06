@@ -15,7 +15,7 @@ import java.util.List;
 public class InfoSubcommand {
     public static void execute(SBCommand cmd) {
         var user = cmd.getUser();
-        Member member = IslandMemberTable.getInstance().getRow("player_uuid", user.uuid());
+        Member member = IslandMemberTable.getInstance().getRow("player_uuid", user.getUniqueID());
         SBLogger.info(member.toString());
         Island island = IslandTable.getInstance().getRow("id", member.getIslandId());
 
@@ -31,20 +31,19 @@ public class InfoSubcommand {
 
         for (int i = 0; i < island.members().size(); i++) {
             Member m = sortedMembers.get(i);
-            members[i] = "&7 - " + Rank.displayName(m.getRank()) + " &7| &b" + m.username();
+            members[i] = "{messages.prefix} &7 - " + Rank.displayName(m.getRank()) + " &7| &b" + m.getName();
         }
 
         List<String> info = new ArrayList<>() {{
-            add("&6&l=== &e&lIsland Info &6&l===");
-            add("&e&lName: &b" + island.name());
-            add("&e&lIsland ID: &b" + island.uuid().toString().substring(0, 13));
-            add("&e&lLocation: &bLoc[x=" + island.region().getLoc1().x() + ", y=" + island.region().getLoc1().y() + ", z=" + island.region().getLoc1().z() + "]");
-            add("&e&lMembers: &b" + island.members().size());
+            add("{messages.prefix} &6&l=== &e&lIsland Info &6&l===");
+            add("{messages.prefix} &e&lName: &b" + island.name());
+            add("{messages.prefix} &e&lIsland ID: &b" + island.uuid().toString().substring(0, 13));
+            add("{messages.prefix} &e&lLocation: &bLoc[x=" + island.region().getLoc1().x() + ", y=" + island.region().getLoc1().y() + ", z=" + island.region().getLoc1().z() + "]");
+            add("{messages.prefix} &e&lMembers: &b" + island.members().size());
             addAll(List.of(members));
         }};
 
         member.sendMessage(
-                true,
                 info.toArray(String[]::new)
         );
     }

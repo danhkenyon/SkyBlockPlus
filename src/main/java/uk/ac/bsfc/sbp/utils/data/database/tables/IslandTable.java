@@ -1,12 +1,13 @@
 package uk.ac.bsfc.sbp.utils.data.database.tables;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import uk.ac.bsfc.sbp.core.skyblock.Island;
 import uk.ac.bsfc.sbp.core.skyblock.Member;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
+import uk.ac.bsfc.sbp.utils.location.SBLocation;
+import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
 import java.util.*;
@@ -14,8 +15,6 @@ import java.util.*;
 import static uk.ac.bsfc.sbp.utils.SBConstants.Island.*;
 
 public class IslandTable extends DatabaseTable<Island> {
-    private static final ThreadLocal<Set<UUID>> loading = ThreadLocal.withInitial(HashSet::new);
-
     public IslandTable() {
         super(SBConstants.Database.TABLE_ISLANDS, 2);
     }
@@ -33,10 +32,6 @@ public class IslandTable extends DatabaseTable<Island> {
         try {
             UUID id = UUID.fromString((String) row.get("id"));
 
-            //if (!loading.get().add(id)) {
-            //    return null;
-            //}
-
             String name = (String) row.get("name");
             String worldName = (String) row.get("world");
             double x = ((Number) row.get("x")).doubleValue();
@@ -44,7 +39,7 @@ public class IslandTable extends DatabaseTable<Island> {
             double z = ((Number) row.get("z")).doubleValue();
 
             List<Member> members = IslandMemberTable.getInstance().getIslandMembers(id);
-            Location loc = new Location(Bukkit.getWorld(worldName), x, y, z);
+            SBLocation loc = SBLocation.of(SBWorld.of(worldName), x, y, z);
             Island island = Island.createIsland(id, name, loc, members);
 
             island.setName(name);

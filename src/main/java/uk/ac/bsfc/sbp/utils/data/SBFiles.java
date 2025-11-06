@@ -2,6 +2,7 @@ package uk.ac.bsfc.sbp.utils.data;
 
 import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.Main;
+import uk.ac.bsfc.sbp.utils.SBLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class SBFiles {
             if (!file.exists() && !file.createNewFile()) {
                 throw new IOException("Failed to create file: " + file.getAbsolutePath());
             }
+            SBLogger.warn("File not found. creating new file: " + file.getAbsolutePath());
 
             return file;
         } catch (IOException e) {

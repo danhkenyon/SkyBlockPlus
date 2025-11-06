@@ -89,7 +89,7 @@ public class SBPlayer extends SBUser {
             player.setGameMode(this.gameMode().getGameMode());
         }
 
-        SBLogger.info("&aUpdated &e" + this.username() + "'s &agame mode to &e" + this.gameMode().name() + "&a.");
+        SBLogger.info("&aUpdated &e" + this.getName() + "'s &agame mode to &e" + this.gameMode().name() + "&a.");
     }
     public void allowFlight(boolean allowFlight) {
         this.allowFlight = allowFlight;
@@ -101,7 +101,7 @@ public class SBPlayer extends SBUser {
     }
     public void flying(boolean value) {
         if (this.flying == value) {
-            SBLogger.warn("&eCannot update flight for " + this.username() + ". Already " + (flying() ? "flying" : "not flying") + "!");
+            SBLogger.warn("&eCannot update flight for " + this.getName() + ". Already " + (flying() ? "flying" : "not flying") + "!");
         } else {
             this.flying = value;
 
@@ -110,7 +110,7 @@ public class SBPlayer extends SBUser {
                 player.setFlying(value);
             }
 
-            SBLogger.info("&a" + this.username() + " is now &e" + (flying() ? "flying" : "not flying") + "!");
+            SBLogger.info("&a" + this.getName() + " is now &e" + (flying() ? "flying" : "not flying") + "!");
         }
     }
 
@@ -118,35 +118,39 @@ public class SBPlayer extends SBUser {
         this.currentWorld = world;
 
         Player player = super.toBukkit(Player.class);
-        if (player != null && world.getBukkitWorld() != null) {
+        if (player != null && world.toBukkit() != null) {
             Location loc = player.getLocation();
-            loc.setWorld(world.getBukkitWorld());
+            loc.setWorld(world.toBukkit());
             player.teleport(loc);
         }
 
-        SBLogger.info("&a" + this.username() + " moved to world &e" + world.getName() + "&a.");
+        SBLogger.info("&a" + this.getName() + " moved to world &e" + world.getName() + "&a.");
     }
     public void location(SBLocation location) {
         this.location = location;
 
         Player player = super.toBukkit(Player.class);
-        if (player != null && location.toBukkitLocation() != null) {
-            player.teleport(location.toBukkitLocation());
+        if (player != null && location.toBukkit() != null) {
+            player.teleport(location.toBukkit());
         }
 
-        SBLogger.info("&aTeleported &e" + this.username() + " &ato &e" +
-                location.getWorldName() + " (" +
+        SBLogger.info("&aTeleported &e" + this.getName() + " &ato &e" +
+                location.getWorld() + " (" +
                 Math.round(location.getX()) + ", " +
                 Math.round(location.getY()) + ", " +
                 Math.round(location.getZ()) + ")");
     }
 
+    public void teleport(SBLocation loc) {
+        this.currentWorld = loc.getWorld();
+        this.location(loc);
+    }
 
 
     @Override
     public String toString() {
-        return "SBPlayer[username=" + this.username() +
-                ", uuid=" + this.uuid() +
+        return "SBPlayer[username=" + this.getName() +
+                ", uuid=" + this.getUniqueID() +
                 ", world=" + (currentWorld != null ? currentWorld.getName() : "null") +
                 ", location=" + (location != null ?
                 "(" + Math.round(location.getX()) + "," + Math.round(location.getY()) + "," + Math.round(location.getZ()) + ")" : "null") + "]";

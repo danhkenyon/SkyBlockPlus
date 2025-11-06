@@ -36,7 +36,7 @@ public class InviteSubcommand {
         InviteManager.getInstance().sendInvite(
                 IslandTable.getInstance().getRow(
                         "id",
-                        IslandMemberTable.getInstance().getRow("player_uuid", cmd.getUser().uuid()).getIslandId()
+                        IslandMemberTable.getInstance().getRow("player_uuid", cmd.getUser().getUniqueID()).getIslandId()
                 ),
                 IslandMemberTable.getInstance().getRow("player_name", playerName)
         );

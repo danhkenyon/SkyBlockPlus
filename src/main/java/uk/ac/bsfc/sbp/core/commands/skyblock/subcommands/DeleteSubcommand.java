@@ -8,14 +8,14 @@ import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 public class DeleteSubcommand {
     public static void execute(SBCommand cmd) {
         var user = cmd.getUser();
-        var member = IslandMemberTable.getInstance().getRow("player_uuid", user.uuid());
+        var member = IslandMemberTable.getInstance().getRow("player_uuid", user.getUniqueID());
         Island island = IslandTable.getInstance().getRow("id", member.getIslandId());
 
         if (island == null) {
             member.sendMessage("&cYou do not have an island to delete!");
             return;
         }
-        if (!island.leader().uuid().equals(member.uuid())) {
+        if (!island.leader().getUniqueID().equals(member.getUniqueID())) {
             member.sendMessage("&cOnly the island leader can delete the island.");
             return;
         }

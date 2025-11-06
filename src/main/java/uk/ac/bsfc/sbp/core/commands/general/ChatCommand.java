@@ -14,7 +14,7 @@ public class ChatCommand extends SBCommand {
 
     @Override
     public void execute() {
-        if (super.getUser().userType() == SBUserType.PLAYER || super.getUser().userType() == SBUserType.UNDEFINED) {
+        if (super.getUser().getUserType() == SBUserType.PLAYER || super.getUser().getUserType() == SBUserType.UNDEFINED) {
             super.getUser().sendMessage("&cOnly the console can use this command.");
             return;
         }

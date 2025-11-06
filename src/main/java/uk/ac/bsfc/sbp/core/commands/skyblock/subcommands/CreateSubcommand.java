@@ -20,10 +20,10 @@ public class CreateSubcommand {
         }
 
         assert user instanceof SBPlayer;
-        Member member = IslandMemberTable.getInstance().getRow("player_uuid", user.uuid());
+        Member member = IslandMemberTable.getInstance().getRow("player_uuid", user.getUniqueID());
         if (member == null) {
             IslandMemberTable.getInstance().insertOrUpdate(Member.of(user.to(SBPlayer.class)));
-            member = IslandMemberTable.getInstance().getRow("player_uuid", user.uuid());
+            member = IslandMemberTable.getInstance().getRow("player_uuid", user.getUniqueID());
         }
 
         if (member.getIslandId() != null) {

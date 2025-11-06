@@ -1,36 +1,36 @@
 package uk.ac.bsfc.sbp.utils.schematic;
 
-import de.tr7zw.changeme.nbtapi.NBTBlock;
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.Main;
 import uk.ac.bsfc.sbp.utils.SBLogger;
+import uk.ac.bsfc.sbp.utils.location.SBLocation;
+import uk.ac.bsfc.sbp.utils.location.SBWorld;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Region extends BlockSet {
-    private @Nullable Location loc1;
-    private @Nullable Location loc2;
+    private @Nullable SBLocation loc1;
+    private @Nullable SBLocation loc2;
 
-    protected Region(@Nullable Location loc1, @Nullable Location loc2) {
+    protected Region(@Nullable SBLocation loc1, @Nullable SBLocation loc2) {
         this.loc1 = loc1 == null ? null : loc1.clone();
         this.loc2 = loc2 == null ? null : loc2.clone();
     }
 
-    public static Region of(@Nullable Location loc1, @Nullable Location loc2) {
+    public static Region of(@Nullable SBLocation loc1, @Nullable SBLocation loc2) {
         return new Region(loc1, loc2);
     }
 
-    public boolean isInside(Location loc) {
+    public boolean isInside(SBLocation loc) {
         if (loc1 == null || loc2 == null) {
             return false;
         }
@@ -59,23 +59,17 @@ public class Region extends BlockSet {
             return;
         }
 
-        World world = loc1.getWorld();
+        SBWorld world = loc1.getWorld();
         if (world == null || !world.equals(loc2.getWorld())) {
             return;
         }
 
-        int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
-        int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
-        int minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
-        int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
-        int minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
-        int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
-
+        int[] values = SchematicParser.getCoordinates(loc1, loc2);
         int filled = 0;
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    Block block = world.getBlockAt(x, y, z);
+        for (int x = values[0]; x <= values[1]; x++) {
+            for (int y = values[2]; y <= values[3]; y++) {
+                for (int z = values[4]; z <= values[5]; z++) {
+                    Block block = world.toBukkit().getBlockAt(x, y, z);
                     if (block.getType() != material) {
                         block.setType(material, false);
                         filled++;
@@ -91,25 +85,19 @@ public class Region extends BlockSet {
             return;
         }
 
-        World world = loc1.getWorld();
+        SBWorld world = loc1.getWorld();
         if (world == null || !world.equals(loc2.getWorld())) {
             return;
         }
 
-        int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
-        int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
-        int minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
-        int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
-        int minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
-        int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
-
+        int[] values = SchematicParser.getCoordinates(loc1, loc2);
         new Thread(() -> {
             List<Block> blocksToFill = new ArrayList<>();
 
-            for (int x = minX; x <= maxX; x++) {
-                for (int y = minY; y <= maxY; y++) {
-                    for (int z = minZ; z <= maxZ; z++) {
-                        Block block = world.getBlockAt(x, y, z);
+            for (int x = values[0]; x <= values[1]; x++) {
+                for (int y = values[2]; y <= values[3]; y++) {
+                    for (int z = values[4]; z <= values[5]; z++) {
+                        Block block = world.toBukkit().getBlockAt(x, y, z);
                         if (block.getType() != material) {
                             blocksToFill.add(block);
                         }
@@ -136,32 +124,26 @@ public class Region extends BlockSet {
             return null;
         }
 
-        World world = loc1.getWorld();
+        SBWorld world = loc1.getWorld();
         if (world == null || !world.equals(loc2.getWorld())) {
             SBLogger.err("Cannot copy region: world is null or mismatched.");
             return null;
         }
 
-        int minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
-        int maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
-        int minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
-        int maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
-        int minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
-        int maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
-
+        int[] values = SchematicParser.getCoordinates(loc1, loc2);
         List<BlockEntry> blocks = new ArrayList<>();
 
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    Block block = world.getBlockAt(x, y, z);
+        for (int x = values[0]; x <= values[1]; x++) {
+            for (int y = values[2]; y <= values[3]; y++) {
+                for (int z = values[4]; z <= values[5]; z++) {
+                    Block block = world.toBukkit().getBlockAt(x, y, z);
                     Material mat = block.getType();
                     if (mat == Material.AIR) continue;
 
                     BlockData data = block.getBlockData();
 
                     blocks.add(new BlockEntry(
-                            new org.bukkit.util.Vector(x - minX, y - minY, z - minZ),
+                            new Vector(x - values[0], y - values[2], z - values[4]),
                             mat,
                             data,
                             Map.of()
@@ -170,31 +152,40 @@ public class Region extends BlockSet {
             }
         }
 
-        return new Schematic(this.toString(), new org.bukkit.util.Vector(0, 0, 0), blocks);
+        return new Schematic(this.toString(), new Vector(0, 0, 0), blocks);
     }
 
-
-    public void setLoc1(@NotNull Location loc1) {
+    public void setLoc1(@NotNull SBLocation loc1) {
         this.loc1 = loc1;
     }
-    public void setLoc2(@NotNull Location loc2) {
+    public void setLoc2(@NotNull SBLocation loc2) {
         this.loc2 = loc2;
     }
 
-    public @Nullable Location getLoc1() {
+    public @Nullable SBLocation getLoc1() {
         return this.loc1;
     }
-    public @Nullable Location getLoc2() {
+    public @Nullable SBLocation getLoc2() {
         return this.loc2;
     }
 
     @Override
+    public void paste(SBLocation loc) {
+        SchematicPlacer.place(this.copy(), loc.getWorld(), loc, Rotation.NONE, Mirror.NONE);
+    }
+    
+    @Override
     public String toString() {
         return "Region[loc1=" + loc1 + ", loc2=" + loc2 + ']';
     }
-
     @Override
-    public void paste(Location loc) {
-        SchematicPlacer.place(this.copy(), loc.getWorld(), loc, Rotation.NONE, Mirror.NONE);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Region that)) return false;
+        return Objects.equals(hashCode(), that.hashCode());
+    }
+    @Override
+    public int hashCode() {
+        return 31 * (loc1 != null ? loc1.hashCode() : 0) + (loc2 != null ? loc2.hashCode() : 0);
     }
 }

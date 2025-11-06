@@ -22,7 +22,7 @@ public class Member extends SBPlayer {
         this(name, uuid, Rank.RECRUIT);
     }
     protected Member(SBPlayer player, Rank rank) {
-        super(player.username(), player.uuid());
+        super(player.getName(), player.getUniqueID());
         this.rank = rank;
         this.islandId = SBConstants.Island.UNKNOWN_ISLAND_UUID;
     }
@@ -42,16 +42,16 @@ public class Member extends SBPlayer {
             case RECRUIT -> this.setRank(Rank.MEMBER);
             case MEMBER -> this.setRank(Rank.OFFICER);
             case OFFICER -> this.setRank(Rank.CO_LEADER);
-            case CO_LEADER, LEADER -> SBLogger.err("Cannot promote beyond &b" + this.getRank() + "&c. (&f" + super.username() + "&c)");
+            case CO_LEADER, LEADER -> SBLogger.err("Cannot promote beyond &b" + this.getRank() + "&c. (&f" + super.getName() + "&c)");
         }
     }
     public void demote() {
         switch (rank) {
-            case LEADER -> SBLogger.err("Cannot demote the island leader. (&f" + super.username() + "&c)");
+            case LEADER -> SBLogger.err("Cannot demote the island leader. (&f" + super.getName() + "&c)");
             case CO_LEADER -> this.setRank(Rank.OFFICER);
             case OFFICER -> this.setRank(Rank.MEMBER);
             case MEMBER -> this.setRank(Rank.RECRUIT);
-            case RECRUIT -> SBLogger.err("Cannot demote beyond &b" + this.getRank() + "&c. (&f" + super.username() + "&c)");
+            case RECRUIT -> SBLogger.err("Cannot demote beyond &b" + this.getRank() + "&c. (&f" + super.getName() + "&c)");
         }
     }
 
@@ -90,6 +90,6 @@ public class Member extends SBPlayer {
 
     @Override
     public String toString() {
-        return "Member[name=" + username() + ", uuid=" + uuid() + ", rank=" + rank + ", islandId=" + islandId + "]";
+        return "Member[name=" + getName() + ", uuid=" + getUniqueID() + ", rank=" + rank + ", islandId=" + islandId + "]";
     }
 }

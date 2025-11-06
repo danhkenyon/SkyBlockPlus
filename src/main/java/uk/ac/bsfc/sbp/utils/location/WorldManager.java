@@ -6,31 +6,43 @@ import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
+import uk.ac.bsfc.sbp.utils.data.SBFiles;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
 
 public class WorldManager {
-    private final Map<String, SBWorld> worlds = new HashMap<>();
-    private final File pluginFolder;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private final Map<String, SBWorld> worldsMap = new HashMap<>();
+
+    private final File pluginFolder = SBFiles.get(SBConstants.PLUGIN_FOLDER);
     private final File worldsFile;
 
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
     private WorldManager() {
-        this.pluginFolder = new File("plugins/SkyBlockPlus");
-        this.worldsFile = new File(pluginFolder, "worlds.json");
+        this.worldsFile = SBFiles.get("worlds.json");
 
-        if (!pluginFolder.exists()) pluginFolder.mkdirs();
-        if (!worldsFile.exists()) saveWorldsList(new ArrayList<>());
+        if (!worldsFile.exists()) {
+            try {
+                worldsFile.createNewFile();
+                this.saveWorldsList(new ArrayList<>() {{
+                    add("world");
+                    add("world_nether");
+                    add("world_the_end");
+                }});
+            } catch (IOException | RuntimeException e) {
+                SBLogger.err("[SBP] Could not create worlds.json file!");
+                e.printStackTrace();
+            }
+        }
     }
 
     private static WorldManager INSTANCE;
-
     public static WorldManager getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new WorldManager();
@@ -39,46 +51,42 @@ public class WorldManager {
     }
 
     public void loadWorld(SBWorld world) {
-        if (world.getBukkitWorld() != null) return;
+        if (world.toBukkit() != null) return;
 
-        File folder = world.getWorldFolder();
+        File folder = world.getFolder();
         if (!folder.exists()) {
             throw new IllegalArgumentException("World folder does not exist: " + folder.getName());
         }
 
         World bukkitWorld = Bukkit.createWorld(new WorldCreator(world.getName()));
-        world.setBukkitWorld(bukkitWorld);
-        worlds.put(world.getName(), world);
+        world.setBukkit(bukkitWorld);
+        worldsMap.put(world.getName(), world);
     }
-
     public void unloadWorld(SBWorld world) {
-        World bukkitWorld = world.getBukkitWorld();
+        World bukkitWorld = world.toBukkit();
         if (bukkitWorld == null) return;
 
         Bukkit.unloadWorld(bukkitWorld, false);
-        world.setBukkitWorld(null);
-        worlds.remove(world.getName());
+        world.setBukkit(null);
+        worldsMap.remove(world.getName());
     }
-
     public SBWorld createWorld(String name, long seed) {
         WorldCreator creator = new WorldCreator(name);
         creator.seed(seed);
         World world = Bukkit.createWorld(creator);
         SBWorld sbWorld = SBWorld.of(name, world);
-        worlds.put(name, sbWorld);
+        worldsMap.put(name, sbWorld);
 
         addWorldToJson(name);
         return sbWorld;
     }
-
     public SBWorld createWorld(String name) {
         return createWorld(name, System.currentTimeMillis());
     }
-
     public void deleteWorld(SBWorld world) {
         unloadWorld(world);
 
-        File folder = world.getWorldFolder();
+        File folder = world.getFolder();
         if (folder.exists()) {
             deleteFolderRecursive(folder);
         }
@@ -87,7 +95,7 @@ public class WorldManager {
     }
 
     public SBWorld getWorld(String name) {
-        return worlds.get(name);
+        return worldsMap.get(name);
     }
 
     public void loadAllFromJson() {
@@ -103,26 +111,24 @@ public class WorldManager {
             }
         }
     }
-
     private List<String> loadWorldsList() {
         try (FileReader reader = new FileReader(worldsFile)) {
             Type listType = new TypeToken<List<String>>() {}.getType();
-            List<String> list = gson.fromJson(reader, listType);
+            List<String> list = GSON.fromJson(reader, listType);
             return list != null ? list : new ArrayList<>();
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
     }
-
     private void saveWorldsList(List<String> worlds) {
         try (FileWriter writer = new FileWriter(worldsFile)) {
-            gson.toJson(worlds, writer);
+            GSON.toJson(worlds, writer);
+            writer.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
     private void addWorldToJson(String worldName) {
         List<String> worldsList = loadWorldsList();
         if (!worldsList.contains(worldName)) {
@@ -130,7 +136,6 @@ public class WorldManager {
             saveWorldsList(worldsList);
         }
     }
-
     private void removeWorldFromJson(String worldName) {
         List<String> worldsList = loadWorldsList();
         if (worldsList.remove(worldName)) {
