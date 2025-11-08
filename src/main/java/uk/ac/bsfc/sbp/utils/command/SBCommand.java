@@ -79,7 +79,7 @@ public abstract class SBCommand {
         List<String> results = new ArrayList<>();
         for (String suggestion : suggestions) {
             if (suggestion.toLowerCase().startsWith(prefix)) {
-                results.add(SBColourUtils.format(suggestion));
+                results.add(suggestion);
             }
         }
         return results;

@@ -33,7 +33,8 @@ public class SBLogger {
         if (bukkitLogging) {
             plugin.getLogger().info(SBColourUtils.format(s));
         } else {
-            new PrintStream(new FileOutputStream(FileDescriptor.out)).println(SBColourUtils.ansi(timeStamp+" ["+PLUGIN_TITLE+"] "+s));
+            //TODO: fix once we got formatting up again
+            new PrintStream(new FileOutputStream(FileDescriptor.out)).println(/*SBColourUtils.ansi(*/timeStamp+" ["+PLUGIN_TITLE+"] "+s)/*)*/;
         }
     }
     public static void info(String message) {
