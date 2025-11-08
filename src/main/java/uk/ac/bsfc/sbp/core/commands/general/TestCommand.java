@@ -15,7 +15,7 @@ public class TestCommand extends SBCommand {
     }
     @Override
     public void execute() {
-        SBServer.broadcast(super.getUser(), "&aTest command executed!");
+        SBServer.broadcast(super.getUser(), "<green>Test command executed!");
     }
 }
 

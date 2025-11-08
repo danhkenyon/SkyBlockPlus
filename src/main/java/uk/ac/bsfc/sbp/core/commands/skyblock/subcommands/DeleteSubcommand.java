@@ -12,15 +12,15 @@ public class DeleteSubcommand {
         Island island = IslandTable.getInstance().getRow("id", member.getIslandId());
 
         if (island == null) {
-            member.sendMessage("&cYou do not have an island to delete!");
+            member.sendMessage("<red>You do not have an island to delete!");
             return;
         }
         if (!island.leader().getUniqueID().equals(member.getUniqueID())) {
-            member.sendMessage("&cOnly the island leader can delete the island.");
+            member.sendMessage("<red>Only the island leader can delete the island.");
             return;
         }
 
         island.delete();
-        member.sendMessage("&aSuccessfully deleted your island.");
+        member.sendMessage("<green>Successfully deleted your island.");
     }
 }

@@ -34,7 +34,7 @@ public class UserTable extends DatabaseTable<SBUser> {
                 user.getName(),
                 user.getName()
         );
-        SBLogger.info("[UserTable] &aInserted &b"+user.getName()+"&a into the database.");
+        SBLogger.info("[UserTable] <green>Inserted <aqua>"+user.getName()+"<green> into the database.");
     }
     public void insert(SBUser user) {
         if (user == null) {
@@ -47,7 +47,7 @@ public class UserTable extends DatabaseTable<SBUser> {
                 user.getName(),
                 user.getName()
         );
-        SBLogger.info("[UserTable] &aInserted &b"+user.getName()+"&a into the database.");
+        SBLogger.info("[UserTable] <green>Inserted <aqua>"+user.getName()+"<green> into the database.");
     }
     public void insert(UUID uuid, String username) {
         try {
@@ -58,9 +58,9 @@ public class UserTable extends DatabaseTable<SBUser> {
                     username,
                     username
             );
-            SBLogger.info("[UserTable] &aInserted &b"+username+"&a into the database.");
+            SBLogger.info("[UserTable] <green>Inserted <aqua>"+username+"<green> into the database.");
         } catch (RuntimeException e) {
-            SBLogger.err("[UserTable] RuntimeException occurred for &b" + username + "&c: " + e.getMessage());
+            SBLogger.err("[UserTable] RuntimeException occurred for <aqua>" + username + "<red>: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -36,7 +36,7 @@ public class UserJoinEvent extends SBEvent {
 
     @Override
     public void call() {
-        SBLogger.raw("&f"+user.getName()+" &eexecuted the event: &b"+getClass().getSimpleName());
+        SBLogger.raw("<white>"+user.getName()+" <yellow>executed the event: <aqua>"+getClass().getSimpleName());
 
         SBServer.broadcastRaw(this.getMessage().replace("%username%", user.getName()));
     }

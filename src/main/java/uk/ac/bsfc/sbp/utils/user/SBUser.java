@@ -1,5 +1,6 @@
 package uk.ac.bsfc.sbp.utils.user;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -54,7 +55,7 @@ public abstract class SBUser {
 
         SBUser user = UserTable.getInstance().getRow("uuid", uuid);
         if (user == null) {
-            SBLogger.err("&cCould not find user! UUID["+uuid+"]");
+            SBLogger.err("<red>Could not find user! UUID["+uuid+"]");
             throw new NullPointerException();
         }
         return user;
@@ -66,7 +67,7 @@ public abstract class SBUser {
 
         SBUser user = UserTable.getInstance().getRow("name", name);
         if (user == null) {
-            SBLogger.err("&cCould not find user! Name["+name+"]");
+            SBLogger.err("<red>Could not find user! Name["+name+"]");
             throw new NullPointerException();
         }
         return user;
@@ -97,7 +98,7 @@ public abstract class SBUser {
 
     public World getWorld() {
         if (this.isConsole()) {
-            SBLogger.err("&cAttempted to retrieve a World from CommandSender!");
+            SBLogger.err("<red>Attempted to retrieve a World from CommandSender!");
             throw new NullPointerException();
         }
         Player player = this.toBukkit(Player.class);
@@ -113,7 +114,7 @@ public abstract class SBUser {
         if (clazz == SBPlayer.class && !this.isConsole()) return clazz.cast(new SBPlayer(this.name, this.uuid));
         if (clazz == SBUser.class) return clazz.cast(this);
 
-        SBLogger.err("&cCannot convert " + this.getClass().getSimpleName() + " to " + clazz.getSimpleName());
+        SBLogger.err("<red>Cannot convert " + this.getClass().getSimpleName() + " to " + clazz.getSimpleName());
         return null;
     }
     public <T extends CommandSender> T toBukkit(Class<T> clazz) {
@@ -123,7 +124,7 @@ public abstract class SBUser {
             if (player != null && player.isOnline()) return clazz.cast(player);
         }
 
-        SBLogger.err("&cCannot convert " + this.getClass().getSimpleName() + " to " + clazz.getSimpleName());
+        SBLogger.err("<red>Cannot convert " + this.getClass().getSimpleName() + " to " + clazz.getSimpleName());
         return null;
     }
 
@@ -145,7 +146,7 @@ public abstract class SBUser {
     }
 
     private void msg(String message, Placeholder[] userPlaceholders) {
-        String formatted = SBColourUtils.format(Messages.get(message, userPlaceholders));
+        Component formatted = SBColourUtils.format(Messages.get(message, userPlaceholders));
         if (this.isConsole()) {
             Bukkit.getConsoleSender().sendMessage(formatted);
         } else {
@@ -163,15 +164,15 @@ public abstract class SBUser {
         // TODO: Validate user permissions.
 
         if (content.isEmpty()) {
-            SBLogger.err("&c[SUDO] Cannot execute empty command (&f"+user.getName()+"->"+this.getName()+"&c)!");
+            SBLogger.err("<red>[SUDO] Cannot execute empty command (<white>"+user.getName()+"->"+this.getName()+"<red>)!");
             return;
         }
         if (amt < 1 || amt > 10000) {
-            SBLogger.err("&c[SUDO] Invalid sudo command amount (&f"+user.getName()+"->"+this.getName()+"&c)!");
+            SBLogger.err("<red>[SUDO] Invalid sudo command amount (<white>"+user.getName()+"->"+this.getName()+"<red>)!");
             return;
         }
         if (this == user) {
-            SBLogger.err("&c[SUDO] Attempt to sudo self. (&f"+user.getName()+"&c)!");
+            SBLogger.err("<red>[SUDO] Attempt to sudo self. (<white>"+user.getName()+"<red>)!");
             return;
         }
 
@@ -183,27 +184,27 @@ public abstract class SBUser {
         switch (type) {
             case CHAT -> this.forceChat(user, content.substring(4), amt);
             case COMMAND -> this.forceCommand(user, content, amt);
-            default -> SBLogger.err("&c[SUDO] Unknown sudo type!");
+            default -> SBLogger.err("<red>[SUDO] Unknown sudo type!");
         }
     }
 
     private void forceChat(@NotNull SBUser user, String chat, int amt) {
-        SBLogger.raw("&f[SUDO] (&a"+user.getName()+"&f) &eForcing &f"+this.getName()+" &eto say \"&f"+chat+"&e\" &f(&e"+amt+"x&f)");
+        SBLogger.raw("<white>[SUDO] (<green>"+user.getName()+"<white>) <yellow>Forcing <white>"+this.getName()+" <yellow>to say \"<white>"+chat+"<yellow>\" <white>(<yellow>"+amt+"x<white>)");
         for (int i = 0; i < amt; i++) {
             if (this.getUserType() == SBUserType.CONSOLE) {
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + SBColourUtils.format("[CONSOLE] " + chat));
                 continue;
             }
-            this.toBukkit(Player.class).chat(SBColourUtils.format(chat));
+            this.toBukkit(Player.class).chat(chat);
         }
     }
     private void forceCommand(@NotNull SBUser user, String command, int amt) {
-        SBLogger.raw("&f[SUDO] (&a"+user.getName()+"&f) &eForcing &f"+this.getName()+" &eto run \"&f"+command+"&e\" &f(&e"+amt+"x&f)");
+        SBLogger.raw("<white>[SUDO] (<green>"+user.getName()+"<white>) <yellow>Forcing <white>"+this.getName()+" <yellow>to run \"<white>"+command+"<yellow>\" <white>(<yellow>"+amt+"x<white>)");
         for (int i = 0; i < amt; i++) {
             if (this.getUserType() == SBUserType.CONSOLE) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), SBColourUtils.format(command));
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
             } else {
-                this.toBukkit(Player.class).performCommand(SBColourUtils.format(command));
+                this.toBukkit(Player.class).performCommand(command);
             }
         }
     }

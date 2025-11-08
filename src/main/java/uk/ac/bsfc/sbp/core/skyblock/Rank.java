@@ -9,11 +9,11 @@ public enum Rank {
 
     public static String displayName(Rank rank) {
         return switch (rank) {
-            case LEADER -> "&6&lLeader";
-            case CO_LEADER -> "&b&lCo-Leader";
-            case OFFICER -> "&a&lOfficer";
-            case MEMBER -> "&7&lMember";
-            case RECRUIT -> "&f&lRecruit";
+            case LEADER -> "<gold><b>Leader";
+            case CO_LEADER -> "<aqua><b>Co-Leader";
+            case OFFICER -> "<green><b>Officer";
+            case MEMBER -> "<gray><b>Member";
+            case RECRUIT -> "<white><b>Recruit";
         };
     }
 }

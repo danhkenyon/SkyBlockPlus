@@ -38,10 +38,10 @@ public class IslandUtils {
 
         for (Island island : rows) {
             islands.put(island.uuid(), island);
-            SBLogger.info("&aLoaded island &b" + island.name() + " &7(ID: " + island.uuid() + ")");
+            SBLogger.info("<green>Loaded island <aqua>" + island.name() + " <gray>(ID: " + island.uuid() + ")");
         }
 
-        SBLogger.info("&aLoaded &b" + islands.size() + " &aislands from database.");
+        SBLogger.info("<green>Loaded <aqua>" + islands.size() + " <green>islands from database.");
     }
 
     public Island getIsland(UUID id) {

@@ -52,7 +52,7 @@ public class SBEventRegister {
                 }
             }
         } catch (Exception e) {
-            SBLogger.err("&cException occurred while registering events!\n" + e.getMessage());
+            SBLogger.err("<red>Exception occurred while registering events!\n" + e.getMessage());
         }
 
         Main.getInstance().getServer().getPluginManager().registerEvents(new EventBridge(), Main.getInstance());
@@ -79,11 +79,11 @@ public class SBEventRegister {
                     try {
                         eventInstance.call();
                     } catch (Exception ex) {
-                        SBLogger.err("&cError while running event.call() for " + eventClass.getSimpleName());
+                        SBLogger.err("<red>Error while running event.call() for " + eventClass.getSimpleName());
                         ex.printStackTrace();
                     }
                 } catch (Exception e) {
-                    SBLogger.err("&cError during event execution: " + e.getMessage());
+                    SBLogger.err("<red>Error during event execution: " + e.getMessage());
                     e.printStackTrace();
                 }
             };
@@ -98,7 +98,7 @@ public class SBEventRegister {
             ctor.setAccessible(true);
             return ctor.newInstance();
         } catch (Exception e) {
-            SBLogger.err("&cFailed to instantiate handler " + handlerClass.getSimpleName() + ": " + e.getMessage());
+            SBLogger.err("<red>Failed to instantiate handler " + handlerClass.getSimpleName() + ": " + e.getMessage());
             e.printStackTrace();
             return null;
         }

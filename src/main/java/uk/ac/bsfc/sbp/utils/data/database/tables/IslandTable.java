@@ -103,7 +103,7 @@ public class IslandTable extends DatabaseTable<Island> {
             return UNKNOWN_ISLAND_UUID;
         }
 
-        SBLogger.info("[IslandTable] &aSaved island &b" + island.name() + "&a (ID: " + retrieved + ")");
+        SBLogger.info("[IslandTable] <green>Saved island <aqua>" + island.name() + "<green> (ID: " + retrieved + ")");
         return retrieved;
     }
 

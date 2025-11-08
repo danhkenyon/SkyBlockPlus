@@ -28,12 +28,12 @@ public class CreateSubcommand {
 
         if (member.getIslandId() != null) {
             Island island = IslandTable.getInstance().getRow("id", member.getIslandId());
-            member.sendMessage("&cYou already have an island! &7(&b" + island.name() + "&7)");
+            member.sendMessage("<red>You already have an island! <gray>(<aqua>" + island.name() + "<gray>)");
             return;
         }
         member.setRank(Rank.LEADER);
 
         Island island = Island.createIsland(member);
-        member.sendMessage("&aSuccessfully created island! &7(Island ID: &b" + island.uuid() + "&7)");
+        member.sendMessage("<green>Successfully created island! <gray>(Island ID: <aqua>" + island.uuid() + "<gray>)");
     }
 }

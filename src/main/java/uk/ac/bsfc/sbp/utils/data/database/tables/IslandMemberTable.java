@@ -81,7 +81,7 @@ public class IslandMemberTable extends DatabaseTable<Member> {
                 "DELETE FROM " + this.getTableName() + " WHERE island_id = ?",
                 id
         );
-        SBLogger.info("[IslandMemberTable] &cDeleted all members for island ID &b" + id);
+        SBLogger.info("[IslandMemberTable] <red>Deleted all members for island ID <aqua>" + id);
     }
 
     public List<Member> getIslandMembers(UUID id) {

@@ -42,16 +42,16 @@ public class Member extends SBPlayer {
             case RECRUIT -> this.setRank(Rank.MEMBER);
             case MEMBER -> this.setRank(Rank.OFFICER);
             case OFFICER -> this.setRank(Rank.CO_LEADER);
-            case CO_LEADER, LEADER -> SBLogger.err("Cannot promote beyond &b" + this.getRank() + "&c. (&f" + super.getName() + "&c)");
+            case CO_LEADER, LEADER -> SBLogger.err("Cannot promote beyond <aqua>" + this.getRank() + "<red>. (<white>" + super.getName() + "<red>)");
         }
     }
     public void demote() {
         switch (rank) {
-            case LEADER -> SBLogger.err("Cannot demote the island leader. (&f" + super.getName() + "&c)");
+            case LEADER -> SBLogger.err("Cannot demote the island leader. (<white>" + super.getName() + "<red>)");
             case CO_LEADER -> this.setRank(Rank.OFFICER);
             case OFFICER -> this.setRank(Rank.MEMBER);
             case MEMBER -> this.setRank(Rank.RECRUIT);
-            case RECRUIT -> SBLogger.err("Cannot demote beyond &b" + this.getRank() + "&c. (&f" + super.getName() + "&c)");
+            case RECRUIT -> SBLogger.err("Cannot demote beyond <aqua>" + this.getRank() + "<red>. (<white>" + super.getName() + "<red>)");
         }
     }
 

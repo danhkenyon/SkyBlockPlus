@@ -75,7 +75,7 @@ public final class QueryExecutor {
              PreparedStatement stmt = prepareStatement(conn, sql, params)) {
 
             SBLogger.newLine();
-            SBLogger.info("&a<------> &b&lDatabase Update &a<------>");
+            SBLogger.info("<green><------> <aqua><b>Database Update <green><------>");
             SBLogger.info("Script: " + name);
 
             int affected = stmt.executeUpdate();

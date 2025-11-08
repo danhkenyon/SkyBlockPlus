@@ -81,7 +81,7 @@ public class SBDatabase implements AutoCloseable {
 
     @Override
     public void close() {
-        SBLogger.info("[Database] &cClosing database connection!");
+        SBLogger.info("[Database] <red>Closing database connection!");
         pool.close();
     }
 }

@@ -34,13 +34,13 @@ public class SBCommandHandler {
                 }
             }
         } catch (Exception e) {
-            SBLogger.err("&cException occurred while registering commands!\n" + e.getMessage());
+            SBLogger.err("<red>Exception occurred while registering commands!\n" + e.getMessage());
         }
     }
 
     public void register(SBCommand command) {
         if (command.name == null) {
-            SBLogger.err("&cYou did not specify a command name!");
+            SBLogger.err("<red>You did not specify a command name!");
             throw new IllegalArgumentException();
         }
 
@@ -55,7 +55,7 @@ public class SBCommandHandler {
                 SBUser user = SBUser.from(sender);
 
                 if (command.permission != null && !command.permission.isEmpty() && !sender.hasPermission(command.permission)) {
-                    user.sendMessage("&cNo Permission!");
+                    user.sendMessage("<red>No Permission!");
                     return true;
                 }
 
@@ -65,7 +65,7 @@ public class SBCommandHandler {
 
                     command.execute();
                 } catch (Exception e) {
-                    user.sendMessage("&cAn internal error occurred while executing the command.");
+                    user.sendMessage("<red>An internal error occurred while executing the command.");
                     e.printStackTrace();
                 }
 

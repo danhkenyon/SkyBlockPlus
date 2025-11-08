@@ -39,12 +39,12 @@ public class SetCommand extends SBCommand {
         Material blockMaterial = Material.getMaterial(block.toUpperCase());
 
         if (blockMaterial == null || !blockMaterial.isBlock()) {
-            player.sendMessage("&c'&f&l%block%&c' is not a valid block!", Placeholder.of("%block%", block));
+            player.sendMessage("<red>'<white><b>%block%<red>' is not a valid block!", Placeholder.of("%block%", block));
             return;
         }
 
         region.asyncFill(blockMaterial);
-        player.sendMessage("{messages.world-edit.async} &aSuccessfully set the selected area to &f" + blockMaterial.name() + "&a.");
+        player.sendMessage("{messages.world-edit.async} <green>Successfully set the selected area to <white>" + blockMaterial.name() + "<green>.");
     }
 
     @Override

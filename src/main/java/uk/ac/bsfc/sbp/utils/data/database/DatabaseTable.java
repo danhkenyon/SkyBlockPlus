@@ -107,15 +107,15 @@ public abstract class DatabaseTable<T> {
                     }
                 }
             } catch (Exception e) {
-                SBLogger.err("&cFailed to instantiate class &b" + clazz.getSimpleName() + "&c: " + e.getMessage());
+                SBLogger.err("<red>Failed to instantiate class <aqua>" + clazz.getSimpleName() + "<red>: " + e.getMessage());
             }
         }
 
         tables.sort(Comparator.comparingInt(DatabaseTable::getWeight));
 
-        SBLogger.info("[Database] &aFound &b" + tables.size() + " &aTable(s).");
+        SBLogger.info("[Database] <rainbow>Found " + tables.size() + " <green>Table(s).");
         for (DatabaseTable<?> table : tables) {
-            SBLogger.info("[Database] &a-| Table: &b" + table.getTableName() + " &7(Weight: " + table.getWeight() + ")");
+            SBLogger.info("[Database] <green>-| Table: <aqua>" + table.getTableName() + " <gray>(Weight: " + table.getWeight() + ")");
         }
 
         return tables;

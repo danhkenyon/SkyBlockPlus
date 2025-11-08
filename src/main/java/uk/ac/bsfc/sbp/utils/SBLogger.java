@@ -1,5 +1,6 @@
 package uk.ac.bsfc.sbp.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import uk.ac.bsfc.sbp.Main;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
@@ -27,23 +28,18 @@ public class SBLogger {
     public static void raw(String s) {
         String timeStamp = "";
         if (timeStamps) {
-            timeStamp = "&7[&7&o" + SBTime.format(timeFormat) +"&7]";
+            timeStamp = "<gray>[<i>" + SBTime.format(timeFormat) +"<gray>]";
         }
+        Bukkit.getConsoleSender().sendMessage(SBColourUtils.format(s));
 
-        if (bukkitLogging) {
-            plugin.getLogger().info(SBColourUtils.format(s));
-        } else {
-            //TODO: fix once we got formatting up again
-            new PrintStream(new FileOutputStream(FileDescriptor.out)).println(/*SBColourUtils.ansi(*/timeStamp+" ["+PLUGIN_TITLE+"] "+s)/*)*/;
-        }
     }
     public static void info(String message) {
-        SBLogger.raw("&7[INFO] " + message);
+        SBLogger.raw("<gray>[INFO] " + message);
     }
     public static void warn(String message) {
-        SBLogger.raw("&e[WARN] " + message);
+        SBLogger.raw("<yellow>[WARN] " + message);
     }
     public static void err(String message) {
-        SBLogger.raw("&c[ERR] " + message);
+        SBLogger.raw("<red>[ERR] " + message);
     }
 }

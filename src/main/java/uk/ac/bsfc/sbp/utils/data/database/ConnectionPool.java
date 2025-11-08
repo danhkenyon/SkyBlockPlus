@@ -20,7 +20,7 @@ public final class ConnectionPool implements AutoCloseable {
         hikari.setAutoCommit(false);
 
         this.source = new HikariDataSource(hikari);
-        SBLogger.info("[Database] &aConnected to database.");
+        SBLogger.info("[Database] <green>Connected to database.");
     }
 
     private static ConnectionPool INSTANCE;

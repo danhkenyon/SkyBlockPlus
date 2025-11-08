@@ -37,7 +37,7 @@ public class SBPlayer extends SBUser {
         }
 
         skinUrl = "";
-        chatColour = "&f";
+        chatColour = "<white>";
         gameMode = SBGameMode.SURVIVAL;
         allowFlight = false;
         flying = false;
@@ -100,7 +100,7 @@ public class SBPlayer extends SBUser {
             player.setGameMode(this.gameMode().getGameMode());
         }
 
-        SBLogger.info("&aUpdated &e" + this.getName() + "'s &agame mode to &e" + this.gameMode().name() + "&a.");
+        SBLogger.info("<green>Updated <yellow>" + this.getName() + "'s <green>game mode to <yellow>" + this.gameMode().name() + "<green>.");
     }
     public void allowFlight(boolean allowFlight) {
         this.allowFlight = allowFlight;
@@ -112,7 +112,7 @@ public class SBPlayer extends SBUser {
     }
     public void flying(boolean value) {
         if (this.flying == value) {
-            SBLogger.warn("&eCannot update flight for " + this.getName() + ". Already " + (flying() ? "flying" : "not flying") + "!");
+            SBLogger.warn("<yellow>Cannot update flight for " + this.getName() + ". Already " + (flying() ? "flying" : "not flying") + "!");
         } else {
             this.flying = value;
 
@@ -121,7 +121,7 @@ public class SBPlayer extends SBUser {
                 player.setFlying(value);
             }
 
-            SBLogger.info("&a" + this.getName() + " is now &e" + (flying() ? "flying" : "not flying") + "!");
+            SBLogger.info("<green>" + this.getName() + " is now <yellow>" + (flying() ? "flying" : "not flying") + "!");
         }
     }
 
@@ -135,7 +135,7 @@ public class SBPlayer extends SBUser {
             player.teleport(loc);
         }
 
-        SBLogger.info("&a" + this.getName() + " moved to world &e" + world.getName() + "&a.");
+        SBLogger.info("<green>" + this.getName() + " moved to world <yellow>" + world.getName() + "<green>.");
     }
     public void location(SBLocation location) {
         this.location = location;
@@ -145,7 +145,7 @@ public class SBPlayer extends SBUser {
             player.teleport(location.toBukkit());
         }
 
-        SBLogger.info("&aTeleported &e" + this.getName() + " &ato &e" +
+        SBLogger.info("<green>Teleported <yellow>" + this.getName() + " <green>to <yellow>" +
                 location.getWorld().toString() + " (" +
                 Math.round(location.getX()) + ", " +
                 Math.round(location.getY()) + ", " +

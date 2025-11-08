@@ -26,7 +26,7 @@ public final class Main extends JavaPlugin {
     public void onLoad() {
         instance = this;
         this.setNaggable(SBConfig.getBoolean("bukkit-logging"));
-        SBLogger.info("&aLoading plugin...");
+        SBLogger.info("<green>Loading plugin...");
 
         if (!NBT.preloadApi()) {
             SBLogger.warn("NBT-API wasn't initialized properly, disabling the plugin");
@@ -48,17 +48,18 @@ public final class Main extends JavaPlugin {
 
             WorldManager.getInstance();
 
-            SBLogger.info("&aPlugin enabled!");
+            SBLogger.info("<green>Plugin enabled!");
             SBLogger.raw(SBConstants.Schematics.DEFAULT_SCHEMATIC_NAME);
         } catch (Exception e) {
-            SBLogger.info("&cDisabling plugin...");
+            SBLogger.err(e.getMessage());
+            SBLogger.info("<red>Disabling plugin...");
             Bukkit.getPluginManager().disablePlugin(this);
         }
     }
 
     @Override
     public void onDisable() {
-        SBLogger.info("&cPlugin Disabled!");
+        SBLogger.info("<red>Plugin Disabled!");
     }
 
     public SBCommandHandler getCommandHandler() {

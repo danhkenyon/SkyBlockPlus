@@ -22,7 +22,7 @@ public class RotateCommand extends SBCommand {
         }
 
         if (super.args().length != 1) {
-            player.sendMessage("&cUsage: " + super.usage());
+            player.sendMessage("<red>Usage: " + super.usage());
             return;
         }
         Rotation rot = switch (args()[0]) {
@@ -31,7 +31,7 @@ public class RotateCommand extends SBCommand {
             case "270", "-90" -> Rotation.CLOCKWISE_270;
             case "0", "360", "-360" -> Rotation.NONE;
             default -> {
-                player.sendMessage("&cUsage: " + super.usage());
+                player.sendMessage("<red>Usage: " + super.usage());
                 yield null;
             }
         };
@@ -43,7 +43,7 @@ public class RotateCommand extends SBCommand {
                 case "fb", "front-back", "frontback" -> Mirror.FRONT_BACK;
                 case "none" -> Mirror.NONE;
                 default -> {
-                    player.sendMessage("&cUnknown mirror type. Use &eleft-right&c or &efront-back&c.");
+                    player.sendMessage("<red>Unknown mirror type. Use <yellow>left-right<red> or <yellow>front-back<red>.");
                     yield null;
                 }
             };

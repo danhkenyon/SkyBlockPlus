@@ -29,7 +29,7 @@ public class SkyBlockCommand extends SBCommand {
                 SBConfig.reload();
                 SBDatabase.reload();
 
-                user.sendMessage(SBConstants.PLUGIN_PREFIX + " &aReloaded plugin data.");
+                user.sendMessage(SBConstants.PLUGIN_PREFIX + " <green>Reloaded plugin data.");
             }
         }
     }

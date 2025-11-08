@@ -9,9 +9,9 @@ public class SBServer {
     public static void broadcast(SBUser user, String ... msg) {
         for (String line : msg) {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                SBUser.from(p.getUniqueId()).sendMessage("&e[&bBROADCAST&e] &e[&b"+user.getName()+"&e]: &f&l"+line);
+                SBUser.from(p.getUniqueId()).sendMessage("<yellow>[<aqua>BROADCAST<yellow>] <yellow>[<aqua>"+user.getName()+"<yellow>]: <white><b>"+line);
             }
-            SBLogger.raw("&e[&bBROADCAST&e] &e[&b"+user.getName()+"&e]: &f&l"+line);
+            SBLogger.raw("<yellow>[<aqua>BROADCAST<yellow>] <yellow>[<aqua>"+user.getName()+"<yellow>]: <white><b>"+line);
         }
     }
     public static void broadcast(String ... msg) {
@@ -22,7 +22,7 @@ public class SBServer {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 SBUser.from(p.getUniqueId()).sendMessage(line);
             }
-            SBLogger.raw("&e[&bBROADCAST&e] &e[&b"+user.getName()+"&e]: &f&l"+line);
+            SBLogger.raw("<yellow>[<aqua>BROADCAST<yellow>] <yellow>[<aqua>"+user.getName()+"<yellow>]: <white><b>"+line);
         }
     }
     public static void broadcastRaw(String ... msg) {

@@ -21,7 +21,7 @@ public class SudoCommand extends SBCommand {
 
     public @Override void execute() {
         if (args.length < 2) {
-            getUser().sendMessage("&cUsage: &f" + usage());
+            getUser().sendMessage("<red>Usage: <white>" + usage());
             return;
         }
         String targetName = args[0];
@@ -32,7 +32,7 @@ public class SudoCommand extends SBCommand {
         } else {
             Player targetPlayer = Bukkit.getPlayerExact(targetName);
             if (targetPlayer == null) {
-                getUser().sendMessage("&cUser &f" + targetName + " &cis not online!");
+                getUser().sendMessage("<red>User <white>" + targetName + " <red>is not online!");
                 return;
             }
             target = SBUser.from(targetPlayer.getUniqueId());
@@ -55,7 +55,7 @@ public class SudoCommand extends SBCommand {
         String command = sb.toString().trim();
 
         if (command.isEmpty()) {
-            super.getUser().sendMessage("&cYou must specify a command or chat message to execute!");
+            super.getUser().sendMessage("<red>You must specify a command or chat message to execute!");
             return;
         }
 

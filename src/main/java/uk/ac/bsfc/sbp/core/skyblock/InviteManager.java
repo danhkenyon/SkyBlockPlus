@@ -25,14 +25,14 @@ public class InviteManager {
         }
 
         invites.computeIfAbsent(island.uuid(), id -> new ArrayList<>()).add(member);
-        SBLogger.info("&b" + member.getName() + " &ahas been invited to island &b" + island.name()+"&a.");
+        SBLogger.info("<aqua>" + member.getName() + " <green>has been invited to island <aqua>" + island.name()+"<green>.");
 
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             if (this.isInvited(island, member)) {
                 this.revokeInvite(island, member);
 
-                member.sendMessage("&cInvite from &b" + island.name() + "&c expired!");
-                SBLogger.info("&7(&b" + member.getName() + "&7) &cIsland invite from &b" + island.name() + "&c expired.");
+                member.sendMessage("<red>Invite from <aqua>" + island.name() + "<red> expired!");
+                SBLogger.info("<gray>(<aqua>" + member.getName() + "<gray>) <red>Island invite from <aqua>" + island.name() + "<red> expired.");
             }
         }, 20L * 60);
     }
@@ -55,19 +55,19 @@ public class InviteManager {
         if (this.isInvited(island, member)) {
             this.revokeInvite(island, member);
             island.addMember(member);
-            member.sendMessage("&aAccepted invite from &b" + island.name() + "&a!");
-            SBLogger.info("&7(&b" + member.getName() + "&7) &aJoined island &b" + island.name());
+            member.sendMessage("<green>Accepted invite from <aqua>" + island.name() + "<green>!");
+            SBLogger.info("<gray>(<aqua>" + member.getName() + "<gray>) <green>Joined island <aqua>" + island.name());
         } else {
-            member.sendMessage("&cYou don't have a invite from that island!");
+            member.sendMessage("<red>You don't have a invite from that island!");
         }
     }
     public void denyInvite(Island island, Member member) {
         if (this.isInvited(island, member)) {
             this.revokeInvite(island, member);
-            member.sendMessage("&cYou denied the invite from &b" + island.name());
-            SBLogger.info("&7(&b" + member.getName() + "&7) &aDeclined invite from &b" + island.name());
+            member.sendMessage("<red>You denied the invite from <aqua>" + island.name());
+            SBLogger.info("<gray>(<aqua>" + member.getName() + "<gray>) <green>Declined invite from <aqua>" + island.name());
         } else {
-            member.sendMessage("&cYou don't have a invite from that island!");
+            member.sendMessage("<red>You don't have a invite from that island!");
         }
     }
 }

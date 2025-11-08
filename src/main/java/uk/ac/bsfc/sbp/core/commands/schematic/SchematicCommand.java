@@ -26,14 +26,14 @@ public class SchematicCommand extends SBCommand {
         }
 
         if (super.args().length == 0) {
-            player.sendMessage("&cUsage: " + super.usage());
+            player.sendMessage("<red>Usage: " + super.usage());
             return;
         }
         String subcommand = super.args()[0].toLowerCase();
         switch (subcommand) {
             case "save" -> {
                 if (!(args.length == 1 || args.length == 2)) {
-                    player.sendMessage("&cUsage: " + super.usage());
+                    player.sendMessage("<red>Usage: " + super.usage());
                     return;
                 }
 
@@ -45,7 +45,7 @@ public class SchematicCommand extends SBCommand {
             }
             case "load" -> {
                 if (args.length != 2) {
-                    player.sendMessage("&cUsage: " + super.usage());
+                    player.sendMessage("<red>Usage: " + super.usage());
                     return;
                 }
 
@@ -55,7 +55,7 @@ public class SchematicCommand extends SBCommand {
                         SBFiles.get(SBConstants.Schematics.SCHEMATIC_FOLDER + fileName)
                 );
                 if (schematic == null) {
-                    player.sendMessage("{messages.world-edit.schem-load-err} &o" + args[1]);
+                    player.sendMessage("{messages.world-edit.schem-load-err} <i>" + args[1]);
                     return;
                 }
                 Clipboard clipboard = ClipboardUtils.getInstance().getClipboard(player);

@@ -15,15 +15,15 @@ public class ChatCommand extends SBCommand {
     @Override
     public void execute() {
         if (super.getUser().getUserType() == SBUserType.PLAYER || super.getUser().getUserType() == SBUserType.UNDEFINED) {
-            super.getUser().sendMessage("&cOnly the console can use this command.");
+            super.getUser().sendMessage("<red>Only the console can use this command.");
             return;
         }
         if (super.args().length == 0) {
-            super.getUser().sendMessage("&cUsage: /chat <message>");
+            super.getUser().sendMessage("<red>Usage: /chat <message>");
             return;
         }
 
         String message = String.join(" ", super.args());
-        SBServer.broadcastRaw("&f&lConsole: &f" + message);
+        SBServer.broadcastRaw("<white><b>Console: <white>" + message);
     }
 }

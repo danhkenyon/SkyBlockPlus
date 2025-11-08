@@ -166,7 +166,7 @@ public class SchematicParser {
     public static Schematic asyncLoad(SBUser user, File file) {
         final Schematic[] schematic = new Schematic[1];
         Thread thread = new Thread(() -> schematic[0] = load(file), "Schematic-Loader");
-        user.sendMessage("&eLoading schematic...");
+        user.sendMessage("<yellow>Loading schematic...");
         thread.start();
         try {
             thread.join();
@@ -194,7 +194,7 @@ public class SchematicParser {
         String finalName = name;
         new Thread(() -> {
             try {
-                user.sendMessage("&eSaving schematic...");
+                user.sendMessage("<yellow>Saving schematic...");
                 save(region, finalName);
             } catch (Exception e) {
                 SBLogger.err("Async schematic save failed: " + e.getMessage());
