@@ -8,7 +8,7 @@ import uk.ac.bsfc.sbp.utils.time.SBTime;
 import java.util.UUID;
 
 public class SBConstants {
-    public static final String DEFAULT_PLUGIN_PREFIX = "&b&lSkyBlock&3&l+ &8&l➤ &r";
+    public static final String DEFAULT_PLUGIN_PREFIX = "<#55FFFF><b>SkyBlock<#00AA00>+ <#555555><b>➤ <reset>";
     public static final String PLUGIN_PREFIX = SBConfig.getString("messages.plugin-prefix", DEFAULT_PLUGIN_PREFIX);
 
     public static final String PLUGIN_NAME = "SkyBlockPlus";
@@ -16,7 +16,7 @@ public class SBConstants {
     public static final String PLUGIN_FOLDER = "/";
     public static final String CONFIG_FILE = "config.yml";
 
-    public static final String DEFAULT_JOIN_MESSAGE = "&e%username% has joined the server.";
+    public static final String DEFAULT_JOIN_MESSAGE = "<#FFFF55>%username% has joined the server.";
     public static final String SERVER_INFO = "SkyBlock+";
 
     public static final class Island {
