@@ -40,7 +40,7 @@ public class SchematicPlacer {
         }
     }
 
-    private static Vector transform(Vector pos, Rotation rotation, Mirror mirror) {
+    static Vector transform(Vector pos, Rotation rotation, Mirror mirror) {
         double x = pos.getX();
         double y = pos.getY();
         double z = pos.getZ();
@@ -61,7 +61,7 @@ public class SchematicPlacer {
         return new Vector(x, y, z);
     }
 
-    private static BlockData transformBlockData(BlockData data, Rotation rotation, Mirror mirror) {
+    static BlockData transformBlockData(BlockData data, Rotation rotation, Mirror mirror) {
         if (data instanceof Directional directional) {
             directional.setFacing(rotateFace(directional.getFacing(), rotation, mirror));
             return directional;

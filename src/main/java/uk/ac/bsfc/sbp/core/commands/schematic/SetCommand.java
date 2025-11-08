@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.schematic.Region;
 import uk.ac.bsfc.sbp.utils.schematic.RegionUtils;
+import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 import java.util.Arrays;
@@ -20,28 +21,30 @@ public class SetCommand extends SBCommand {
 
     @Override
     public void execute() {
-        Region region = RegionUtils.getInstance().getRegion(super.getUser().to(SBPlayer.class));
-
+        if (!(user instanceof SBPlayer player)) {
+            user.sendMessage("{messages.player-only-command}");
+            return;
+        }
+        Region region = RegionUtils.getInstance().getRegion(player);
         if (region == null || !region.isComplete()) {
-            super.getUser().sendMessage("&cYou must first select two positions using //pos1 and //pos2.");
+            player.sendMessage("{messages.world-edit.no-region-selected}");
             return;
         }
 
         if (super.args().length < 1) {
-            super.getUser().sendMessage("&cYou must specify a block to set.");
+            player.sendMessage("{messages.world-edit.null-block-set}");
             return;
         }
-
         String block = super.args()[0];
         Material blockMaterial = Material.getMaterial(block.toUpperCase());
 
         if (blockMaterial == null || !blockMaterial.isBlock()) {
-            super.getUser().sendMessage("&c'&f&l" + block + "&c' is not a valid block!");
+            player.sendMessage("&c'&f&l%block%&c' is not a valid block!", Placeholder.of("%block%", block));
             return;
         }
 
         region.asyncFill(blockMaterial);
-        super.getUser().sendMessage("&aSuccessfully set the selected area to &f" + blockMaterial.name() + "&a.");
+        player.sendMessage("{messages.world-edit.async} &aSuccessfully set the selected area to &f" + blockMaterial.name() + "&a.");
     }
 
     @Override

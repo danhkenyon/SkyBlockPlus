@@ -20,12 +20,10 @@ public class Pos2Command extends SBCommand {
     @Override
     public void execute() {
         if (!(super.getUser() instanceof SBPlayer player)) {
-            super.getUser().sendMessage("&cOnly players can use this command.");
+            user.sendMessage("{messages.player-only-command}");
             return;
         }
-        SBLocation loc = player.location();
-        RegionUtils.getInstance().inputLoc2(player, loc);
-
-        user.sendMessage("&7Set position 1 to "+loc.format());
+        RegionUtils.getInstance().inputLoc2(player, player.location());
+        player.sendMessage("{messages.world-edit.pos2-set}");
     }
 }

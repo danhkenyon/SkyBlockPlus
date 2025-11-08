@@ -18,16 +18,18 @@ public class CopyCommand extends SBCommand {
 
     @Override
     public void execute() {
-        if (!(super.getUser() instanceof SBPlayer)) {
-            super.getUser().sendMessage("&cOnly players can use this command.");
+        if (!(user instanceof SBPlayer player)) {
+            user.sendMessage("{messages.player-only-command}");
             return;
         }
 
-        Region region = RegionUtils.getInstance().getRegion(user.to(SBPlayer.class));
-        Schematic schematic = region.copy();
-        this.user.to(SBPlayer.class).clipboard().add(schematic);
+        Region region = RegionUtils.getInstance().getRegion(player);
+        if (!region.isComplete()) {
+            player.sendMessage("{messages.world-edit.no_region_selected}");
+            return;
+        }
 
-        String prefix = SBConstants.Schematics.ASYNC ? "&8[&4&lASYNC&8] " : "";
-        this.user.sendMessage("{messages.async} {messages.clipboard-copy}");
+        player.clipboard().add(region.copy());
+        player.sendMessage("{messages.world-edit.async} {messages.world-edit.clipboard-copy}");
     }
 }

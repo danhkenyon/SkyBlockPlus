@@ -16,28 +16,21 @@ public class PasteCommand extends SBCommand {
 
     @Override
     public void execute() {
-        if (!(super.getUser() instanceof SBPlayer player)) {
-            user.sendMessage("&cOnly players can use this command.");
+        if (!(user instanceof SBPlayer player)) {
+            user.sendMessage("{messages.player-only-command}");
             return;
         }
 
         if (super.args().length == 0) {
-            BlockSet schematic = user.to(SBPlayer.class).clipboard().getLast();
+            BlockSet schematic = player.clipboard().getLast();
             if (schematic == null) {
-                user.sendMessage("&cFailed to paste.");
+                player.sendMessage("{messages.world-edit.no-region-selected}");
                 return;
             }
+
             schematic.paste(player.location());
-
-            int blocks = -1;
-            if (schematic instanceof Schematic) {
-                blocks = ((Schematic) schematic).blocks().size();
-            }else if (schematic instanceof Region) {
-                blocks = ((Region) schematic).copy().blocks().size();
-            }
-
-            String prefix = SBConstants.Schematics.ASYNC ? "&8[&4&lASYNC&8] " : "";
-            user.sendMessage("{messages.async} &7Clipboard pasted at "+player.location().format()+". ("+blocks+" blocks)");
+            int blocks = (schematic instanceof Schematic) ? ((Schematic) schematic).blocks().size() : ((Region) schematic).copy().blocks().size();
+            player.sendMessage("{messages.world-edit.async} {messages.world-edit.clipboard-paste} ("+blocks+" blocks)");
         }
     }
 }

@@ -20,11 +20,13 @@ public class SBFiles {
                 }
             }
 
-            if (!file.exists() && !file.createNewFile()) {
-                throw new IOException("Failed to create file: " + file.getAbsolutePath());
-            }
-            SBLogger.warn("File not found. creating new file: " + file.getAbsolutePath());
+            if (!file.exists()) {
+                SBLogger.warn("File not found. creating new file: " + file.getAbsolutePath());
 
+                if (!file.createNewFile()) {
+                    throw new IOException("Failed to create file: " + file.getAbsolutePath());
+                }
+            }
             return file;
         } catch (IOException e) {
             e.printStackTrace();

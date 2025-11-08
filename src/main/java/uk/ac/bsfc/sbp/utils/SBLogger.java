@@ -27,17 +27,17 @@ public class SBLogger {
     public static void raw(String s) {
         String timeStamp = "";
         if (timeStamps) {
-            timeStamp = SBTime.format(timeFormat);
+            timeStamp = "&7[&7&o" + SBTime.format(timeFormat) +"&7]";
         }
 
         if (bukkitLogging) {
             plugin.getLogger().info(SBColourUtils.format(s));
         } else {
-            new PrintStream(new FileOutputStream(FileDescriptor.out)).println(SBColourUtils.ansi("&f[&7&o"+timeStamp+"&f] ["+PLUGIN_TITLE+"] "+s));
+            new PrintStream(new FileOutputStream(FileDescriptor.out)).println(SBColourUtils.ansi(timeStamp+" ["+PLUGIN_TITLE+"] "+s));
         }
     }
     public static void info(String message) {
-        SBLogger.raw("&f[INFO] " + message);
+        SBLogger.raw("&7[INFO] " + message);
     }
     public static void warn(String message) {
         SBLogger.raw("&e[WARN] " + message);

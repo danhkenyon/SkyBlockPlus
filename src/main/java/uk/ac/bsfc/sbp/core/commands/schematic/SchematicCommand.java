@@ -1,6 +1,5 @@
 package uk.ac.bsfc.sbp.core.commands.schematic;
 
-import org.bukkit.Location;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.data.SBFiles;
@@ -21,50 +20,48 @@ public class SchematicCommand extends SBCommand {
 
     @Override
     public void execute() {
-        if (!(super.getUser() instanceof SBPlayer)) {
-            super.getUser().sendMessage("&cOnly players can use this command.");
+        if (!(user instanceof SBPlayer player)) {
+            user.sendMessage("{messages.player-only-command}");
             return;
         }
 
         if (super.args().length == 0) {
-            super.getUser().sendMessage("&cUsage: " + super.usage());
+            player.sendMessage("&cUsage: " + super.usage());
             return;
         }
         String subcommand = super.args()[0].toLowerCase();
         switch (subcommand) {
             case "save" -> {
                 if (!(args.length == 1 || args.length == 2)) {
-                    super.getUser().sendMessage("&cUsage: /schematic save [name]");
+                    player.sendMessage("&cUsage: " + super.usage());
                     return;
                 }
 
                 SchematicParser.asyncSave(
                         user,
-                        RegionUtils.getInstance().getRegion(super.getUser().to(SBPlayer.class)),
+                        RegionUtils.getInstance().getRegion(player),
                         args.length == 2 ? args[1] : null
                 );
             }
             case "load" -> {
                 if (args.length != 2) {
-                    super.getUser().sendMessage("&cUsage: /schematic load [name]");
+                    player.sendMessage("&cUsage: " + super.usage());
                     return;
                 }
 
                 String fileName = args[1].endsWith(".json") ? args[1] : args[1] + ".json";
-                Schematic schem = SchematicParser.asyncLoad(user, SBFiles.get(SBConstants.Schematics.SCHEMATIC_FOLDER + fileName));
-
-                if (schem == null) {
-                    super.getUser().sendMessage("&cError occurred in loading schematic: &o" + args[1]);
+                Schematic schematic = SchematicParser.asyncLoad(
+                        user,
+                        SBFiles.get(SBConstants.Schematics.SCHEMATIC_FOLDER + fileName)
+                );
+                if (schematic == null) {
+                    player.sendMessage("{messages.world-edit.schem-load-err} &o" + args[1]);
                     return;
                 }
-
-                SBPlayer player = super.getUser().to(SBPlayer.class);
                 Clipboard clipboard = ClipboardUtils.getInstance().getClipboard(player);
 
-                clipboard.add(schem);
+                clipboard.add(schematic);
                 ClipboardUtils.getInstance().setClipboard(player, clipboard);
-
-                System.out.println(player.clipboard());
             }
         }
     }

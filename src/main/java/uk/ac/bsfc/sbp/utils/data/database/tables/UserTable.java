@@ -74,7 +74,7 @@ public class UserTable extends DatabaseTable<SBUser> {
 
     @Override
     public void ensureTableExists() {
-        super.database.getExecutor().update(
+        super.database.getExecutor().update("User Table Creation",
                 "CREATE TABLE IF NOT EXISTS " + this.getTableName() + " (" +
                     "uuid VARCHAR(36) PRIMARY KEY," +
                     "name VARCHAR(16) NOT NULL" +

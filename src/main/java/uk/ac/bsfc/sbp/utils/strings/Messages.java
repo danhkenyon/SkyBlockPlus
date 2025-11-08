@@ -22,6 +22,9 @@ public class Messages {
             String placeholderKey = matcher.group(1);
             String replacement = SBConfig.getString(placeholderKey);
 
+            System.out.println(placeholderKey);
+            System.out.println(replacement);
+
             if (replacement.contains("{")) {
                 replacement = applyConfig(replacement);
             }

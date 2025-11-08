@@ -54,7 +54,7 @@ public class IslandTable extends DatabaseTable<Island> {
 
     @Override
     public void ensureTableExists() {
-        super.database.getExecutor().update(
+        super.database.getExecutor().update("Island Table Creation",
                 "CREATE TABLE IF NOT EXISTS " + this.getTableName() + " (" +
                         "id CHAR(36) PRIMARY KEY," +
                         "name VARCHAR(64) NOT NULL UNIQUE," +

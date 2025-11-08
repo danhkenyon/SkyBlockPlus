@@ -67,17 +67,16 @@ public final class QueryExecutor {
         return result;
     }
 
-    public int update(String sql, Object... params) {
+    public int update(String sql, Object ... params) {
+        return this.update(sql, sql, params);
+    }
+    public int update(String name, String sql, Object ... params) {
         try (Connection conn = pool.getConnection();
              PreparedStatement stmt = prepareStatement(conn, sql, params)) {
 
             SBLogger.newLine();
             SBLogger.info("&a<------> &b&lDatabase Update &a<------>");
-            SBLogger.info("SQL: " + sql);
-            if (params != null) {
-                SBLogger.info("Parameters: " + Arrays.toString(params));
-            }
-            SBLogger.newLine();
+            SBLogger.info("Script: " + name);
 
             int affected = stmt.executeUpdate();
             conn.commit();

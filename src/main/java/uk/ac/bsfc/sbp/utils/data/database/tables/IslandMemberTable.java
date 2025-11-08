@@ -52,12 +52,12 @@ public class IslandMemberTable extends DatabaseTable<Member> {
 
     @Override
     public void ensureTableExists() {
-        super.database.getExecutor().update(
+        super.database.getExecutor().update("Island Member Table Creation",
                 "CREATE TABLE IF NOT EXISTS " + this.getTableName() + " (" +
                         "player_uuid CHAR(36) PRIMARY KEY," +
                         "island_id CHAR(36) NOT NULL DEFAULT '"+UNKNOWN_ISLAND_UUID+"'," +
                         "rank ENUM('LEADER','CO_LEADER','OFFICER','MEMBER','RECRUIT') NOT NULL DEFAULT 'RECRUIT'" +
-                        ");" //  PLAYER_UUID | ISLAND_ID | RANK
+                ");"
         );
     }
 
@@ -77,7 +77,7 @@ public class IslandMemberTable extends DatabaseTable<Member> {
         );
     }
     public void deleteIslandMembers(UUID id) {
-        super.database.getExecutor().update(
+        super.database.getExecutor().update("Island Member Deletion",
                 "DELETE FROM " + this.getTableName() + " WHERE island_id = ?",
                 id
         );

@@ -93,6 +93,7 @@ public class SBConfig {
     }
     public static Object getOrDefault(String key, Object defaultValue) {
         Object val = SBConfig.getNestedValue(SBConfig.getInstance().data, key);
+        System.out.println(val);
         if (val == null) {
             set(key, defaultValue);
             return defaultValue;

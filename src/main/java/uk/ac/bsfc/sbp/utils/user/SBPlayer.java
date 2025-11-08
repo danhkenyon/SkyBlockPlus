@@ -8,11 +8,13 @@ import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.schematic.Clipboard;
 import uk.ac.bsfc.sbp.utils.schematic.ClipboardUtils;
+import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 
 import java.util.UUID;
 
 public class SBPlayer extends SBUser {
     private final Clipboard clipboard;
+    private final Placeholder[] playerPlaceholders;
 
     private String skinUrl;
     private String chatColour;
@@ -48,6 +50,15 @@ public class SBPlayer extends SBUser {
             this.currentWorld = SBWorld.of("world");
             this.location = SBLocation.of();
         }
+
+        playerPlaceholders = new Placeholder[]{
+                Placeholder.of("%player.world%", this.currentWorld().getName()),
+                Placeholder.of("%player.loc%", this.location().format()),
+                Placeholder.of("%player.chat-colour%", this.chatColour()),
+                Placeholder.of("%player.gamemode%", this.gameMode().toString()),
+                Placeholder.of("%player.allow-flight%", this.allowFlight()),
+                Placeholder.of("%player.skin-url%", this.skinUrl()),
+        };
     }
 
     public String skinUrl() {
@@ -135,7 +146,7 @@ public class SBPlayer extends SBUser {
         }
 
         SBLogger.info("&aTeleported &e" + this.getName() + " &ato &e" +
-                location.getWorld() + " (" +
+                location.getWorld().toString() + " (" +
                 Math.round(location.getX()) + ", " +
                 Math.round(location.getY()) + ", " +
                 Math.round(location.getZ()) + ")");
@@ -146,6 +157,10 @@ public class SBPlayer extends SBUser {
         this.location(loc);
     }
 
+    @Override
+    public void sendMessage(String message) {
+        super.sendMessage(message, this.playerPlaceholders);
+    }
 
     @Override
     public String toString() {

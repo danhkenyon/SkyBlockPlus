@@ -12,8 +12,11 @@ import uk.ac.bsfc.sbp.utils.data.database.tables.UserTable;
 import uk.ac.bsfc.sbp.utils.strings.Messages;
 import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public abstract class SBUser {
     protected Placeholder[] userPlaceholders;
@@ -126,7 +129,22 @@ public abstract class SBUser {
 
     // ---------- MESSAGING ---------- //
 
+    public void sendMessage(String message, Placeholder ... placeholders) {
+        this.msg(message, Stream
+                .concat(Arrays.stream(userPlaceholders), Arrays.stream(placeholders))
+                .toArray(Placeholder[]::new));
+    }
     public void sendMessage(String message) {
+        this.msg(message, userPlaceholders);
+    }
+
+    public void sendMessage(String ... messages) {
+        for (String message : messages) {
+            this.sendMessage(message);
+        }
+    }
+
+    private void msg(String message, Placeholder[] userPlaceholders) {
         String formatted = SBColourUtils.format(Messages.get(message, userPlaceholders));
         if (this.isConsole()) {
             Bukkit.getConsoleSender().sendMessage(formatted);
@@ -135,11 +153,6 @@ public abstract class SBUser {
             if (player != null && player.isOnline()) {
                 player.sendMessage(formatted);
             }
-        }
-    }
-    public void sendMessage(String ... messages) {
-        for (String message : messages) {
-            this.sendMessage(message);
         }
     }
 

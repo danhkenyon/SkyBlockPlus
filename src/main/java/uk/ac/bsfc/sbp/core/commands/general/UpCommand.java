@@ -1,8 +1,10 @@
 package uk.ac.bsfc.sbp.core.commands.general;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
+import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 public class UpCommand extends SBCommand {
@@ -30,6 +32,7 @@ public class UpCommand extends SBCommand {
             blocks = Integer.parseInt(args[0]);
             SBLocation loc = player.location();
 
+            player.currentWorld().toBukkit().getBlockAt(loc.toBukkit()).setType(Material.GLASS);
             player.teleport(SBLocation.of(
                     loc.getWorld(),
                     loc.getX(),
@@ -38,6 +41,7 @@ public class UpCommand extends SBCommand {
                     loc.getYaw(),
                     loc.getPitch()
             ));
+            player.sendMessage("{messages.commands.up-success}", Placeholder.of("%blocks%", blocks));
         } catch (NumberFormatException e) {
             user.sendMessage("&cInvalid number of blocks: " + args[0]);
         }
