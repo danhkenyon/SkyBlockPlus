@@ -2,9 +2,10 @@ package uk.ac.bsfc.sbp.utils.location;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
-import org.bukkit.World.Environment;
+import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.Wrapper;
 import uk.ac.bsfc.sbp.utils.data.JSON;
 import uk.ac.bsfc.sbp.utils.data.JsonFile;
@@ -41,9 +42,14 @@ public class SBWorld extends Wrapper<World> {
         this.name = name;
 
         File worldDir = new File(Bukkit.getWorldContainer(), name);
-        if (!worldDir.exists()) {
-            worldDir.mkdirs();
+        try {
+            if (worldDir.mkdirs()) {
+                SBLogger.raw("<green>World <gold>" + name + "<green> has been created");
+            }
+        }catch (SecurityException e){
+            SBLogger.err(e.getMessage());
         }
+
         this.worldDirectory = worldDir;
 
         this.env = WorldEnvironment.valueOf(env.toUpperCase());
@@ -108,7 +114,7 @@ public class SBWorld extends Wrapper<World> {
             worldsJson.saveAsync();
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            SBLogger.err(e.getMessage());
             return false;
         }
     }
@@ -178,9 +184,12 @@ public class SBWorld extends Wrapper<World> {
     public World toBukkit() {
         World world = Bukkit.getWorld(uuid);
         if (world == null) {
-            if (!worldDirectory.exists()) {
-                worldDirectory.mkdirs();
+            try {
+                boolean ignored = worldDirectory.mkdirs();
+            }catch (SecurityException e){
+                SBLogger.err(e.getMessage());
             }
+
 
             WorldCreator creator = new WorldCreator(name)
                     .environment(Environment.valueOf(env.name()))

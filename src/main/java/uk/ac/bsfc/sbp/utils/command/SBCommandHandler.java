@@ -3,6 +3,7 @@ package uk.ac.bsfc.sbp.utils.command;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.Main;
 import uk.ac.bsfc.sbp.utils.SBLogger;
@@ -54,7 +55,7 @@ public class SBCommandHandler {
             public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
                 SBUser user = SBUser.from(sender);
 
-                if (!command.isEnabled()){
+                if (!command.isEnabled() && !user.toBukkit(Player.class).hasPermission("sbp.command-bypass")){
                     user.sendMessage("<red>This command is disabled!");
                     return false;
                 }
