@@ -49,7 +49,6 @@ public final class Main extends JavaPlugin {
             WorldManager.getInstance();
 
             SBLogger.info("<green>Plugin enabled!");
-            SBLogger.raw(SBConstants.Schematics.DEFAULT_SCHEMATIC_NAME);
         } catch (Exception e) {
             SBLogger.err(e.getMessage());
             SBLogger.info("<red>Disabling plugin...");

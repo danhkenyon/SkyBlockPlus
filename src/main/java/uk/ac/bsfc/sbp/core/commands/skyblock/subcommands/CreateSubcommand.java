@@ -3,6 +3,7 @@ package uk.ac.bsfc.sbp.core.commands.skyblock.subcommands;
 import uk.ac.bsfc.sbp.core.skyblock.Island;
 import uk.ac.bsfc.sbp.core.skyblock.Member;
 import uk.ac.bsfc.sbp.core.skyblock.Rank;
+import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
@@ -26,7 +27,8 @@ public class CreateSubcommand {
             member = IslandMemberTable.getInstance().getRow("player_uuid", user.getUniqueID());
         }
 
-        if (member.getIslandId() != null) {
+        if (member.getIslandId() != null && member.getIslandId() != SBConstants.Island.UNKNOWN_ISLAND_UUID) {
+            System.out.println(member.getIslandId());
             Island island = IslandTable.getInstance().getRow("id", member.getIslandId());
             member.sendMessage("<red>You already have an island! <gray>(<aqua>" + island.name() + "<gray>)");
             return;

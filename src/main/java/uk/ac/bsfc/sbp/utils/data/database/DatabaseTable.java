@@ -113,7 +113,7 @@ public abstract class DatabaseTable<T> {
 
         tables.sort(Comparator.comparingInt(DatabaseTable::getWeight));
 
-        SBLogger.info("[Database] <rainbow>Found " + tables.size() + " <green>Table(s).");
+        SBLogger.info("[Database] <green>Found " + tables.size() + " <green>Table(s).");
         for (DatabaseTable<?> table : tables) {
             SBLogger.info("[Database] <green>-| Table: <aqua>" + table.getTableName() + " <gray>(Weight: " + table.getWeight() + ")");
         }
