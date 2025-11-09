@@ -114,7 +114,7 @@ public class SBWorld extends Wrapper<World> {
             worldsJson.saveAsync();
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            SBLogger.err(e.getMessage());
             return false;
         }
     }
@@ -184,9 +184,12 @@ public class SBWorld extends Wrapper<World> {
     public World toBukkit() {
         World world = Bukkit.getWorld(uuid);
         if (world == null) {
-            if (!worldDirectory.exists()) {
-                worldDirectory.mkdirs();
+            try {
+                boolean ignored = worldDirectory.mkdirs();
+            }catch (SecurityException e){
+                SBLogger.err(e.getMessage());
             }
+
 
             WorldCreator creator = new WorldCreator(name)
                     .environment(Environment.valueOf(env.name()))
