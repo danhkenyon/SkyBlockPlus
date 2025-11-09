@@ -2,9 +2,10 @@ package uk.ac.bsfc.sbp.utils.location;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
-import org.bukkit.World.Environment;
+import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.Wrapper;
 import uk.ac.bsfc.sbp.utils.data.JSON;
 import uk.ac.bsfc.sbp.utils.data.JsonFile;
@@ -41,9 +42,12 @@ public class SBWorld extends Wrapper<World> {
         this.name = name;
 
         File worldDir = new File(Bukkit.getWorldContainer(), name);
-        if (!worldDir.exists()) {
-            worldDir.mkdirs();
+        if (!worldDir.mkdirs()){
+            SBLogger.info("World <gold>" + name + "<gray> already exists");
+        }else {
+            SBLogger.raw("<green>World <gold>" + name + "<green> has been created");
         }
+
         this.worldDirectory = worldDir;
 
         this.env = WorldEnvironment.valueOf(env.toUpperCase());
