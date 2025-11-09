@@ -125,6 +125,16 @@ public class SBPlayer extends SBUser {
         }
     }
 
+
+    public void setFlySpeed(float speed){
+        Player player = super.toBukkit(Player.class);
+        if (player == null){
+            return;
+        }
+
+        player.setFlySpeed(speed);
+    }
+
     public void currentWorld(SBWorld world) {
         this.currentWorld = world;
 
