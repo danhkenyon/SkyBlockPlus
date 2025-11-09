@@ -52,7 +52,7 @@ public class SBDatabase implements AutoCloseable {
 
     public static List<Map<String, Object>> query(String sql, Object... params) {
         try {
-            return SBDatabase.getInstance().getExecutor().query(sql, params);
+            return SBDatabase.getInstance().getExecutor().asyncQuery(sql, params).join();
         } catch (RuntimeException e) {
             SBLogger.err("[SBDatabase] RuntimeException occurred during SQL query! Message: " + e.getMessage());
             throw new RuntimeException();
@@ -76,7 +76,7 @@ public class SBDatabase implements AutoCloseable {
     }
 
     public static List<String> getAllColumnValues(String table, String column) {
-        return SBDatabase.getInstance().getExecutor().getAllColumnValues(table, column);
+        return SBDatabase.getInstance().getExecutor().getAllColumnValues(table, column).join();
     }
 
     @Override
