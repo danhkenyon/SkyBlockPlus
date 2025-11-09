@@ -45,19 +45,11 @@ public class TestCommand extends SBCommand {
         itemStack.displayName();
         Component itemName = itemStack.displayName();
 
-
         for (Player player : Bukkit.getOnlinePlayers()){
             player.sendMessage(itemName.hoverEvent(hover));
         }
 
-
-
-
         user.toBukkit(Player.class).getInventory().addItem(itemStack);
-
-
-
-
     }
 }
 
