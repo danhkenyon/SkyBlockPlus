@@ -1,10 +1,8 @@
 package uk.ac.bsfc.sbp.core.commands.schematic;
 
-import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.schematic.Region;
 import uk.ac.bsfc.sbp.utils.schematic.RegionUtils;
-import uk.ac.bsfc.sbp.utils.schematic.Schematic;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 public class CopyCommand extends SBCommand {

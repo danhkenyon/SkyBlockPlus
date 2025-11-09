@@ -4,13 +4,11 @@ import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.SBReflectionUtils;
 import uk.ac.bsfc.sbp.utils.data.SBDatabase;
 
-import javax.print.attribute.standard.JobKOctets;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public abstract class DatabaseTable<T> {
     protected final SBDatabase database = SBDatabase.getInstance();

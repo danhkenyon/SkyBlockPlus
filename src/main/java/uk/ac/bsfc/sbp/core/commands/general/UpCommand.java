@@ -1,7 +1,6 @@
 package uk.ac.bsfc.sbp.core.commands.general;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.strings.Placeholder;

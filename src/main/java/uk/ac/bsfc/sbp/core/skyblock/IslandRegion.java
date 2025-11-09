@@ -1,6 +1,5 @@
 package uk.ac.bsfc.sbp.core.skyblock;
 
-import org.bukkit.Location;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.schematic.Region;

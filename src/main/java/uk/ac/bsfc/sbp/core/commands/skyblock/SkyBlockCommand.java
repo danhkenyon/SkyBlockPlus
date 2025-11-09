@@ -3,7 +3,6 @@ package uk.ac.bsfc.sbp.core.commands.skyblock;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
-import uk.ac.bsfc.sbp.utils.data.SBDatabase;
 
 import java.util.List;
 

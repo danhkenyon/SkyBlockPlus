@@ -1,19 +1,14 @@
 package uk.ac.bsfc.sbp.core.commands.general;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.Main;
 import uk.ac.bsfc.sbp.utils.NKeys;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
-import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ToggleCommand extends SBCommand {

@@ -1,7 +1,5 @@
 package uk.ac.bsfc.sbp.utils.skyblock;
 
-import org.bukkit.Location;
-import org.bukkit.World;
 import uk.ac.bsfc.sbp.core.skyblock.Island;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;

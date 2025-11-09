@@ -5,7 +5,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.Main;
 import uk.ac.bsfc.sbp.utils.NKeys;
-import uk.ac.bsfc.sbp.utils.SBColourUtils;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
 import javax.annotation.Nullable;

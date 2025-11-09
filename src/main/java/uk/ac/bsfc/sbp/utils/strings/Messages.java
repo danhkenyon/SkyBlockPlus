@@ -1,8 +1,7 @@
 package uk.ac.bsfc.sbp.utils.strings;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

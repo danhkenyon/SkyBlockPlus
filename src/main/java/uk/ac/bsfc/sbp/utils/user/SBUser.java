@@ -7,14 +7,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.utils.SBColourUtils;
-import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.tables.UserTable;
 import uk.ac.bsfc.sbp.utils.strings.Messages;
 import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;

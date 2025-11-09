@@ -4,14 +4,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import uk.ac.bsfc.sbp.Main;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
-import uk.ac.bsfc.sbp.utils.time.SBTimeFormat;
 import uk.ac.bsfc.sbp.utils.time.SBTime;
+import uk.ac.bsfc.sbp.utils.time.SBTimeFormat;
 
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-
-import static uk.ac.bsfc.sbp.utils.SBConstants.PLUGIN_TITLE;
 
 public class SBLogger {
     private static final boolean bukkitLogging = SBConfig.getBoolean("bukkit-logging");

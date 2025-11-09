@@ -1,10 +1,6 @@
 package uk.ac.bsfc.sbp.core.commands.schematic;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import uk.ac.bsfc.sbp.utils.SBMath;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
-import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.schematic.RegionUtils;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 

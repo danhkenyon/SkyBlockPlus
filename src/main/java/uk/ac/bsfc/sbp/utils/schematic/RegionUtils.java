@@ -1,10 +1,10 @@
 package uk.ac.bsfc.sbp.utils.schematic;
 
-import org.bukkit.Location;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class RegionUtils {
     private final LinkedHashMap<SBPlayer, Region> regions;

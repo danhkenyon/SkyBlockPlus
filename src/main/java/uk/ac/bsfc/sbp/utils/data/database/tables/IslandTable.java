@@ -10,9 +10,12 @@ import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import static uk.ac.bsfc.sbp.utils.SBConstants.Island.*;
+import static uk.ac.bsfc.sbp.utils.SBConstants.Island.BASE_ISLAND_SIZE;
+import static uk.ac.bsfc.sbp.utils.SBConstants.Island.UNKNOWN_ISLAND_UUID;
 
 public class IslandTable extends DatabaseTable<Island> {
     public IslandTable() {
