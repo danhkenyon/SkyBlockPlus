@@ -88,7 +88,7 @@ public class SchematicParser {
             for (int x = values[0]; x <= values[1]; x++) {
                 for (int y = values[2]; y <= values[3]; y++) {
                     for (int z = values[4]; z <= values[5]; z++) {
-                        Block block = world.getBlock(x, y, z);
+                        Block block = world.toBukkit().getBlockAt(x, y, z);
                         Material mat = block.getType();
 
                         if (mat == Material.AIR) continue;

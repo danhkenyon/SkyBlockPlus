@@ -29,6 +29,7 @@ public class SBPlayer extends SBUser {
     protected SBPlayer(String name, UUID uuid) {
         super(name, uuid, false);
 
+        // Initialize clipboard
         if (ClipboardUtils.getInstance().hasClipboard(this)) {
             clipboard = ClipboardUtils.getInstance().getClipboard(this);
         } else {
@@ -36,28 +37,40 @@ public class SBPlayer extends SBUser {
             ClipboardUtils.getInstance().getClipboards().put(this, clipboard);
         }
 
+        // Default player properties
         skinUrl = "";
         chatColour = "<white>";
         gameMode = SBGameMode.SURVIVAL;
         allowFlight = false;
         flying = false;
 
+        // Get the Bukkit player if online
         Player player = super.toBukkit(Player.class);
-        if (player != null) {
-            this.currentWorld = SBWorld.of(player.getWorld().getName(), player.getWorld());
+
+        // Ensure world exists
+        SBWorld defaultWorld;
+        if (player != null && player.getWorld() != null) {
+            defaultWorld = SBWorld.getWorld(player.getWorld().getName());
+            if (defaultWorld == null) {
+                defaultWorld = SBWorld.load(player.getWorld().getName());
+            }
             this.location = SBLocation.of(player.getLocation());
         } else {
-            this.currentWorld = SBWorld.of("world");
-            this.location = SBLocation.of();
+            defaultWorld = SBWorld.getWorld("world");
+            if (defaultWorld == null) {
+                defaultWorld = SBWorld.load("world"); // Load or create default world
+            }
+            this.location = SBLocation.of(defaultWorld, 0.5, 0, 0.5);
         }
+        this.currentWorld = defaultWorld;
 
         playerPlaceholders = new Placeholder[]{
-                Placeholder.of("%player.world%", this.currentWorld().getName()),
-                Placeholder.of("%player.loc%", this.location().format()),
-                Placeholder.of("%player.chat-colour%", this.chatColour()),
-                Placeholder.of("%player.gamemode%", this.gameMode().toString()),
-                Placeholder.of("%player.allow-flight%", this.allowFlight()),
-                Placeholder.of("%player.skin-url%", this.skinUrl()),
+                Placeholder.of("%player.world%", this.currentWorld() != null ? this.currentWorld().getName() : "unknown"),
+                Placeholder.of("%player.loc%", this.location != null ? this.location.format() : "(0,0,0)"),
+                Placeholder.of("%player.chat-colour%", this.chatColour),
+                Placeholder.of("%player.gamemode%", this.gameMode.toString()),
+                Placeholder.of("%player.allow-flight%", this.allowFlight),
+                Placeholder.of("%player.skin-url%", this.skinUrl),
         };
     }
 

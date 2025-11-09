@@ -16,7 +16,7 @@ public class SBLocation extends Wrapper<Location> implements Cloneable {
      */
 
     private SBLocation(Location location) {
-        this.world = SBWorld.of(location.getWorld().getName());
+        this.world = SBWorld.getWorld(location.getWorld().getName());
         this.worldName = location.getWorld().getName();
         this.x = location.getX();
         this.y = location.getY();
@@ -34,7 +34,7 @@ public class SBLocation extends Wrapper<Location> implements Cloneable {
         this.pitch = pitch;
     }
     private SBLocation(String worldName, double x, double y, double z, float yaw, float pitch) {
-        this.world = SBWorld.of(worldName);
+        this.world = SBWorld.getWorld(worldName);
         this.worldName = worldName;
         this.x = x;
         this.y = y;

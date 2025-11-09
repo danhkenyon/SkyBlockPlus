@@ -16,7 +16,7 @@ public class SBConstants {
     public static final class Island {
         public static final String DEFAULT_ISLAND_NAME = "%leader%'s Island";
         public static final int BASE_ISLAND_SIZE = 500;
-        public static final SBWorld ISLAND_WORLD = SBWorld.of("world");
+        public static final SBWorld ISLAND_WORLD = SBWorld.getWorld("world");
 
         public static final UUID UNKNOWN_ISLAND_UUID = new UUID(0, 0);
 

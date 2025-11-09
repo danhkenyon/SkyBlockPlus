@@ -116,15 +116,21 @@ public abstract class SBUser {
         return null;
     }
     public <T extends CommandSender> T toBukkit(Class<T> clazz) {
-        if (clazz.isInstance(Bukkit.getConsoleSender()) && this.isConsole()) return clazz.cast(Bukkit.getConsoleSender());
-        if (clazz.isInstance(Bukkit.getPlayer(uuid)) && !this.isConsole()) {
+        if (clazz.isInstance(Bukkit.getConsoleSender()) && this.isConsole()) {
+            return clazz.cast(Bukkit.getConsoleSender());
+        }
+        if (Player.class.isAssignableFrom(clazz) && !this.isConsole()) {
             Player player = Bukkit.getPlayer(uuid);
-            if (player != null && player.isOnline()) return clazz.cast(player);
+            if (player != null && player.isOnline()) {
+                return clazz.cast(player);
+            }
+            return null;
         }
 
-        SBLogger.err("<red>Cannot convert " + this.getClass().getSimpleName() + " to " + clazz.getSimpleName());
+        SBLogger.err("<red>Cannot convert " + this.getClass().getSimpleName() + " to " + clazz.getSimpleName() + " (unsupported type)");
         return null;
     }
+
 
     // ---------- MESSAGING ---------- //
 
@@ -136,15 +142,41 @@ public abstract class SBUser {
     public void sendMessage(String message) {
         this.msg(message, userPlaceholders);
     }
-
     public void sendMessage(String ... messages) {
         for (String message : messages) {
             this.sendMessage(message);
         }
     }
 
+    public void sendMessage(Component message, Placeholder ... placeholders) {
+        this.msg(message, Stream
+                .concat(Arrays.stream(userPlaceholders), Arrays.stream(placeholders))
+                .toArray(Placeholder[]::new));
+    }
+    public void sendMessage(Component message) {
+        this.msg(message, userPlaceholders);
+    }
+    public void sendMessage(Component ... messages) {
+        for (Component message : messages) {
+            this.sendMessage(message);
+        }
+    }
+
     private void msg(String message, Placeholder[] userPlaceholders) {
         Component formatted = SBColourUtils.format(Messages.get(message, userPlaceholders));
+        if (this.isConsole()) {
+            Bukkit.getConsoleSender().sendMessage(formatted);
+        } else {
+            Player player = this.toBukkit(Player.class);
+            if (player != null && player.isOnline()) {
+                player.sendMessage(formatted);
+            }
+        }
+    }
+    private void msg(Component message, Placeholder[] userPlaceholders) {
+        String parsed = Messages.get(SBColourUtils.format(message), userPlaceholders);
+
+        Component formatted = SBColourUtils.format(parsed);
         if (this.isConsole()) {
             Bukkit.getConsoleSender().sendMessage(formatted);
         } else {

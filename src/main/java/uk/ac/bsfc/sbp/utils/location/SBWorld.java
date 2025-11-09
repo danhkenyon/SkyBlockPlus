@@ -1,101 +1,195 @@
 package uk.ac.bsfc.sbp.utils.location;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import uk.ac.bsfc.sbp.Main;
-import uk.ac.bsfc.sbp.utils.SBLogger;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
+import org.bukkit.World.Environment;
 import uk.ac.bsfc.sbp.utils.Wrapper;
+import uk.ac.bsfc.sbp.utils.data.JSON;
+import uk.ac.bsfc.sbp.utils.data.JsonFile;
 
 import java.io.File;
-import java.io.FileReader;
-import java.lang.reflect.Type;
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public class SBWorld extends Wrapper<World> {
+    private final JsonFile worldsJson = JSON.get("worlds");
+
+    private final UUID uuid;
     private final String name;
-    private final File worldFolder;
-    private World bukkitWorld;
+    private final File worldDirectory;
 
-    private SBWorld(String name, World bukkitWorld) {
+    private WorldEnvironment env;
+    private long seed;
+    private boolean loaded;
+
+    protected SBWorld(World world) {
+        this.uuid = world.getUID();
+        this.name = world.getName();
+        this.worldDirectory = world.getWorldFolder();
+        this.env = WorldEnvironment.valueOf(world.getEnvironment().name().toLowerCase());
+        this.seed = world.getSeed();
+        this.loaded = true;
+    }
+    protected SBWorld(String name, String env, long seed, boolean loaded) {
+        this.uuid = UUID.nameUUIDFromBytes(name.getBytes());
         this.name = name;
-        this.bukkitWorld = bukkitWorld;
-        this.worldFolder = bukkitWorld.getWorldFolder();
-    }
-    private SBWorld(String name, File worldFolder) {
-        this.name = name;
-        this.worldFolder = worldFolder;
+
+        File worldDir = new File(Bukkit.getWorldContainer(), name);
+        if (!worldDir.exists()) {
+            worldDir.mkdirs();
+        }
+        this.worldDirectory = worldDir;
+
+        this.env = WorldEnvironment.valueOf(env.toUpperCase());
+        this.seed = seed;
+        this.loaded = loaded;
     }
 
-    public static SBWorld of(String name, World bukkitWorld) {
-        return new SBWorld(name, bukkitWorld);
+    public static SBWorld getWorld(UUID uuid) {
+        return SBWorldUtils.getInstance().getWorld(uuid);
     }
-    public static SBWorld of(String name, File worldFolder) {
-        return new SBWorld(name, worldFolder);
+    public static SBWorld getWorld(String name) {
+        SBWorld world = SBWorldUtils.getInstance().getWorld(name);
+        if (world == null) {
+            world = SBWorld.load(name); // Auto-load if missing
+        }
+        return world;
     }
-    public static SBWorld of(String name) {
-        File jsonFile = new File(Main.getInstance().getDataFolder(), "worlds.json");
 
-        if (!jsonFile.exists()) {
-            throw new IllegalStateException("worlds.json does not exist in plugin folder: " + jsonFile.getAbsolutePath());
+
+    public @SuppressWarnings("unchecked") static SBWorld load(String name) {
+        JsonFile json = JSON.get("worlds");
+        Object data = json.get(name);
+        SBWorld world;
+
+        if (data instanceof Map<?, ?> map) {
+            world = fromMap((Map<Object, Object>) map);
+        } else {
+            world = new SBWorld(name, "NORMAL", System.currentTimeMillis(), false);
         }
 
-        try (FileReader reader = new FileReader(jsonFile)) {
-            Type listType = new TypeToken<List<String>>() {}.getType();
-            List<String> worldNames = new Gson().fromJson(reader, listType);
+        world.load();
+        SBWorldUtils.getInstance().register(world);
+        world.save();
+        return world;
+    }
+    public static SBWorld create(String name, String env, long seed) {
+        SBWorld world = new SBWorld(name, env, seed, false);
+        world.load();
+        SBWorldUtils.getInstance().register(world);
+        world.save();
+        return world;
+    }
 
-            if (worldNames == null || !worldNames.contains(name)) {
-                throw new IllegalArgumentException("World '" + name + "' not found in worlds.json!");
-            }
-
-            World bukkitWorld = Bukkit.getWorld(name);
-            if (bukkitWorld != null) {
-                return new SBWorld(name, bukkitWorld);
-            }
-
-            File worldFolder = new File(Bukkit.getWorldContainer(), name);
-            if (!worldFolder.exists()) {
-                throw new IllegalStateException("World folder not found: " + worldFolder.getAbsolutePath());
-            }
-
-            return new SBWorld(name, worldFolder);
-        } catch (Exception e) {
-            SBLogger.err(e.getMessage());
-            throw new RuntimeException("Failed to load SBWorld for " + name, e);
+    public void load() {
+        if (!isLoaded()) {
+            toBukkit();
+        }
+    }
+    public void unload(boolean save) {
+        if (isLoaded()) {
+            Bukkit.unloadWorld(name, save);
+            loaded = false;
         }
     }
 
+    public boolean delete() {
+        unload(false);
+        try {
+            deleteRecursively(worldDirectory);
+            SBWorldUtils.getInstance().unregister(this);
+            worldsJson.getData().remove(name);
+            worldsJson.saveAsync();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    private void deleteRecursively(File file) throws IOException {
+        if (!file.exists()) return;
+        if (file.isDirectory()) {
+            for (File child : Objects.requireNonNull(file.listFiles())) {
+                deleteRecursively(child);
+            }
+        }
+        Files.delete(file.toPath());
+    }
+
+    public void save() {
+        worldsJson.set(name, toMap());
+        worldsJson.saveAsync();
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("uuid", uuid.toString());
+        map.put("environment", env);
+        map.put("seed", seed);
+        map.put("loaded", loaded);
+        map.put("directory", worldDirectory.getAbsolutePath());
+        return map;
+    }
+    public static SBWorld fromMap(Map<Object, Object> data) {
+        String directory = String.valueOf(data.get("directory"));
+        String name = new File(directory).getName();
+        String env = String.valueOf(data.getOrDefault("environment", "NORMAL"));
+        long seed = ((Number) data.getOrDefault("seed", System.currentTimeMillis())).longValue();
+        boolean loaded = (boolean) data.getOrDefault("loaded", false);
+        return new SBWorld(name, env, seed, loaded);
+    }
+
+    public UUID getUniqueId() {
+        return uuid;
+    }
     public String getName() {
         return name;
     }
-    public File getFolder() {
-        return worldFolder;
+    public File getWorldDirectory() {
+        return worldDirectory;
+    }
+    public WorldEnvironment getEnvironment() {
+        return env;
+    }
+    public long getSeed() {
+        return seed;
+    }
+    public boolean isLoaded() {
+        return loaded && Bukkit.getWorld(name) != null;
+    }
+
+    public void setEnvironment(WorldEnvironment env) {
+        this.env = env;
+    }
+    public void setSeed(long seed) {
+        this.seed = seed;
+    }
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
     }
 
     @Override
     public World toBukkit() {
-        return bukkitWorld;
-    }
-    public void setBukkit(World world) {
-        this.bukkitWorld = world;
-    }
+        World world = Bukkit.getWorld(uuid);
+        if (world == null) {
+            if (!worldDirectory.exists()) {
+                worldDirectory.mkdirs();
+            }
 
-    public Block getBlock(int x, int y, int z) {
-        return this.toBukkit().getBlockAt(x, y, z);
-    }
-    public Block getBlock(SBLocation location) {
-        return this.toBukkit().getBlockAt(location.toBukkit());
-    }
+            WorldCreator creator = new WorldCreator(name)
+                    .environment(Environment.valueOf(env.name()))
+                    .seed(seed)
+                    .type(WorldType.NORMAL);
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        SBWorld sbWorld = (SBWorld) obj;
-
-        return name.equals(sbWorld.name);
+            world = creator.createWorld();
+            loaded = (world != null);
+        }
+        return world;
     }
 }

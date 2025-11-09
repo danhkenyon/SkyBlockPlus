@@ -10,7 +10,6 @@ import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
-import uk.ac.bsfc.sbp.utils.location.WorldManager;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
 public final class Main extends JavaPlugin {
@@ -46,8 +45,6 @@ public final class Main extends JavaPlugin {
 
             DatabaseTable.getAllTables().forEach(DatabaseTable::ensureTableExists);
             IslandUtils.getInstance().init();
-
-            WorldManager.getInstance();
 
             SBLogger.info("<green>Plugin enabled!");
             SBLogger.raw(SBConstants.Schematics.DEFAULT_SCHEMATIC_NAME);

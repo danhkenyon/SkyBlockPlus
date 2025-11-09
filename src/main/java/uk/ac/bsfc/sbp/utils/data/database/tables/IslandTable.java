@@ -42,7 +42,7 @@ public class IslandTable extends DatabaseTable<Island> {
             double z = ((Number) row.get("z")).doubleValue();
 
             List<Member> members = IslandMemberTable.getInstance().getIslandMembers(id);
-            SBLocation loc = SBLocation.of(SBWorld.of(worldName), x, y, z);
+            SBLocation loc = SBLocation.of(SBWorld.getWorld(worldName), x, y, z);
             Island island = Island.createIsland(id, name, loc, members);
 
             island.setName(name);
