@@ -42,10 +42,12 @@ public class SBWorld extends Wrapper<World> {
         this.name = name;
 
         File worldDir = new File(Bukkit.getWorldContainer(), name);
-        if (!worldDir.mkdirs()){
-            SBLogger.info("World <gold>" + name + "<gray> already exists");
-        }else {
-            SBLogger.raw("<green>World <gold>" + name + "<green> has been created");
+        try {
+            if (worldDir.mkdirs()) {
+                SBLogger.raw("<green>World <gold>" + name + "<green> has been created");
+            }
+        }catch (SecurityException e){
+            SBLogger.err(e.getMessage());
         }
 
         this.worldDirectory = worldDir;
