@@ -16,130 +16,193 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class WorldManager {
+/**
+ * Handles world creation, loading, unloading, and persistence for the plugin.
+ * Worlds are tracked via SBWorld objects and saved to a JSON file.
+ */
+public final class WorldManager {
+
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private final Map<String, SBWorld> worldsMap = new HashMap<>();
+    private static final Type STRING_LIST_TYPE = new TypeToken<List<String>>() {}.getType();
 
-    private final File pluginFolder = SBFiles.get(SBConstants.PLUGIN_FOLDER);
+    private static volatile WorldManager INSTANCE;
+
+    private final Map<String, SBWorld> loadedWorlds = new ConcurrentHashMap<>();
     private final File worldsFile;
+
+    // -----------------------
+    // Singleton
+    // -----------------------
 
     private WorldManager() {
         this.worldsFile = SBFiles.get("worlds.json");
-
-        if (!worldsFile.exists()) {
-            try {
-                worldsFile.createNewFile();
-                this.saveWorldsList(new ArrayList<>() {{
-                    add("world");
-                    add("world_nether");
-                    add("world_the_end");
-                }});
-            } catch (IOException | RuntimeException e) {
-                SBLogger.err("[SBP] Could not create worlds.json file!");
-                e.printStackTrace();
-            }
-        }
+        ensureWorldsFile();
     }
 
-    private static WorldManager INSTANCE;
     public static WorldManager getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new WorldManager();
+            synchronized (WorldManager.class) {
+                if (INSTANCE == null) INSTANCE = new WorldManager();
+            }
         }
         return INSTANCE;
     }
 
-    public void loadWorld(SBWorld world) {
-        if (world.toBukkit() != null) return;
+    // -----------------------
+    // Initialization
+    // -----------------------
+
+    private void ensureWorldsFile() {
+        if (worldsFile.exists()) return;
+
+        try {
+            if (worldsFile.createNewFile()) {
+                saveWorldList(Arrays.asList("world", "world_nether", "world_the_end"));
+            }
+        } catch (IOException e) {
+            SBLogger.err("[SBP] Failed to create worlds.json<br>" + e.getMessage());
+        }
+    }
+
+    // -----------------------
+    // Public API
+    // -----------------------
+
+    /**
+     * Loads all worlds defined in the JSON file, if their folders exist.
+     */
+    public void loadAllFromJson() {
+        for (String name : loadWorldList()) {
+            File folder = new File(Bukkit.getWorldContainer(), name);
+            if (!folder.isDirectory()) {
+                SBLogger.err("[SBP] Missing folder for world \"" + name + "\" — skipped.");
+                continue;
+            }
+            loadWorld(SBWorld.of(name, folder));
+        }
+    }
+
+    /**
+     * Loads a world if it exists on disk and isn't already loaded.
+     */
+    public SBWorld loadWorld(SBWorld world) {
+        if (world == null) return null;
+        if (world.toBukkit() != null) return world; // already loaded
 
         File folder = world.getFolder();
         if (!folder.exists()) {
-            throw new IllegalArgumentException("World folder does not exist: " + folder.getName());
+            SBLogger.err("[SBP] Tried to load non-existent world: " + folder.getName());
+            return null;
         }
 
         World bukkitWorld = Bukkit.createWorld(new WorldCreator(world.getName()));
         world.setBukkit(bukkitWorld);
-        worldsMap.put(world.getName(), world);
+        loadedWorlds.put(world.getName(), world);
+        return world;
     }
+
+    /**
+     * Creates a new world and persists it to the JSON list.
+     */
+    public SBWorld createWorld(String name, long seed) {
+        if (loadedWorlds.containsKey(name)) return loadedWorlds.get(name);
+
+        World world = Bukkit.createWorld(new WorldCreator(name).seed(seed));
+        SBWorld sbWorld = SBWorld.of(name, world);
+
+        loadedWorlds.put(name, sbWorld);
+        addWorldToJson(name);
+
+        return sbWorld;
+    }
+
+    /** Creates a world with a random seed. */
+    public SBWorld createWorld(String name) {
+        return createWorld(name, System.currentTimeMillis());
+    }
+
+    /**
+     * Unloads the given world from memory, without saving changes.
+     */
     public void unloadWorld(SBWorld world) {
+        if (world == null) return;
+
         World bukkitWorld = world.toBukkit();
         if (bukkitWorld == null) return;
 
         Bukkit.unloadWorld(bukkitWorld, false);
         world.setBukkit(null);
-        worldsMap.remove(world.getName());
+        loadedWorlds.remove(world.getName());
     }
-    public SBWorld createWorld(String name, long seed) {
-        WorldCreator creator = new WorldCreator(name);
-        creator.seed(seed);
-        World world = Bukkit.createWorld(creator);
-        SBWorld sbWorld = SBWorld.of(name, world);
-        worldsMap.put(name, sbWorld);
 
-        addWorldToJson(name);
-        return sbWorld;
-    }
-    public SBWorld createWorld(String name) {
-        return createWorld(name, System.currentTimeMillis());
-    }
+    /**
+     * Deletes a world from disk and removes it from JSON tracking.
+     */
     public void deleteWorld(SBWorld world) {
+        if (world == null) return;
+
         unloadWorld(world);
 
         File folder = world.getFolder();
         if (folder.exists()) {
-            deleteFolderRecursive(folder);
+            deleteRecursive(folder);
         }
 
         removeWorldFromJson(world.getName());
     }
 
+    /**
+     * Gets a loaded world by name.
+     */
     public SBWorld getWorld(String name) {
-        return worldsMap.get(name);
+        return loadedWorlds.get(name);
     }
 
-    public void loadAllFromJson() {
-        List<String> worldNames = loadWorldsList();
-
-        for (String name : worldNames) {
-            File worldFolder = new File(Bukkit.getWorldContainer(), name);
-            if (worldFolder.exists() && worldFolder.isDirectory()) {
-                SBWorld world = SBWorld.of(name, worldFolder);
-                loadWorld(world);
-            } else {
-                SBLogger.err("[SBP] World folder missing for " + name + " — skipping load.");
-            }
-        }
+    /**
+     * Returns a read-only view of loaded worlds.
+     */
+    public Collection<SBWorld> getLoadedWorlds() {
+        return Collections.unmodifiableCollection(loadedWorlds.values());
     }
-    private List<String> loadWorldsList() {
+
+    // -----------------------
+    // JSON Persistence
+    // -----------------------
+
+    private List<String> loadWorldList() {
+        if (!worldsFile.exists()) return new ArrayList<>();
         try (FileReader reader = new FileReader(worldsFile)) {
-            Type listType = new TypeToken<List<String>>() {}.getType();
-            List<String> list = GSON.fromJson(reader, listType);
-            return list != null ? list : new ArrayList<>();
-        } catch (Exception e) {
+            List<String> list = GSON.fromJson(reader, STRING_LIST_TYPE);
+            return list == null ? new ArrayList<>() : new ArrayList<>(list);
+        } catch (IOException e) {
+            SBLogger.err("[SBP] Failed to read worlds.json");
             e.printStackTrace();
             return new ArrayList<>();
         }
     }
-    private void saveWorldsList(List<String> worlds) {
-        try (FileWriter writer = new FileWriter(worldsFile)) {
+
+    private void saveWorldList(List<String> worlds) {
+        try (FileWriter writer = new FileWriter(worldsFile, false)) {
             GSON.toJson(worlds, writer);
-            writer.flush();
-        } catch (Exception e) {
+        } catch (IOException e) {
+            SBLogger.err("[SBP] Failed to write worlds.json");
             e.printStackTrace();
         }
     }
-    private void addWorldToJson(String worldName) {
-        List<String> worldsList = loadWorldsList();
-        if (!worldsList.contains(worldName)) {
-            worldsList.add(worldName);
-            saveWorldsList(worldsList);
-        }
+
+    private void addWorldToJson(String name) {
+        List<String> worlds = loadWorldList();
+        if (worlds.contains(name)) return;
+        worlds.add(name);
+        saveWorldList(worlds);
     }
-    private void removeWorldFromJson(String worldName) {
-        List<String> worldsList = loadWorldsList();
-        if (worldsList.remove(worldName)) {
-            saveWorldsList(worldsList);
+
+    private void removeWorldFromJson(String name) {
+        List<String> worlds = loadWorldList();
+        if (worlds.remove(name)) {
+            saveWorldList(worlds);
         }
     }
 
@@ -147,14 +210,18 @@ public class WorldManager {
     // Utilities
     // -----------------------
 
-    private void deleteFolderRecursive(File folder) {
-        File[] files = folder.listFiles();
-        if (files != null) {
-            for (File f : files) {
-                if (f.isDirectory()) deleteFolderRecursive(f);
-                else f.delete();
+    private void deleteRecursive(File folder) {
+        File[] contents = folder.listFiles();
+        if (contents != null) {
+            for (File file : contents) {
+                if (file.isDirectory()) deleteRecursive(file);
+                else if (!file.delete()) {
+                    SBLogger.warn("[SBP] Could not delete: " + file.getAbsolutePath());
+                }
             }
         }
-        folder.delete();
+        if (!folder.delete()) {
+            SBLogger.warn("[SBP] Could not delete folder: " + folder.getAbsolutePath());
+        }
     }
 }

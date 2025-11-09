@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import uk.ac.bsfc.sbp.Main;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.Wrapper;
 
@@ -35,7 +36,7 @@ public class SBWorld extends Wrapper<World> {
         return new SBWorld(name, worldFolder);
     }
     public static SBWorld of(String name) {
-        File pluginFolder = new File("plugins/SkyBlockPlus");
+        File pluginFolder = new File(Main.getInstance().getDataFolder(),"SkyBlockPlus");
         File jsonFile = new File(pluginFolder, "worlds.json");
 
         if (!jsonFile.exists()) {
