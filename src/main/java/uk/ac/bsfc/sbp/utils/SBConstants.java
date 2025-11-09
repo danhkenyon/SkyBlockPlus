@@ -2,27 +2,21 @@ package uk.ac.bsfc.sbp.utils;
 
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
-import uk.ac.bsfc.sbp.utils.location.WorldManager;
 import uk.ac.bsfc.sbp.utils.time.SBTime;
 
 import java.util.UUID;
 
 public class SBConstants {
-    public static final String DEFAULT_PLUGIN_PREFIX = "<#55FFFF><b>SkyBlock<#00AA00>+ <#555555><b>➤ <reset>";
-    public static final String PLUGIN_PREFIX = SBConfig.getString("messages.plugin-prefix", DEFAULT_PLUGIN_PREFIX);
-
     public static final String PLUGIN_NAME = "SkyBlockPlus";
     public static final String PLUGIN_TITLE = "SkyBlock+";
     public static final String PLUGIN_FOLDER = "/";
     public static final String CONFIG_FILE = "config.yml";
-
-    public static final String DEFAULT_JOIN_MESSAGE = "<#FFFF55>%username% has joined the server.";
     public static final String SERVER_INFO = "SkyBlock+";
 
     public static final class Island {
         public static final String DEFAULT_ISLAND_NAME = "%leader%'s Island";
         public static final int BASE_ISLAND_SIZE = 500;
-        public static final SBWorld ISLAND_WORLD = WorldManager.getInstance().getWorld("world");
+        public static final SBWorld ISLAND_WORLD = SBWorld.of("world");
 
         public static final UUID UNKNOWN_ISLAND_UUID = new UUID(0, 0);
 
@@ -46,5 +40,20 @@ public class SBConstants {
         public static final String DEFAULT_SCHEMATIC_NAME = SBTime.format("HHmmss_ddMMyyyy") + ".schem";
 
         public static final boolean ASYNC = SBConfig.getBoolean("schematics.async", true);
+    }
+    public static final class Messages {
+        public static final String DEFAULT_PLUGIN_PREFIX = "<#55FFFF><b>SkyBlock<#00AA00>+ <#555555><b>➤ <reset>";
+        public static final String DEFAULT_JOIN_MESSAGE = "<aqua>%username% <yellow>has joined the server.";
+
+        public static final class WorldEdit {
+            public static final String ASYNC = "<dark_gray>[<dark_red><bold>ASYNC<dark_gray>";
+            public static final String SET_POSITION_1 = "&7Set position 1 to %player.loc%";
+            public static final String SET_POSITION_2 = "&7Set position 2 to %player.loc%";
+            public static final String CLIPBOARD_COPY = "&aCopied to clipboard.";
+            public static final String CLIPBOARD_PASTE = "&aPasted from clipboard at %player.loc%.";
+        }
+        public static final class Commands {
+
+        }
     }
 }
