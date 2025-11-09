@@ -2,6 +2,8 @@ package uk.ac.bsfc.sbp;
 
 import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
@@ -19,6 +21,7 @@ public final class Main extends JavaPlugin {
         return instance;
     }
 
+    private PersistentDataContainer globalContainer;
     private SBCommandHandler commandHandler;
     private SBEventRegister eventRegister;
 
@@ -50,6 +53,8 @@ public final class Main extends JavaPlugin {
 
             SBLogger.info("<green>Plugin enabled!");
             SBLogger.raw(SBConstants.Schematics.DEFAULT_SCHEMATIC_NAME);
+            assert Bukkit.getWorlds().getFirst()!=null;
+            globalContainer = Bukkit.getWorlds().getFirst().getPersistentDataContainer();
         } catch (Exception e) {
             SBLogger.err(e.getMessage());
             SBLogger.info("<red>Disabling plugin...");
@@ -67,5 +72,8 @@ public final class Main extends JavaPlugin {
     }
     public SBEventRegister getEventRegister() {
         return eventRegister;
+    }
+    public PersistentDataContainer getGlobalContainer(){
+        return globalContainer;
     }
 }
