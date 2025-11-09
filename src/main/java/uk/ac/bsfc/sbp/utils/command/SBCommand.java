@@ -1,6 +1,10 @@
 package uk.ac.bsfc.sbp.utils.command;
 
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import uk.ac.bsfc.sbp.Main;
+import uk.ac.bsfc.sbp.utils.NKeys;
 import uk.ac.bsfc.sbp.utils.SBColourUtils;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
@@ -34,6 +38,13 @@ public abstract class SBCommand {
     }
     public String[] aliases() {
         return aliases;
+    }
+    public Boolean isEnabled(){
+        PersistentDataContainer pdc = Main.getInstance().getGlobalContainer();
+        if (!pdc.has(NKeys.getKey(name))){
+            pdc.set(NKeys.getKey(name), PersistentDataType.BOOLEAN, true);
+        }
+        return pdc.get(NKeys.getKey(name), PersistentDataType.BOOLEAN);
     }
 
     public void name(@NotNull String name) {

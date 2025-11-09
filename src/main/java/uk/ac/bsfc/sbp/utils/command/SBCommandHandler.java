@@ -54,6 +54,11 @@ public class SBCommandHandler {
             public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
                 SBUser user = SBUser.from(sender);
 
+                if (!command.isEnabled()){
+                    user.sendMessage("<red>This command is disabled!");
+                    return false;
+                }
+
                 if (command.permission != null && !command.permission.isEmpty() && !sender.hasPermission(command.permission)) {
                     user.sendMessage("<red>No Permission!");
                     return true;
@@ -93,5 +98,14 @@ public class SBCommandHandler {
 
     public List<SBCommand> getCommands() {
         return Collections.unmodifiableList(commands);
+    }
+
+    public List<String> getCommandNames() {
+        List<String> names = new ArrayList<>();
+        getCommands().forEach(cmd -> {
+            names.add(cmd.name);
+        });
+
+        return names;
     }
 }

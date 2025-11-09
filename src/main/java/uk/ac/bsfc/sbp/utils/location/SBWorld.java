@@ -36,8 +36,7 @@ public class SBWorld extends Wrapper<World> {
         return new SBWorld(name, worldFolder);
     }
     public static SBWorld of(String name) {
-        File pluginFolder = new File(Main.getInstance().getDataFolder(),"SkyBlockPlus");
-        File jsonFile = new File(pluginFolder, "worlds.json");
+        File jsonFile = new File(Main.getInstance().getDataFolder(), "worlds.json");
 
         if (!jsonFile.exists()) {
             throw new IllegalStateException("worlds.json does not exist in plugin folder: " + jsonFile.getAbsolutePath());
