@@ -27,7 +27,7 @@ public class SkyBlockCommand extends SBCommand {
         if (args[0].equalsIgnoreCase("admin")) {
             if (args[1].equalsIgnoreCase("reload")) {
                 SBConfig.reload();
-                SBDatabase.reload();
+//                SBDatabase.reload();
 
                 user.sendMessage("{messages.prefix} <green>Reloaded plugin data.");
             }

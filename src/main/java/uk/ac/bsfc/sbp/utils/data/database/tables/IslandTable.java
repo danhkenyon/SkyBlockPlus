@@ -92,11 +92,11 @@ public class IslandTable extends DatabaseTable<Island> {
                 baseLocation.getZ()
         );
 
-        UUID retrieved = UUID.fromString(super.database.getExecutor().query(
+        UUID retrieved = UUID.fromString(super.database.getExecutor().asyncQuery(
                 "SELECT id FROM " + this.getTableName() + " WHERE name = ? LIMIT 1;",
                 String.class,
                 island.name()
-        ).stream().findFirst().orElse(UNKNOWN_ISLAND_UUID.toString()));
+        ).join().stream().findFirst().orElse(UNKNOWN_ISLAND_UUID.toString()));
 
         if (UNKNOWN_ISLAND_UUID.equals(retrieved)) {
             SBLogger.err("[IslandTable] Failed to retrieve ID for island " + island.name());

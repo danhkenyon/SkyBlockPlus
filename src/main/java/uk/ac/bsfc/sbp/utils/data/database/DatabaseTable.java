@@ -4,11 +4,13 @@ import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.SBReflectionUtils;
 import uk.ac.bsfc.sbp.utils.data.SBDatabase;
 
+import javax.print.attribute.standard.JobKOctets;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class DatabaseTable<T> {
     protected final SBDatabase database = SBDatabase.getInstance();
@@ -49,10 +51,10 @@ public abstract class DatabaseTable<T> {
         return results.isEmpty() ? null : mapRow(results.getFirst());
     }
     public boolean exists(String fieldName, Object value) {
-        List<Map<String, Object>> results = SBDatabase.getInstance().getExecutor().query(
+        List<Map<String, Object>> results = SBDatabase.getInstance().getExecutor().asyncQuery(
                 "SELECT 1 FROM " + this.getTableName() + " WHERE " + fieldName + " = ? LIMIT 1;",
                 value
-        );
+        ).join();
         return !results.isEmpty();
     }
     public T getRow(String column, Object value) {
@@ -75,6 +77,8 @@ public abstract class DatabaseTable<T> {
                 value
         ).stream().map(this::mapRow).toList();
     }
+
+
     public int delete(Object value) {
         return SBDatabase.update(
                 "DELETE FROM " + this.tableName + " WHERE " + this.primaryKey + " = ?;",
