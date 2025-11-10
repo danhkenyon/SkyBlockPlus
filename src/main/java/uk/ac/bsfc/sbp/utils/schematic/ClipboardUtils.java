@@ -5,6 +5,12 @@ import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The ClipboardUtils class provides utility methods for managing Clipboard associations
+ * with individual players. This is achieved through an internal mapping of SBPlayer instances
+ * to Clipboard objects. It is implemented as a singleton to ensure a single shared instance
+ * across the application.
+ */
 public class ClipboardUtils {
     private final Map<SBPlayer, Clipboard> clipboards;
 

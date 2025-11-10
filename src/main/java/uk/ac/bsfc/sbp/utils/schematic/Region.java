@@ -17,6 +17,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Represents a three-dimensional rectangular region defined by two corner
+ * locations in the world. This region supports several operations such as
+ * checking whether a location is inside the region, filling the region with
+ * a specific material, and copying blocks within the region to a schematic.
+ *
+ * The two corner locations, referred to as `loc1` (one corner) and `loc2`
+ * (opposite corner), define the boundaries of the region in the world.
+ * These corner locations are optional and can be null. The region is considered
+ * incomplete until both locations are set.
+ *
+ * This class provides methods to:
+ * - Check if a location is inside the region.
+ * - Check if the region is complete.
+ * - Synchronously or asynchronously fill the region with a material.
+ * - Copy the blocks within the region into a schematic.
+ * - Set and retrieve the corner locations.
+ *
+ * The region can also be pasted into a different location in the world
+ * by placing the copied schematic.
+ */
 public class Region extends BlockSet {
     private @Nullable SBLocation loc1;
     private @Nullable SBLocation loc2;

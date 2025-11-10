@@ -1,5 +1,9 @@
 package uk.ac.bsfc.sbp.core.skyblock;
 
+/**
+ * Represents the different ranks that a member of an island can hold.
+ * These ranks define a member's role and permissions within the island hierarchy.
+ */
 public enum Rank {
     LEADER,
     CO_LEADER,

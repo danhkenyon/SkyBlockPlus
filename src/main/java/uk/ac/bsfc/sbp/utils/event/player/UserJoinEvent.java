@@ -8,6 +8,9 @@ import uk.ac.bsfc.sbp.utils.user.SBUser;
 
 import static uk.ac.bsfc.sbp.utils.SBConstants.Messages.DEFAULT_JOIN_MESSAGE;
 
+/**
+ *
+ */
 public class UserJoinEvent extends SBEvent {
     private boolean cancelled;
     private String message;

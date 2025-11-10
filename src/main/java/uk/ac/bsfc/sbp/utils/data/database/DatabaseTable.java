@@ -10,6 +10,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents an abstract database table with generic row mapping capability.
+ * This class provides methods for querying and manipulating data in a database table.
+ * Each implementation must define how rows are mapped from the database and ensure the table exists.
+ *
+ * @param <T> The type of object that represents a row in the table.
+ */
 public abstract class DatabaseTable<T> {
     protected final SBDatabase database = SBDatabase.getInstance();
     protected final String tableName;

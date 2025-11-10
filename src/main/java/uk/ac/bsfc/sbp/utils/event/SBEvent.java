@@ -6,6 +6,12 @@ import uk.ac.bsfc.sbp.utils.user.SBUser;
 
 import java.time.Instant;
 
+/**
+ * Represents an abstract base event within the application.
+ * This class is designed to be extended by more specific event types.
+ * It tracks the timestamp of the event, whether the event is cancelled,
+ * and the user associated with the event.
+ */
 public abstract class SBEvent {
     protected Instant timestamp;
     protected boolean cancelled;

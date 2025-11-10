@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Utility class for managing world-related data storage and retrieval.
+ * Handles operations such as reading and writing world names to a JSON file.
+ */
 public class WorldManagerIO {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = "worlds.json";

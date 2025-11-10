@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Represents an island within the SkyBlock+ system, containing details such as
+ * its unique identifier, name, region, and members.
+ */
 public class Island {
     private final int size = SBConstants.Island.BASE_ISLAND_SIZE;
 

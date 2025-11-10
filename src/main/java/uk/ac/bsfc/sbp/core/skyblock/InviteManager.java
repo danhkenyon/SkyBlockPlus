@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Manages island invitations and provides functionalities for sending, revoking,
+ * accepting, and denying invites between islands and members.
+ */
 public class InviteManager {
     private final Map<UUID, List<Member>> invites = new ConcurrentHashMap<>();
 

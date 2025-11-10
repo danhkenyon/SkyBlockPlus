@@ -6,6 +6,11 @@ import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
+/**
+ * Represents the "up" command, which allows a player to move up by a specified number of blocks.
+ * The command places a glass block for the player to stand on before teleporting them upward.
+ * This command is only available to players in the game.
+ */
 public class UpCommand extends SBCommand {
     public UpCommand() {
         super();

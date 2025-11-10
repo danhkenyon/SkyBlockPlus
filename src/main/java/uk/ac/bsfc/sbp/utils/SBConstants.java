@@ -6,6 +6,11 @@ import uk.ac.bsfc.sbp.utils.time.SBTime;
 
 import java.util.UUID;
 
+/**
+ * The SBConstants class contains a collection of constant values used across the project for
+ * managing plugin-specific configurations, files, database details, schematics, messages, and more.
+ * It organizes constants into nested static classes for better modularity and logical grouping.
+ */
 public class SBConstants {
     public static final String PLUGIN_NAME = "SkyBlockPlus";
     public static final String PLUGIN_TITLE = "SkyBlock+";

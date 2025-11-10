@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * Provides utility methods for performing reflection-based operations, such as discovering classes
+ * in a specified package that inherit from or implement a given superclass or interface.
+ */
 public class SBReflectionUtils {
     public static List<Class<?>> find(String basePackage, Class<?> superClass) {
         List<Class<?>> classes = new ArrayList<>();

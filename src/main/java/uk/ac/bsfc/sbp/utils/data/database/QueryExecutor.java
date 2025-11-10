@@ -9,6 +9,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * QueryExecutor is a singleton class responsible for executing SQL queries and updates
+ * asynchronously and synchronously. It provides methods for executing queries, updating
+ * database records, and mapping query results into custom objects or data structures.
+ * It utilizes a ConnectionPool to manage database connections efficiently.
+ *
+ * This class supports:
+ * - Asynchronous execution of SQL SELECT queries with mapping options.
+ * - Synchronous execution of INSERT, UPDATE, and DELETE statements.
+ * - Retrieving specific column values and mapping result rows to an object of a given type.
+ *
+ * This class uses the ConnectionPool to acquire database connections and ensures proper
+ * resource handling.
+ *
+ * Note: Non-public utility methods within this class are used internally to simplify
+ * query preparation, parameter binding, and result set processing.
+ */
 public final class QueryExecutor {
     private final ConnectionPool pool;
 

@@ -8,6 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The Schematic class represents a collection of blocks with a defined origin point
+ * and provides functionality for manipulating and transforming these blocks in 3D space.
+ * It serves as a concrete implementation extending from the BlockSet abstract class.
+ *
+ * A schematic is defined by its name, an origin vector that represents the reference
+ * point for relative block positions, and a list of blocks that comprise the schematic.
+ */
 public class Schematic extends BlockSet {
     private final String name;
     private final Vector origin;

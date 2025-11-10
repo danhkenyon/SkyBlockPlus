@@ -7,6 +7,17 @@ import java.io.File;
 import java.util.Map;
 import java.util.concurrent.*;
 
+/**
+ * The JSON class provides utility methods for managing JSON files, including
+ * reading, writing, and caching JSON data. It uses Gson for serialization and
+ * deserialization, and manages asynchronous operations with an internal executor service.
+ *
+ * Key functionality includes:
+ * - Creating or retrieving JSON file instances by name.
+ * - Thread-safe caching of JSON file instances.
+ * - Easy access to a pre-configured Gson instance and executor service.
+ * - Managing the lifecycle of async operations and the cache.
+ */
 public class JSON {
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()

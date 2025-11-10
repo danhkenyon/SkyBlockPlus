@@ -8,6 +8,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * The JsonFile class provides an abstraction for managing JSON files, enabling
+ * easy reading, writing, and modification of JSON data. It handles nested values
+ * using dot-separated paths and supports both synchronous and asynchronous
+ * operations for file IO.
+ *
+ * Functionality includes:
+ * - Loading and saving JSON data to a file.
+ * - Asynchronous reload and save operations.
+ * - Thread-safe access to the underlying data structure.
+ * - Support for nested JSON structure manipulation using dot-separated keys.
+ */
 public class JsonFile {
     private final File jsonFile;
     private volatile Map<String, Object> data;

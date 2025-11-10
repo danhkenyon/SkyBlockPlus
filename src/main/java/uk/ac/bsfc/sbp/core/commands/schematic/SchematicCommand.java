@@ -8,6 +8,27 @@ import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 import java.util.List;
 
+/**
+ * The SchematicCommand class extends SBCommand and provides functionality
+ * for handling schematic-related commands in the application.
+ *
+ * This command has two subcommands: "save" and "load".
+ *
+ * Usage of the command:
+ * /schematic <save | load> [name]
+ *
+ * Additional aliases:
+ * /schem
+ *
+ * The command is primarily targeted at players and will not execute
+ * for other users, ensuring appropriate messaging when invoked in
+ * non-player contexts.
+ *
+ * Key behaviors include:
+ * - Saving schematics either with a given name or default name.
+ * - Loading schematics by provided name, incorporating JSON file validation.
+ * - Throwing usage messages when improper arguments or contexts are detected.
+ */
 public class SchematicCommand extends SBCommand {
 	public SchematicCommand() {
         super();

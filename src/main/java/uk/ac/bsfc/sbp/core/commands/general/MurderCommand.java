@@ -11,6 +11,9 @@ import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 import java.util.function.Predicate;
 
+/**
+ *
+ */
 public class MurderCommand extends SBCommand {
     public MurderCommand() {
         super();

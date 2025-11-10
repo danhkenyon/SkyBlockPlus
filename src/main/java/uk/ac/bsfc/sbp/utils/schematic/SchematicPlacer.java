@@ -20,6 +20,16 @@ import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The SchematicPlacer class provides utility methods to place and transform
+ * Minecraft schematics into a specified world. It handles block placements,
+ * block data transformations, and the application of NBT data.
+ *
+ * This class supports operations such as rotation and mirroring of the schematic
+ * and ensures proper orientation and attributes for the placed blocks. The placement
+ * logic accommodates rotational and mirroring transformations, including adjustments
+ * for block-facing directions and NBT metadata.
+ */
 public class SchematicPlacer {
     private static final Gson GSON = new Gson();
 

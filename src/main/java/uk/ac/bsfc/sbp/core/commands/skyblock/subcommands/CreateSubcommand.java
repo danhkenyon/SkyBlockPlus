@@ -12,6 +12,16 @@ import uk.ac.bsfc.sbp.utils.user.SBConsole;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
+/**
+ * Represents the CreateSubcommand class that provides the functionality
+ * for creating an island in the application based on the specified conditions.
+ *
+ * This class is responsible for:
+ * - Ensuring the command is not executed by a console user.
+ * - Verifying if the user exists in the member database and managing membership status.
+ * - Assigning the leader rank to the user if creating a new island.
+ * - Creating a new island for the user and generating feedback messages.
+ */
 public class CreateSubcommand {
     public static void execute(SBCommand cmd) {
         SBUser user = cmd.getUser();

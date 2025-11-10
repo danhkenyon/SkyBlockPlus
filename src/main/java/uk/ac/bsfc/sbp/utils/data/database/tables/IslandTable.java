@@ -17,6 +17,12 @@ import java.util.UUID;
 import static uk.ac.bsfc.sbp.utils.SBConstants.Island.BASE_ISLAND_SIZE;
 import static uk.ac.bsfc.sbp.utils.SBConstants.Island.UNKNOWN_ISLAND_UUID;
 
+/**
+ * The IslandTable class is responsible for handling database interactions specific to
+ * the Islands table. It extends the DatabaseTable class, which provides generic functionalities
+ * for table operations. This class includes methods to map database rows to Island objects,
+ * ensure the Islands table exists, and perform various table operations like retrieval and insertion.
+ */
 public class IslandTable extends DatabaseTable<Island> {
     public IslandTable() {
         super(SBConstants.Database.TABLE_ISLANDS, 2);

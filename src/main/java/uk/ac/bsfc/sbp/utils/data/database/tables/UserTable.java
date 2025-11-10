@@ -10,6 +10,11 @@ import uk.ac.bsfc.sbp.utils.user.SBUser;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * The UserTable class represents a table in the database for managing user data.
+ * It extends the DatabaseTable class with specific implementation for the SBUser entity.
+ * This class provides methods for inserting, retrieving, and validating user data in the database.
+ */
 public class UserTable extends DatabaseTable<SBUser> {
     public UserTable() {
         super(SBConstants.Database.TABLE_USERS, 1);

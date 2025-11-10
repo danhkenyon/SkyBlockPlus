@@ -18,6 +18,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Represents an SBWorld, a wrapper around a Bukkit {@link World} object that provides additional functionality
+ * for managing worlds in a server environment. The class includes methods for creating, loading, unloading,
+ * saving, and deleting worlds, as well as handling their associated metadata.
+ */
 public class SBWorld extends Wrapper<World> {
     private final JsonFile worldsJson = JSON.get("worlds");
 
