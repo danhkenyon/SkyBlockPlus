@@ -35,7 +35,6 @@ import java.util.function.BiConsumer;
  * - Event handling for inventory clicks and closures.
  */
 public class SBInventory implements Listener {
-
     private static final Map<UUID, SBInventory> openInventories = new HashMap<>();
     private static boolean listenerRegistered = false;
 
@@ -86,6 +85,25 @@ public class SBInventory implements Listener {
             }
             if (c != ' ') {
                 inventory.setItem(i, item);
+            }
+        }
+        return this;
+    }
+    public SBInventory fillPattern(Map<Character, ItemStack> itemMap, String[] pattern) {
+        for (String row : pattern) {
+            if (row.length() > 9) {
+                throw new IllegalArgumentException("Pattern length exceeds inventory size");
+            }
+
+            for (int i = 0; i < row.length(); i++) {
+                char c = row.charAt(i);
+                ItemStack item = itemMap.get(c);
+                if (item == null && c != ' ') {
+                    throw new IllegalArgumentException("Pattern contains unmapped character: " + c);
+                }
+                if (c != ' ') {
+                    inventory.setItem(i, item);
+                }
             }
         }
         return this;
