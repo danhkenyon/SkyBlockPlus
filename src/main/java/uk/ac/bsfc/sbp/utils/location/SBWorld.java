@@ -63,7 +63,7 @@ public class SBWorld extends Wrapper<World> {
     public static SBWorld getWorld(String name) {
         SBWorld world = SBWorldUtils.getInstance().getWorld(name);
         if (world == null) {
-            world = SBWorld.load(name); // Auto-load if missing
+            world = SBWorld.load(name);
         }
         return world;
     }
@@ -86,6 +86,9 @@ public class SBWorld extends Wrapper<World> {
         return world;
     }
     public static SBWorld create(String name, String env, long seed) {
+        if (SBWorldUtils.getInstance().getLoadedWorlds().contains(SBWorld.getWorld(name))) {
+            return SBWorld.getWorld(name);
+        }
         SBWorld world = new SBWorld(name, env, seed, false);
         world.load();
         SBWorldUtils.getInstance().register(world);
