@@ -4,6 +4,7 @@ import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.time.SBTime;
 
+import java.io.File;
 import java.util.UUID;
 
 /**
@@ -27,6 +28,7 @@ public class SBConstants {
         public static final UUID UNKNOWN_ISLAND_UUID = new UUID(0, 0);
 
         public static final String DEFAULT_ISLAND_SCHEMATIC = Schematics.SCHEMATIC_FOLDER + SBConfig.getString("island-schematics.default", "default_island.schem");
+        public static final SBWorld ISLAND_WORLD = SBWorld.getWorld("world");
     }
 
     public static final class Database {
@@ -39,6 +41,11 @@ public class SBConstants {
         public static final String TABLE_USERS = "users";
         public static final String TABLE_ISLANDS = "islands";
         public static final String TABLE_ISLAND_MEMBERS = "island_members";
+    }
+
+    public static final class Configuration {
+        public static final String CONFIG_FILE_NAME = "config.yml";
+        public static final String MESSAGES_CONFIG_FILE_NAME = "config.yml";
     }
 
     public static final class Schematics {

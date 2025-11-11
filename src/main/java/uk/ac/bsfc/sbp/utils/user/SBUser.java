@@ -54,6 +54,9 @@ public abstract class SBUser {
             return new SBConsole();
         }
     }
+    public static @NotNull SBUser console() {
+        return new SBConsole();
+    }
     public static @NotNull SBUser from(UUID uuid) {
         if (uuid == UUID.fromString("00000000-0000-0000-0000-000000000000")) {
             return new SBConsole();

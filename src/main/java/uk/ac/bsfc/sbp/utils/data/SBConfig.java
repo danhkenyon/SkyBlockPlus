@@ -31,7 +31,6 @@ import java.util.Map;
  * configuration manager is active during the application's lifecycle.
  */
 public class SBConfig {
-    private static SBConfig instance;
     private final Yaml yaml;
     private final File configFile;
     private Map<String, Object> data;
@@ -67,12 +66,22 @@ public class SBConfig {
         this(SBFiles.get(SBConstants.CONFIG_FILE));
     }
 
+    private static SBConfig mainInstance;
     private static SBConfig getInstance() {
-        if (instance == null) {
-            instance = new SBConfig();
+        if (mainInstance == null) {
+            mainInstance = new SBConfig(SBFiles.get(SBConstants.Configuration.CONFIG_FILE_NAME));
         }
-        return instance;
+        return mainInstance;
     }
+
+    private static SBConfig configInstance;
+    public static SBConfig getMessageConfig() {
+        if (configInstance == null) {
+            configInstance = new SBConfig(SBFiles.get(SBConstants.Configuration.MESSAGES_CONFIG_FILE_NAME));
+        }
+        return configInstance;
+    }
+
     private void reloadData() {
         try (FileInputStream in = new FileInputStream(configFile)) {
             data = yaml.load(in);

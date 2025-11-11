@@ -7,9 +7,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
+import uk.ac.bsfc.sbp.utils.data.JSON;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
+import uk.ac.bsfc.sbp.utils.menus.SBItem;
+import uk.ac.bsfc.sbp.utils.menus.SBItemListener;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
 /**
@@ -65,10 +68,13 @@ public final class Main extends JavaPlugin {
             DatabaseTable.getAllTables().forEach(DatabaseTable::ensureTableExists);
             IslandUtils.getInstance().init();
 
-            SBLogger.info("<green>Plugin enabled!");
-            SBLogger.raw(SBConstants.Schematics.DEFAULT_SCHEMATIC_NAME);
-            assert Bukkit.getWorlds().getFirst()!=null;
+            SBItem.loadRegistry();
+            SBItemListener.register();
+
+            assert Bukkit.getWorlds().getFirst() != null;
             globalContainer = Bukkit.getWorlds().getFirst().getPersistentDataContainer();
+
+            SBLogger.info("<green>Plugin enabled!");
         } catch (Exception e) {
             SBLogger.err(e.getMessage());
             SBLogger.info("<red>Disabling plugin...");
@@ -78,6 +84,7 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        SBItem.saveRegistry();
         SBLogger.info("<red>Plugin Disabled!");
     }
 

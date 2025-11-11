@@ -1,4 +1,4 @@
-package uk.ac.bsfc.sbp.utils;
+package uk.ac.bsfc.sbp.utils.menus;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-
 
 /**
  * Represents a custom interactive inventory for use in Bukkit plugins.
@@ -65,8 +64,10 @@ public class SBInventory implements Listener {
         if (action != null) actions.put(slot, action);
         return this;
     }
-
-
+    public SBInventory onClose(BiConsumer<Player, Inventory> onClose){
+        this.onClose = onClose;
+        return this;
+    }
     public SBInventory setItem(int slot, ItemStack item){
         inventory.setItem(slot, item);
         return this;
@@ -90,27 +91,26 @@ public class SBInventory implements Listener {
         return this;
     }
     public SBInventory fillPattern(Map<Character, ItemStack> itemMap, String[] pattern) {
+        if (pattern.length > inventory.getSize()) {
+            throw new IllegalArgumentException("Pattern length exceeds inventory size");
+        }
+
         for (String row : pattern) {
             if (row.length() > 9) {
-                throw new IllegalArgumentException("Pattern length exceeds inventory size");
+                throw new IllegalArgumentException("Row length exceeds inventory 9.");
             }
 
             for (int i = 0; i < row.length(); i++) {
                 char c = row.charAt(i);
                 ItemStack item = itemMap.get(c);
                 if (item == null && c != ' ') {
-                    throw new IllegalArgumentException("Pattern contains unmapped character: " + c);
+                    throw new IllegalArgumentException("Character not mapped: " + c);
                 }
                 if (c != ' ') {
                     inventory.setItem(i, item);
                 }
             }
         }
-        return this;
-    }
-
-    public SBInventory onClose(BiConsumer<Player, Inventory> onClose){
-        this.onClose = onClose;
         return this;
     }
 
@@ -140,17 +140,14 @@ public class SBInventory implements Listener {
     }
 
     public SBInventory addNextPageButton(int slot, ItemStack item, SBInventory nextPageInventory) {
-        return setButton(slot, item, (player, event) -> nextPageInventory.open(player));
+        return this.setButton(slot, item, (player, event) -> nextPageInventory.open(player));
     }
-
     public SBInventory addPrevPageButton(int slot, ItemStack item, SBInventory prevPageInventory) {
-        return setButton(slot, item, (player, event) -> prevPageInventory.open(player));
+        return this.setButton(slot, item, (player, event) -> prevPageInventory.open(player));
     }
-
     public SBInventory addCloseButton(int slot, ItemStack item) {
-        return setButton(slot, item, (player, event) -> player.closeInventory());
+        return this.setButton(slot, item, (player, event) -> player.closeInventory());
     }
-
 
     public SBInventory fillAll(ItemStack item) {
         for (int i = 0; i < inventory.getSize(); i++) {
@@ -158,8 +155,6 @@ public class SBInventory implements Listener {
         }
         return this;
     }
-
-
     public SBInventory fillBorder(ItemStack item) {
         int size = inventory.getSize();
         int rows = size / 9;
@@ -180,7 +175,6 @@ public class SBInventory implements Listener {
         
         return this;
     }
-
     public SBInventory fillRow(int row, ItemStack item) {
         if (row < 0 || row >= rows) {
             throw new IllegalArgumentException("Row index out of bounds: " + row);
@@ -193,7 +187,6 @@ public class SBInventory implements Listener {
         
         return this;
     }
-
     public SBInventory fillColumn(int column, ItemStack item) {
         if (column < 0 || column >= 9) {
             throw new IllegalArgumentException("Column index out of bounds: " + column);
