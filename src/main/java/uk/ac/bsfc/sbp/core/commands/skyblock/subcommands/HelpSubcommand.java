@@ -3,6 +3,11 @@ package uk.ac.bsfc.sbp.core.commands.skyblock.subcommands;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
+/**
+ * The HelpSubcommand class provides a static method to handle help messages
+ * for SkyBlock commands. It lists accessible commands and their descriptions,
+ * guiding users on how to interact with the SkyBlock system.
+ */
 public class HelpSubcommand {
     public static void execute(SBCommand cmd) {
         SBUser user = cmd.getUser();

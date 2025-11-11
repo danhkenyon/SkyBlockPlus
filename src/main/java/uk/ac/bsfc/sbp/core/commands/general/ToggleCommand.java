@@ -11,6 +11,15 @@ import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
 
 import java.util.List;
 
+/**
+ * The ToggleCommand class is responsible for toggling the enabled state of specific commands
+ * within the application. It extends the SBCommand class and provides functionality to enable
+ * or disable commands by interacting with a global PersistentDataContainer.
+ *
+ * The command requires a single argument, which is the name of the command to toggle. If the
+ * specified command exists, its current state is flipped between enabled and disabled. Users
+ * are notified of the result of the toggle operation.
+ */
 public class ToggleCommand extends SBCommand {
 
     private List<String> commands = SBCommandHandler.getInstance().getCommandNames();

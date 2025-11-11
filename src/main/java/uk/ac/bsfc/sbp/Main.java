@@ -12,6 +12,25 @@ import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
+/**
+ * Represents the main class of the plugin extending the JavaPlugin framework.
+ *
+ * This class acts as the entry point of the plugin and manages its lifecycle events such as loading,
+ * enabling, and disabling. It provides access to essential components such as command handling,
+ * event registering, and the global PersistentDataContainer.
+ *
+ * Features:
+ * - Singleton access via the static getInstance() method.
+ * - Loads plugin configuration and initializes necessary dependencies during the onLoad and onEnable phases.
+ * - Handles proper shutdown logic in the onDisable phase to ensure clean plugin termination.
+ * - Provides utility methods to retrieve command and event handlers, allowing external classes
+ *   to interact with these core components of the plugin.
+ *
+ * Lifecycle:
+ * - onLoad: Pre-initialization logic runs before activating the plugin, such as preloading APIs and setting configurations.
+ * - onEnable: Primary initialization including command registration, event setup, and dependency initialization.
+ * - onDisable: Cleans up resources and disables the plugin safely if necessary.
+ */
 public final class Main extends JavaPlugin {
     private static Main instance;
     public static Main getInstance() {

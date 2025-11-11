@@ -17,6 +17,14 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+/**
+ * Represents an abstract user in the system. This class provides a foundation
+ * for handling different types of users, such as console users and player users,
+ * and provides various utility methods for interacting with and managing users.
+ *
+ * Subclasses that extend this class must define specific behaviors for certain
+ * types of users.
+ */
 public abstract class SBUser {
     protected Placeholder[] userPlaceholders;
     protected final Class<? extends SBUser> clazz = this.getClass();

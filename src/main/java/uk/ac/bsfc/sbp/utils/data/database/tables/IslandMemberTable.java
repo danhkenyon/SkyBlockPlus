@@ -11,6 +11,11 @@ import java.util.*;
 
 import static uk.ac.bsfc.sbp.utils.SBConstants.Island.UNKNOWN_ISLAND_UUID;
 
+/**
+ * Represents a database table dedicated to managing island membership information.
+ * This table stores information about members associated with specific islands,
+ * their unique identifiers, and their roles within the island.
+ */
 public class IslandMemberTable extends DatabaseTable<Member> {
     private static final ThreadLocal<Set<UUID>> loading = ThreadLocal.withInitial(HashSet::new);
 

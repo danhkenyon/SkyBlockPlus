@@ -1,5 +1,11 @@
 package uk.ac.bsfc.sbp.utils;
 
+/**
+ * The SBColour enum defines various color and formatting codes for use in applications,
+ * particularly for Minecraft and console text output. Each color or format is represented
+ * by three components: a Minecraft-specific character code, an ANSI escape code for terminal
+ * usage, and a MiniMessage format for text representation.
+ */
 public enum SBColour {
     BLACK('0', "\u001B[30m", "<#000000>"),
     DARK_BLUE('1', "\u001B[34m", "<#0000AA>"),

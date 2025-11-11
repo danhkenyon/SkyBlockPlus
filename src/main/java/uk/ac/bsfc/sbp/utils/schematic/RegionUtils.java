@@ -6,6 +6,12 @@ import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Utility class for managing player-specific regions and schematics.
+ * This class provides methods to handle the storage, retrieval, and updating
+ * of region and schematic data associated with individual players.
+ * It uses singleton pattern to ensure a single instance is available.
+ */
 public class RegionUtils {
     private final LinkedHashMap<SBPlayer, Region> regions;
     private final LinkedHashMap<SBPlayer, Schematic> schematics;

@@ -5,6 +5,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import uk.ac.bsfc.sbp.utils.Wrapper;
 
+/**
+ * Represents a custom implementation of a location in a 3D space within a specific world.
+ * This class is used to encapsulate and manage location data, including coordinates, yaw, and pitch,
+ * along with an associated world instance or name.
+ * It serves as a wrapper around a Bukkit Location object, with additional factory methods
+ * and formatting utilities for convenient use.
+ */
 public class SBLocation extends Wrapper<Location> implements Cloneable {
     private final String worldName;
     private final SBWorld world;

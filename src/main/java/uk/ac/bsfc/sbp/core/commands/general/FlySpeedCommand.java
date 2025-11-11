@@ -3,6 +3,17 @@ package uk.ac.bsfc.sbp.core.commands.general;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
+/**
+ * The FlySpeedCommand class is a command used to modify a player's fly speed.
+ * This command is intended to be executed by players only and allows players to set their fly speed
+ * to a value between 1 and 10.
+ *
+ * Features:
+ * - Validates the arguments to ensure that the input is a valid number between 1 and 10.
+ * - Provides feedback to the player when they successfully change their fly speed or if they
+ *   encounter any errors during execution.
+ * - Automatically adjusts the input value to the corresponding fly speed multiplier for the game.
+ */
 public class FlySpeedCommand extends SBCommand {
     public FlySpeedCommand() {
         super();

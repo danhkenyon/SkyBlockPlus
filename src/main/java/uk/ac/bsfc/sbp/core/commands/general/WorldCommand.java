@@ -1,19 +1,30 @@
 package uk.ac.bsfc.sbp.core.commands.general;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.location.SBWorldUtils;
-import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Represents a command for managing worlds within the application.
+ * This command provides functionality for creating, listing, teleporting to,
+ * and deleting worlds.
+ *
+ * The command name is "world" and it includes the alias "world-manager".
+ *
+ * Command usages:
+ * - "create": Creates a new world with a specified name, type, and seed.
+ * - "list": Lists all currently loaded worlds.
+ * - "teleport": Teleports the player to a specified world by name.
+ * - "delete": Deletes a specified world by name.
+ */
 public class WorldCommand extends SBCommand {
     public WorldCommand() {
         super();

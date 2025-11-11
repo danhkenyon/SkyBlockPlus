@@ -25,6 +25,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * The SchematicParser class provides functionality for loading, saving,
+ * and managing schematic files. Schematics represent collections of blocks,
+ * their metadata, and positional data within a specific structure format.
+ * This class supports both synchronous and asynchronous operations for
+ * handling schematic files.
+ *
+ * Key operations include:
+ * - Parsing and loading schematics from files.
+ * - Saving schematics to JSON-based files.
+ * - Asynchronous wrapper methods to offload resource-intensive operations.
+ */
 public class SchematicParser {
     static final Gson GSON = new Gson();
 

@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Utility class for managing the lifecycle and retrieval of {@link SBWorld} objects.
+ * Provides functionality to register, unregister, retrieve, and save instances of SBWorld.
+ * This class follows the singleton pattern to ensure a single instance is used globally.
+ */
 public class SBWorldUtils {
     private final List<SBWorld> loadedWorlds = new ArrayList<>();
     private final JsonFile worldsJson = JSON.get("worlds");

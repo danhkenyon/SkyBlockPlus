@@ -12,6 +12,11 @@ import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 
 import java.util.UUID;
 
+/**
+ * Represents a player in the system, extending the SBUser class.
+ * Provides additional functionality specific to player management,
+ * such as handling game states, world location, flight capabilities, and more.
+ */
 public class SBPlayer extends SBUser {
     private final Clipboard clipboard;
     private final Placeholder[] playerPlaceholders;

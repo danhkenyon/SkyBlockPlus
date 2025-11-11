@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Utility class for managing and interacting with islands in the SkyBlock+ system.
+ * This class provides a centralized singleton instance to handle operations
+ * related to islands, such as retrieving, registering, and initializing them.
+ */
 public class IslandUtils {
     private final Map<UUID, Island> islands;
 

@@ -6,6 +6,12 @@ import uk.ac.bsfc.sbp.utils.data.SBConfig;
 
 import java.util.List;
 
+/**
+ * Represents the main command handler for SkyBlock functionality within the plugin.
+ * This command serves as the entry point for executing various SkyBlock-related subcommands.
+ * <br>
+ * The command supports optional subcommands such as "admin" and its respective arguments.
+ */
 public class SkyBlockCommand extends SBCommand {
     public SkyBlockCommand() {
         super();

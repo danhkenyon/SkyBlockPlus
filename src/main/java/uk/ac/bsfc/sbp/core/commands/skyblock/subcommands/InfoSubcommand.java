@@ -12,6 +12,34 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * The InfoSubcommand class provides functionality to display detailed information about
+ * a user's island in the application. It retrieves the user's island details, such as
+ * the island's name, ID, location, and members, and formats this information into a
+ * structured message that is sent to the user.
+ *
+ * Key Features:
+ * - Checks if a user belongs to an island.
+ * - Retrieves island and member details from the appropriate data tables.
+ * - Formats island information, including name, ID, location, and members, into a list
+ *   of messages.
+ * - Sends the formatted information directly to the user.
+ *
+ * Dependencies:
+ * - Requires access to the `IslandMemberTable` and `IslandTable` instances for retrieving
+ *   member and island data.
+ * - Utilizes the `SBCommand` to get context about the user invoking the command.
+ * - Uses `SBLogger` for logging member information.
+ *
+ * Behavior:
+ * - If the user is not associated with any island, they are notified with a message
+ *   suggesting how to create one.
+ * - If the user belongs to an island, the members are sorted by rank and their information
+ *   is included in the response.
+ *
+ * @param cmd The SBCommand instance used to execute this subcommand, containing the
+ *            user context and necessary data to retrieve island information.
+ */
 public class InfoSubcommand {
     public static void execute(SBCommand cmd) {
         var user = cmd.getUser();

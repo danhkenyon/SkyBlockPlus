@@ -5,6 +5,11 @@ import org.bukkit.entity.Player;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
+/**
+ * The SBServer class provides utility methods for broadcasting messages to all online players
+ * on the server. Messages can be sent in formatted or raw form, and can also include the
+ * sender's information.
+ */
 public class SBServer {
     public static void broadcast(SBUser user, String ... msg) {
         for (String line : msg) {

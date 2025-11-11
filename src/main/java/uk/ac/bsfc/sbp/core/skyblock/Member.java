@@ -9,6 +9,10 @@ import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
+/**
+ * Represents a member of an island in a game. A Member extends the SBPlayer class,
+ * adding additional functionality related to their rank and associated island.
+ */
 public class Member extends SBPlayer {
     private UUID islandId;
     private Rank rank;

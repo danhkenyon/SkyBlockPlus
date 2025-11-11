@@ -8,6 +8,24 @@ import uk.ac.bsfc.sbp.utils.user.SBUser;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a command that allows executing another command as a specified user.
+ *
+ * The SudoCommand extends the SBCommand class, providing functionality to execute
+ * commands or chat messages on behalf of another user, including the console.
+ *
+ * Key Features:
+ * - Executes a command or chat message as another user.
+ * - Allows targeting the console or online players.
+ * - Optionally repeats the command multiple times.
+ * - Provides argument-based suggestions for ease of use.
+ *
+ * Usage details:
+ * - Name: sudo
+ * - Description: Execute a command as another user.
+ * - Usage: /sudo <user> [amount] <command>
+ * - Required Permission: sbp.command.sudo
+ */
 public class SudoCommand extends SBCommand {
     public SudoCommand() {
         super();

@@ -11,6 +11,25 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * A singleton configuration manager for storing, retrieving, and manipulating YAML-based
+ * configuration files. The {@code SBConfig} class provides a thread-safe and centralized
+ * way to handle application configuration by utilizing a key-value structure. Nested
+ * keys (dot-delimited paths) are supported to allow hierarchical data organization.
+ *
+ * Usage of this class ensures configuration persistence by reading from and writing to
+ * a specified YAML file, with automatic file management and creation if it doesn't exist.
+ *
+ * Main responsibilities:
+ * - Reading configuration values.
+ * - Writing and modifying configuration values.
+ * - Managing nested structures using dot-separated keys.
+ * - Persisting changes to a YAML file on disk.
+ *
+ * Thread Safety:
+ * This class uses a singleton pattern which guarantees only one instance of the
+ * configuration manager is active during the application's lifecycle.
+ */
 public class SBConfig {
     private static SBConfig instance;
     private final Yaml yaml;
