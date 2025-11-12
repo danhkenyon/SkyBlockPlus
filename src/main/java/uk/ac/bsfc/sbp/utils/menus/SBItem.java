@@ -2,7 +2,6 @@ package uk.ac.bsfc.sbp.utils.menus;
 
 import io.papermc.paper.event.player.PlayerPickItemEvent;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -18,7 +17,6 @@ import uk.ac.bsfc.sbp.utils.Wrapper;
 import uk.ac.bsfc.sbp.utils.data.JSON;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -166,7 +164,7 @@ public class SBItem extends Wrapper<ItemStack> {
         return item;
     }
     public static SBItem fromBukkit(ItemStack item) {
-        System.out.println(item.getItemMeta());
+//        System.out.println(item.getItemMeta());
         if (item == null || !item.hasItemMeta()) return null;
         var meta = item.getItemMeta();
         var container = meta.getPersistentDataContainer();

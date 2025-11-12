@@ -4,12 +4,11 @@ import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.java.JavaPlugin;
-import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
-import uk.ac.bsfc.sbp.utils.data.JSON;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
+import uk.ac.bsfc.sbp.utils.entity.StackManager;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
 import uk.ac.bsfc.sbp.utils.menus.SBItem;
 import uk.ac.bsfc.sbp.utils.menus.SBItemListener;
@@ -39,14 +38,20 @@ public final class Main extends JavaPlugin {
     public static Main getInstance() {
         return instance;
     }
+    private static StackManager stackManager;
+    public static StackManager getStackManager(){
+        return stackManager;
+    }
 
     private PersistentDataContainer globalContainer;
     private SBCommandHandler commandHandler;
     private SBEventRegister eventRegister;
 
+
     @Override
     public void onLoad() {
         instance = this;
+        stackManager = new StackManager();
         this.setNaggable(SBConfig.getBoolean("bukkit-logging"));
         SBLogger.info("<green>Loading plugin...");
 
@@ -85,6 +90,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         SBItem.saveRegistry();
+        stackManager.killAll();
         SBLogger.info("<red>Plugin Disabled!");
     }
 
