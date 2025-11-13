@@ -13,7 +13,11 @@ public abstract class SBEntity {
 
     public SBEntity(Entity entity, int initialStack) {
         this.entity = entity;
-        this.stackSize = Math.max(1, initialStack);
+        this.stackSize = initialStack;
+        updateNametag();
+    }
+
+    public void initialize() {
         updateNametag();
     }
 
@@ -48,6 +52,7 @@ public abstract class SBEntity {
 
     protected Component buildDisplayName() {
         String typeName = getDisplayName();
+        if (typeName == null || typeName.isEmpty()) typeName = "Unknown";
         String msg = "<gold>x" + stackSize + " <yellow>" + typeName + "</yellow></gold>";
         return mm.deserialize(msg);
     }
@@ -59,4 +64,3 @@ public abstract class SBEntity {
 
     protected abstract String getDisplayName();
 }
-

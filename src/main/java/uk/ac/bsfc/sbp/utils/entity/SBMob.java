@@ -1,7 +1,7 @@
 package uk.ac.bsfc.sbp.utils.entity;
 
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class SBMob extends SBEntity {
 
@@ -14,6 +14,8 @@ public class SBMob extends SBEntity {
 
     @Override
     protected String getDisplayName() {
-        return mob.getType().name().replace("_", " ").toLowerCase();
+        EntityType type = entity.getType();
+        String name = type.name().toLowerCase().replace("_", " ");
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 }
