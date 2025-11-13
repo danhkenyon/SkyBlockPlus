@@ -12,19 +12,19 @@ import uk.ac.bsfc.sbp.utils.event.Event;
 import uk.ac.bsfc.sbp.utils.event.SBEventHandler;
 
 import java.util.UUID;
-//TODO:
-/*
-* Fix event being registered
-* Put Config behind this
- */
+
 public class MobStackerHandler extends SBEventHandler {
 
     private final StackManager stackManager = Main.getStackManager();
 
-    @Event
+    @Event()
     public void onMobStacker(SpawnerSpawnEvent event) {
         SBLogger.raw("<gray>Spawner spawned mob");
-        LivingEntity entity = (LivingEntity) event.getEntity();
+        
+        if (!(event.getEntity() instanceof LivingEntity entity)) {
+            return;
+        }
+
         Chunk chunk = entity.getChunk();
 
         SBMob existing = findExistingSameType(chunk, entity);

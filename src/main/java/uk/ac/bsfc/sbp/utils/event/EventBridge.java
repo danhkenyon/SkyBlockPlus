@@ -39,4 +39,6 @@ public class EventBridge implements Listener {
         e.setJoinMessage("");
         Main.getInstance().getEventRegister().fire(new UserJoinEvent(SBUser.from(e.getPlayer())));
     }
+
+
 }
