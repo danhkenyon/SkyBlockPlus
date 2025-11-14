@@ -1,7 +1,5 @@
 package uk.ac.bsfc.sbp.utils.skyblock;
 
-import org.bukkit.Location;
-import org.bukkit.World;
 import uk.ac.bsfc.sbp.core.skyblock.Island;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
@@ -14,6 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Utility class for managing and interacting with islands in the SkyBlock+ system.
+ * This class provides a centralized singleton instance to handle operations
+ * related to islands, such as retrieving, registering, and initializing them.
+ */
 public class IslandUtils {
     private final Map<UUID, Island> islands;
 
@@ -38,10 +41,10 @@ public class IslandUtils {
 
         for (Island island : rows) {
             islands.put(island.uuid(), island);
-            SBLogger.info("&aLoaded island &b" + island.name() + " &7(ID: " + island.uuid() + ")");
+            SBLogger.info("<green>Loaded island <aqua>" + island.name() + " <gray>(ID: " + island.uuid() + ")");
         }
 
-        SBLogger.info("&aLoaded &b" + islands.size() + " &aislands from database.");
+        SBLogger.info("<green>Loaded <aqua>" + islands.size() + " <green>islands from database.");
     }
 
     public Island getIsland(UUID id) {

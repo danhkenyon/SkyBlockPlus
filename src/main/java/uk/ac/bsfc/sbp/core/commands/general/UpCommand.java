@@ -1,12 +1,16 @@
 package uk.ac.bsfc.sbp.core.commands.general;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
+/**
+ * Represents the "up" command, which allows a player to move up by a specified number of blocks.
+ * The command places a glass block for the player to stand on before teleporting them upward.
+ * This command is only available to players in the game.
+ */
 public class UpCommand extends SBCommand {
     public UpCommand() {
         super();
@@ -19,11 +23,11 @@ public class UpCommand extends SBCommand {
     @Override
     public void execute() {
         if (!(user instanceof SBPlayer player)) {
-            user.sendMessage("&cThis command can only be used by players.");
+            user.sendMessage("<red>This command can only be used by players.");
             return;
         }
         if (args.length != 1) {
-            user.sendMessage("&cUsage: " + usage());
+            user.sendMessage("<red>Usage: " + usage());
             return;
         }
 
@@ -43,7 +47,7 @@ public class UpCommand extends SBCommand {
             ));
             player.sendMessage("{messages.commands.up-;success}", Placeholder.of("%blocks%", blocks));
         } catch (NumberFormatException e) {
-            user.sendMessage("&cInvalid number of blocks: " + args[0]);
+            user.sendMessage("<red>Invalid number of blocks: " + args[0]);
         }
     }
 }

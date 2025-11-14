@@ -8,6 +8,10 @@ import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
+/**
+ * The InviteSubcommand class handles various subcommands related to managing
+ * invites within the system, including sending, accepting, and declining invites.
+ */
 public class InviteSubcommand {
     public static void execute(SBCommand cmd) {
         var args = cmd.args();

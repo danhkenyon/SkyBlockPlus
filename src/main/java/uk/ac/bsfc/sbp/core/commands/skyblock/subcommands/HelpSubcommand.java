@@ -3,43 +3,48 @@ package uk.ac.bsfc.sbp.core.commands.skyblock.subcommands;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
+/**
+ * The HelpSubcommand class provides a static method to handle help messages
+ * for SkyBlock commands. It lists accessible commands and their descriptions,
+ * guiding users on how to interact with the SkyBlock system.
+ */
 public class HelpSubcommand {
     public static void execute(SBCommand cmd) {
         SBUser user = cmd.getUser();
 
         user.sendMessage("");
-        user.sendMessage("&6&l=== &e&lSkyBlock Help &6&l===");
+        user.sendMessage("<gold><b>=== <yellow><b>SkyBlock Help <gold><b>===");
         user.sendMessage(
-                "&e&l/island",
-                "&7- &bIsland creation help."
+                "<yellow><b>/island",
+                "<gray>- <aqua>Island creation help."
         );
         user.sendMessage(
-                "&e&l/island help",
-                "&7- &bDisplays this help message."
+                "<yellow><b>/island help",
+                "<gray>- <aqua>Displays this help message."
         );
         user.sendMessage(
-                "&e&l/island create [island_name]",
-                "&7- &bCreates a new island."
+                "<yellow><b>/island create [island_name]",
+                "<gray>- <aqua>Creates a new island."
         );
         user.sendMessage(
-                "&e&l/island invite <name> [rank]",
-                "&7- &bAdds a user to the island's team."
+                "<yellow><b>/island invite <name> [rank]",
+                "<gray>- <aqua>Adds a user to the island's team."
         );
         user.sendMessage(
-                "&e&l/island invite <accept | deny> <island>",
-                "&7- &bAllows a user to accept or decline an invite."
+                "<yellow><b>/island invite <accept | deny> <island>",
+                "<gray>- <aqua>Allows a user to accept or decline an invite."
         );
         user.sendMessage(
-                "&e&l/island kick <name>",
-                "&7- &bRemoves a user from the island's team."
+                "<yellow><b>/island kick <name>",
+                "<gray>- <aqua>Removes a user from the island's team."
         );
         user.sendMessage(
-                "&e&l/island spawn",
-                "&7- &bTeleports the user to the island's spawn location."
+                "<yellow><b>/island spawn",
+                "<gray>- <aqua>Teleports the user to the island's spawn location."
         );
         user.sendMessage(
-                "&e&l/island setspawn",
-                "&7- &bChanges the island's spawn location to the user's location."
+                "<yellow><b>/island setspawn",
+                "<gray>- <aqua>Changes the island's spawn location to the user's location."
         );
         user.sendMessage("");
     }

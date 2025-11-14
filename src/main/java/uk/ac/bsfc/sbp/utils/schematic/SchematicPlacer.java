@@ -4,9 +4,14 @@ import com.google.gson.Gson;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.NBTBlock;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
-import org.bukkit.*;
-import org.bukkit.block.*;
-import org.bukkit.block.data.*;
+import org.bukkit.Axis;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Orientable;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.util.Vector;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
@@ -15,6 +20,16 @@ import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The SchematicPlacer class provides utility methods to place and transform
+ * Minecraft schematics into a specified world. It handles block placements,
+ * block data transformations, and the application of NBT data.
+ *
+ * This class supports operations such as rotation and mirroring of the schematic
+ * and ensures proper orientation and attributes for the placed blocks. The placement
+ * logic accommodates rotational and mirroring transformations, including adjustments
+ * for block-facing directions and NBT metadata.
+ */
 public class SchematicPlacer {
     private static final Gson GSON = new Gson();
 

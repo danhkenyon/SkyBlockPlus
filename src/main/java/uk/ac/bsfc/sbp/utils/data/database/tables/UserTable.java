@@ -10,6 +10,11 @@ import uk.ac.bsfc.sbp.utils.user.SBUser;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * The UserTable class represents a table in the database for managing user data.
+ * It extends the DatabaseTable class with specific implementation for the SBUser entity.
+ * This class provides methods for inserting, retrieving, and validating user data in the database.
+ */
 public class UserTable extends DatabaseTable<SBUser> {
     public UserTable() {
         super(SBConstants.Database.TABLE_USERS, 1);
@@ -34,7 +39,7 @@ public class UserTable extends DatabaseTable<SBUser> {
                 user.getName(),
                 user.getName()
         );
-        SBLogger.info("[UserTable] &aInserted &b"+user.getName()+"&a into the database.");
+        SBLogger.info("[UserTable] <green>Inserted <aqua>"+user.getName()+"<green> into the database.");
     }
     public void insert(SBUser user) {
         if (user == null) {
@@ -47,7 +52,7 @@ public class UserTable extends DatabaseTable<SBUser> {
                 user.getName(),
                 user.getName()
         );
-        SBLogger.info("[UserTable] &aInserted &b"+user.getName()+"&a into the database.");
+        SBLogger.info("[UserTable] <green>Inserted <aqua>"+user.getName()+"<green> into the database.");
     }
     public void insert(UUID uuid, String username) {
         try {
@@ -58,9 +63,9 @@ public class UserTable extends DatabaseTable<SBUser> {
                     username,
                     username
             );
-            SBLogger.info("[UserTable] &aInserted &b"+username+"&a into the database.");
+            SBLogger.info("[UserTable] <green>Inserted <aqua>"+username+"<green> into the database.");
         } catch (RuntimeException e) {
-            SBLogger.err("[UserTable] RuntimeException occurred for &b" + username + "&c: " + e.getMessage());
+            SBLogger.err("[UserTable] RuntimeException occurred for <aqua>" + username + "<red>: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -77,7 +82,7 @@ public class UserTable extends DatabaseTable<SBUser> {
         super.database.getExecutor().update("User Table Creation",
                 "CREATE TABLE IF NOT EXISTS " + this.getTableName() + " (" +
                     "uuid VARCHAR(36) PRIMARY KEY," +
-                    "name VARCHAR(16) NOT NULL" +
+                    "name VARCHAR(48) NOT NULL" +
                     ");"
         );
     }

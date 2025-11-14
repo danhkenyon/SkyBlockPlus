@@ -4,6 +4,18 @@ import uk.ac.bsfc.sbp.utils.data.SBConfig;
 
 import static uk.ac.bsfc.sbp.utils.SBConstants.Database.*;
 
+/**
+ * Represents the configuration required to connect to a database. This class encapsulates
+ * essential database connection parameters such as driver, URL, username, password, and
+ * maximum pool size. It follows the singleton design pattern to provide a single shared
+ * instance.
+ *
+ * The configuration values are typically loaded from a configuration source (e.g., a file)
+ * using the {@link #getConfig()} method, which reads predefined keys and their corresponding
+ * default values if missing.
+ *
+ * This class is immutable and thread-safe.
+ */
 public final class DatabaseConfig {
     private final String driver;
     private final String url;

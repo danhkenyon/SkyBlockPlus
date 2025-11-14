@@ -10,6 +10,23 @@ import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 import java.util.List;
 
+/**
+ * Represents the main command handler for island-related operations.
+ * This command serves as an entry point for various subcommands that manage islands,
+ * including creating, viewing, and interacting with islands.
+ *
+ * The command is intended to be run by players and not executable by the console.
+ * The associated subcommands include "help", "create", "info", "delete", "invite",
+ * "kick", "spawn", and "setspawn", among others.
+ *
+ * Behavior:
+ * - If no arguments are provided, it suggests basic information or actions based on
+ *   whether the player is part of an island.
+ * - If the "help" subcommand is invoked, detailed information about all commands is displayed.
+ * - Resolves subcommands to their respective handlers.
+ * - Provides tab completion for available subcommands.
+ * - Certain subcommands are marked as not yet implemented and notify the user accordingly.
+ */
 public class IslandCommand extends SBCommand {
     public IslandCommand() {
         super();
@@ -32,10 +49,10 @@ public class IslandCommand extends SBCommand {
 
         if (args.length == 0) {
             if (member == null) {
-                user.sendMessage("&e/island info &7| &fView information about your island.");
+                user.sendMessage("<yellow>/island info <gray>| <white>View information about your island.");
                 return;
             }
-            member.sendMessage("&e/island create &7| &fCreate a new island.");
+            member.sendMessage("<yellow>/island create <gray>| <white>Create a new island.");
             return;
         }
 
@@ -48,19 +65,19 @@ public class IslandCommand extends SBCommand {
             // /island invite accept <island_name>
             // /island invite deny <island_name>
             InviteSubcommand.execute(this);
-            member.sendMessage("&cThe invite subcommand is not yet implemented.");
+            member.sendMessage("<red>The invite subcommand is not yet implemented.");
         } else if (args[0].equalsIgnoreCase("kick")) {
             // /island kick <player>
-            member.sendMessage("&cThe kick subcommand is not yet implemented.");
+            member.sendMessage("<red>The kick subcommand is not yet implemented.");
         } else if (args[0].equalsIgnoreCase("spawn")) {
             // /island spawn
-            member.sendMessage("&cThe home subcommand is not yet implemented.");
+            member.sendMessage("<red>The home subcommand is not yet implemented.");
         } else if (args[0].equalsIgnoreCase("setspawn")) {
             // /island setspawn
-            member.sendMessage("&cThe sethome subcommand is not yet implemented.");
+            member.sendMessage("<red>The sethome subcommand is not yet implemented.");
         }
         else {
-            member.sendMessage("&cUnknown subcommand. Use &e&l/island help &cfor assistance.");
+            member.sendMessage("<red>Unknown subcommand. Use <yellow><b>/island help <red>for assistance.");
         }
 
 

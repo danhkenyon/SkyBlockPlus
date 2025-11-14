@@ -1,0 +1,26 @@
+menu:
+  name: 'Inv'
+  rows: 5
+  row-values:
+    - 'xxx000xxx'
+    - '000xxx000'
+    - 'xxx000xxx'
+    - '000xxx000'
+    - 'xxx000xxx'
+
+items:
+  x:
+    item-name: 'grass'
+    material: 'GRASS_BLOCK'
+    lore:
+      - 'line 1'
+      - 'line 2'
+    events:
+      sendMessage: 'hi'
+      open-menu: 'island-control.yml'
+  0:
+    item-name: 'stone'
+    material: 'STONE'
+    lore:
+      - 'line 3'
+      - 'line 4'

@@ -3,6 +3,7 @@ package uk.ac.bsfc.sbp.core.commands.skyblock.subcommands;
 import uk.ac.bsfc.sbp.core.skyblock.Island;
 import uk.ac.bsfc.sbp.core.skyblock.Member;
 import uk.ac.bsfc.sbp.core.skyblock.Rank;
+import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
@@ -11,6 +12,16 @@ import uk.ac.bsfc.sbp.utils.user.SBConsole;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
+/**
+ * Represents the CreateSubcommand class that provides the functionality
+ * for creating an island in the application based on the specified conditions.
+ *
+ * This class is responsible for:
+ * - Ensuring the command is not executed by a console user.
+ * - Verifying if the user exists in the member database and managing membership status.
+ * - Assigning the leader rank to the user if creating a new island.
+ * - Creating a new island for the user and generating feedback messages.
+ */
 public class CreateSubcommand {
     public static void execute(SBCommand cmd) {
         SBUser user = cmd.getUser();
@@ -26,14 +37,15 @@ public class CreateSubcommand {
             member = IslandMemberTable.getInstance().getRow("player_uuid", user.getUniqueID());
         }
 
-        if (member.getIslandId() != null) {
+        if (member.getIslandId() != null && member.getIslandId() != SBConstants.Island.UNKNOWN_ISLAND_UUID) {
+            System.out.println(member.getIslandId());
             Island island = IslandTable.getInstance().getRow("id", member.getIslandId());
-            member.sendMessage("&cYou already have an island! &7(&b" + island.name() + "&7)");
+            member.sendMessage("<red>You already have an island! <gray>(<aqua>" + island.name() + "<gray>)");
             return;
         }
         member.setRank(Rank.LEADER);
 
         Island island = Island.createIsland(member);
-        member.sendMessage("&aSuccessfully created island! &7(Island ID: &b" + island.uuid() + "&7)");
+        member.sendMessage("<green>Successfully created island! <gray>(Island ID: <aqua>" + island.uuid() + "<gray>)");
     }
 }

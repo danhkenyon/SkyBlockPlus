@@ -20,8 +20,23 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
+/**
+ * The SchematicParser class provides functionality for loading, saving,
+ * and managing schematic files. Schematics represent collections of blocks,
+ * their metadata, and positional data within a specific structure format.
+ * This class supports both synchronous and asynchronous operations for
+ * handling schematic files.
+ *
+ * Key operations include:
+ * - Parsing and loading schematics from files.
+ * - Saving schematics to JSON-based files.
+ * - Asynchronous wrapper methods to offload resource-intensive operations.
+ */
 public class SchematicParser {
     static final Gson GSON = new Gson();
 
@@ -85,7 +100,7 @@ public class SchematicParser {
             for (int x = values[0]; x <= values[1]; x++) {
                 for (int y = values[2]; y <= values[3]; y++) {
                     for (int z = values[4]; z <= values[5]; z++) {
-                        Block block = world.getBlock(x, y, z);
+                        Block block = world.toBukkit().getBlockAt(x, y, z);
                         Material mat = block.getType();
 
                         if (mat == Material.AIR) continue;
@@ -166,7 +181,7 @@ public class SchematicParser {
     public static Schematic asyncLoad(SBUser user, File file) {
         final Schematic[] schematic = new Schematic[1];
         Thread thread = new Thread(() -> schematic[0] = load(file), "Schematic-Loader");
-        user.sendMessage("&eLoading schematic...");
+        user.sendMessage("<yellow>Loading schematic...");
         thread.start();
         try {
             thread.join();
@@ -194,7 +209,7 @@ public class SchematicParser {
         String finalName = name;
         new Thread(() -> {
             try {
-                user.sendMessage("&eSaving schematic...");
+                user.sendMessage("<yellow>Saving schematic...");
                 save(region, finalName);
             } catch (Exception e) {
                 SBLogger.err("Async schematic save failed: " + e.getMessage());

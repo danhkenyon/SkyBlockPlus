@@ -10,10 +10,19 @@ import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import static uk.ac.bsfc.sbp.utils.SBConstants.Island.*;
+import static uk.ac.bsfc.sbp.utils.SBConstants.Island.BASE_ISLAND_SIZE;
+import static uk.ac.bsfc.sbp.utils.SBConstants.Island.UNKNOWN_ISLAND_UUID;
 
+/**
+ * The IslandTable class is responsible for handling database interactions specific to
+ * the Islands table. It extends the DatabaseTable class, which provides generic functionalities
+ * for table operations. This class includes methods to map database rows to Island objects,
+ * ensure the Islands table exists, and perform various table operations like retrieval and insertion.
+ */
 public class IslandTable extends DatabaseTable<Island> {
     public IslandTable() {
         super(SBConstants.Database.TABLE_ISLANDS, 2);
@@ -39,7 +48,7 @@ public class IslandTable extends DatabaseTable<Island> {
             double z = ((Number) row.get("z")).doubleValue();
 
             List<Member> members = IslandMemberTable.getInstance().getIslandMembers(id);
-            SBLocation loc = SBLocation.of(SBWorld.of(worldName), x, y, z);
+            SBLocation loc = SBLocation.of(SBWorld.getWorld(worldName), x, y, z);
             Island island = Island.createIsland(id, name, loc, members);
 
             island.setName(name);
@@ -92,18 +101,18 @@ public class IslandTable extends DatabaseTable<Island> {
                 baseLocation.getZ()
         );
 
-        UUID retrieved = UUID.fromString(super.database.getExecutor().query(
+        UUID retrieved = UUID.fromString(super.database.getExecutor().asyncQuery(
                 "SELECT id FROM " + this.getTableName() + " WHERE name = ? LIMIT 1;",
                 String.class,
                 island.name()
-        ).stream().findFirst().orElse(UNKNOWN_ISLAND_UUID.toString()));
+        ).join().stream().findFirst().orElse(UNKNOWN_ISLAND_UUID.toString()));
 
         if (UNKNOWN_ISLAND_UUID.equals(retrieved)) {
             SBLogger.err("[IslandTable] Failed to retrieve ID for island " + island.name());
             return UNKNOWN_ISLAND_UUID;
         }
 
-        SBLogger.info("[IslandTable] &aSaved island &b" + island.name() + "&a (ID: " + retrieved + ")");
+        SBLogger.info("[IslandTable] <green>Saved island <aqua>" + island.name() + "<green> (ID: " + retrieved + ")");
         return retrieved;
     }
 

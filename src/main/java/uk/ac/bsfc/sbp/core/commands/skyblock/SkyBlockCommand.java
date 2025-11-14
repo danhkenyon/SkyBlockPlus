@@ -3,10 +3,15 @@ package uk.ac.bsfc.sbp.core.commands.skyblock;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
-import uk.ac.bsfc.sbp.utils.data.SBDatabase;
 
 import java.util.List;
 
+/**
+ * Represents the main command handler for SkyBlock functionality within the plugin.
+ * This command serves as the entry point for executing various SkyBlock-related subcommands.
+ * <br>
+ * The command supports optional subcommands such as "admin" and its respective arguments.
+ */
 public class SkyBlockCommand extends SBCommand {
     public SkyBlockCommand() {
         super();
@@ -27,9 +32,9 @@ public class SkyBlockCommand extends SBCommand {
         if (args[0].equalsIgnoreCase("admin")) {
             if (args[1].equalsIgnoreCase("reload")) {
                 SBConfig.reload();
-                SBDatabase.reload();
+//                SBDatabase.reload();
 
-                user.sendMessage(SBConstants.PLUGIN_PREFIX + " &aReloaded plugin data.");
+                user.sendMessage("{messages.prefix} <green>Reloaded plugin data.");
             }
         }
     }

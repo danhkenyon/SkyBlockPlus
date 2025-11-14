@@ -7,6 +7,12 @@ import uk.ac.bsfc.sbp.utils.SBLogger;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * A thread-safe singleton connection pool manager using HikariCP for managing database connections.
+ * This class provides methods for getting a connection, checking the connection status,
+ * and closing the pool when no longer needed.
+ * Implements AutoCloseable to ensure proper resource management.
+ */
 public final class ConnectionPool implements AutoCloseable {
     private final HikariDataSource source;
 
@@ -20,7 +26,7 @@ public final class ConnectionPool implements AutoCloseable {
         hikari.setAutoCommit(false);
 
         this.source = new HikariDataSource(hikari);
-        SBLogger.info("[Database] &aConnected to database.");
+        SBLogger.info("[Database] <green>Connected to database.");
     }
 
     private static ConnectionPool INSTANCE;

@@ -11,8 +11,26 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * A singleton configuration manager for storing, retrieving, and manipulating YAML-based
+ * configuration files. The {@code SBConfig} class provides a thread-safe and centralized
+ * way to handle application configuration by utilizing a key-value structure. Nested
+ * keys (dot-delimited paths) are supported to allow hierarchical data organization.
+ *
+ * Usage of this class ensures configuration persistence by reading from and writing to
+ * a specified YAML file, with automatic file management and creation if it doesn't exist.
+ *
+ * Main responsibilities:
+ * - Reading configuration values.
+ * - Writing and modifying configuration values.
+ * - Managing nested structures using dot-separated keys.
+ * - Persisting changes to a YAML file on disk.
+ *
+ * Thread Safety:
+ * This class uses a singleton pattern which guarantees only one instance of the
+ * configuration manager is active during the application's lifecycle.
+ */
 public class SBConfig {
-    private static SBConfig instance;
     private final Yaml yaml;
     private final File configFile;
     private Map<String, Object> data;
@@ -48,12 +66,22 @@ public class SBConfig {
         this(SBFiles.get(SBConstants.CONFIG_FILE));
     }
 
+    private static SBConfig mainInstance;
     private static SBConfig getInstance() {
-        if (instance == null) {
-            instance = new SBConfig();
+        if (mainInstance == null) {
+            mainInstance = new SBConfig(SBFiles.get(SBConstants.Configuration.CONFIG_FILE_NAME));
         }
-        return instance;
+        return mainInstance;
     }
+
+    private static SBConfig configInstance;
+    public static SBConfig getMessageConfig() {
+        if (configInstance == null) {
+            configInstance = new SBConfig(SBFiles.get(SBConstants.Configuration.MESSAGES_CONFIG_FILE_NAME));
+        }
+        return configInstance;
+    }
+
     private void reloadData() {
         try (FileInputStream in = new FileInputStream(configFile)) {
             data = yaml.load(in);
@@ -93,7 +121,7 @@ public class SBConfig {
     }
     public static Object getOrDefault(String key, Object defaultValue) {
         Object val = SBConfig.getNestedValue(SBConfig.getInstance().data, key);
-        System.out.println(val);
+
         if (val == null) {
             set(key, defaultValue);
             return defaultValue;

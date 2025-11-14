@@ -12,6 +12,11 @@ import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 
 import java.util.UUID;
 
+/**
+ * Represents a player in the system, extending the SBUser class.
+ * Provides additional functionality specific to player management,
+ * such as handling game states, world location, flight capabilities, and more.
+ */
 public class SBPlayer extends SBUser {
     private final Clipboard clipboard;
     private final Placeholder[] playerPlaceholders;
@@ -29,6 +34,7 @@ public class SBPlayer extends SBUser {
     protected SBPlayer(String name, UUID uuid) {
         super(name, uuid, false);
 
+        // Initialize clipboard
         if (ClipboardUtils.getInstance().hasClipboard(this)) {
             clipboard = ClipboardUtils.getInstance().getClipboard(this);
         } else {
@@ -36,28 +42,40 @@ public class SBPlayer extends SBUser {
             ClipboardUtils.getInstance().getClipboards().put(this, clipboard);
         }
 
+        // Default player properties
         skinUrl = "";
-        chatColour = "&f";
+        chatColour = "<white>";
         gameMode = SBGameMode.SURVIVAL;
         allowFlight = false;
         flying = false;
 
+        // Get the Bukkit player if online
         Player player = super.toBukkit(Player.class);
-        if (player != null) {
-            this.currentWorld = SBWorld.of(player.getWorld().getName(), player.getWorld());
+
+        // Ensure world exists
+        SBWorld defaultWorld;
+        if (player != null && player.getWorld() != null) {
+            defaultWorld = SBWorld.getWorld(player.getWorld().getName());
+            if (defaultWorld == null) {
+                defaultWorld = SBWorld.load(player.getWorld().getName());
+            }
             this.location = SBLocation.of(player.getLocation());
         } else {
-            this.currentWorld = SBWorld.of("world");
-            this.location = SBLocation.of();
+            defaultWorld = SBWorld.getWorld("world");
+            if (defaultWorld == null) {
+                defaultWorld = SBWorld.load("world"); // Load or create default world
+            }
+            this.location = SBLocation.of(defaultWorld, 0.5, 0, 0.5);
         }
+        this.currentWorld = defaultWorld;
 
         playerPlaceholders = new Placeholder[]{
-                Placeholder.of("%player.world%", this.currentWorld().getName()),
-                Placeholder.of("%player.loc%", this.location().format()),
-                Placeholder.of("%player.chat-colour%", this.chatColour()),
-                Placeholder.of("%player.gamemode%", this.gameMode().toString()),
-                Placeholder.of("%player.allow-flight%", this.allowFlight()),
-                Placeholder.of("%player.skin-url%", this.skinUrl()),
+                Placeholder.of("%player.world%", this.currentWorld() != null ? this.currentWorld().getName() : "unknown"),
+                Placeholder.of("%player.loc%", this.location != null ? this.location.format() : "(0,0,0)"),
+                Placeholder.of("%player.chat-colour%", this.chatColour),
+                Placeholder.of("%player.gamemode%", this.gameMode.toString()),
+                Placeholder.of("%player.allow-flight%", this.allowFlight),
+                Placeholder.of("%player.skin-url%", this.skinUrl),
         };
     }
 
@@ -100,7 +118,7 @@ public class SBPlayer extends SBUser {
             player.setGameMode(this.gameMode().getGameMode());
         }
 
-        SBLogger.info("&aUpdated &e" + this.getName() + "'s &agame mode to &e" + this.gameMode().name() + "&a.");
+        SBLogger.info("<green>Updated <yellow>" + this.getName() + "'s <green>game mode to <yellow>" + this.gameMode().name() + "<green>.");
     }
     public void allowFlight(boolean allowFlight) {
         this.allowFlight = allowFlight;
@@ -112,7 +130,7 @@ public class SBPlayer extends SBUser {
     }
     public void flying(boolean value) {
         if (this.flying == value) {
-            SBLogger.warn("&eCannot update flight for " + this.getName() + ". Already " + (flying() ? "flying" : "not flying") + "!");
+            SBLogger.warn("<yellow>Cannot update flight for " + this.getName() + ". Already " + (flying() ? "flying" : "not flying") + "!");
         } else {
             this.flying = value;
 
@@ -121,8 +139,18 @@ public class SBPlayer extends SBUser {
                 player.setFlying(value);
             }
 
-            SBLogger.info("&a" + this.getName() + " is now &e" + (flying() ? "flying" : "not flying") + "!");
+            SBLogger.info("<green>" + this.getName() + " is now <yellow>" + (flying() ? "flying" : "not flying") + "!");
         }
+    }
+
+
+    public void setFlySpeed(float speed){
+        Player player = super.toBukkit(Player.class);
+        if (player == null){
+            return;
+        }
+
+        player.setFlySpeed(speed);
     }
 
     public void currentWorld(SBWorld world) {
@@ -135,7 +163,7 @@ public class SBPlayer extends SBUser {
             player.teleport(loc);
         }
 
-        SBLogger.info("&a" + this.getName() + " moved to world &e" + world.getName() + "&a.");
+        SBLogger.info("<green>" + this.getName() + " moved to world <yellow>" + world.getName() + "<green>.");
     }
     public void location(SBLocation location) {
         this.location = location;
@@ -145,7 +173,7 @@ public class SBPlayer extends SBUser {
             player.teleport(location.toBukkit());
         }
 
-        SBLogger.info("&aTeleported &e" + this.getName() + " &ato &e" +
+        SBLogger.info("<green>Teleported <yellow>" + this.getName() + " <green>to <yellow>" +
                 location.getWorld().toString() + " (" +
                 Math.round(location.getX()) + ", " +
                 Math.round(location.getY()) + ", " +

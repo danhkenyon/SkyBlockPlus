@@ -5,6 +5,36 @@ import uk.ac.bsfc.sbp.utils.schematic.*;
 import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
+/**
+ * Represents a command that allows players to rotate the schematic in their
+ * clipboard by a specified angle and optionally apply a mirroring transformation.
+ * This command is intended to be used by players and operates on the player's
+ * clipboard, which must contain a schematic or region to function correctly.
+ *
+ * The command requires a single argument: the rotation angle,
+ * and optionally a second argument for specifying a mirroring type.
+ * If the arguments are invalid or usage is incorrect, the player will
+ * be provided with appropriate error messages.
+ *
+ * Supported rotation angles:
+ * - 90, -270: CLOCKWISE_90
+ * - 180, -180: CLOCKWISE_180
+ * - 270, -90: CLOCKWISE_270
+ * - 0, 360, -360: NONE
+ *
+ * Supported mirror transformations:
+ * - "lr", "left-right", "leftright": LEFT_RIGHT
+ * - "fb", "front-back", "frontback": FRONT_BACK
+ * - "none": NONE
+ *
+ * Error messages will be sent if:
+ * - The command is executed by a non-player entity.
+ * - The clipboard does not contain a schematic or supported region.
+ * - The arguments provided are invalid or missing.
+ *
+ * Upon successful execution, the transformed schematic will be added to the
+ * player's clipboard and a success message will be relayed to the player.
+ */
 public class RotateCommand extends SBCommand {
     public RotateCommand() {
         super();
@@ -22,7 +52,7 @@ public class RotateCommand extends SBCommand {
         }
 
         if (super.args().length != 1) {
-            player.sendMessage("&cUsage: " + super.usage());
+            player.sendMessage("<red>Usage: " + super.usage());
             return;
         }
         Rotation rot = switch (args()[0]) {
@@ -31,7 +61,7 @@ public class RotateCommand extends SBCommand {
             case "270", "-90" -> Rotation.CLOCKWISE_270;
             case "0", "360", "-360" -> Rotation.NONE;
             default -> {
-                player.sendMessage("&cUsage: " + super.usage());
+                player.sendMessage("<red>Usage: " + super.usage());
                 yield null;
             }
         };
@@ -43,7 +73,7 @@ public class RotateCommand extends SBCommand {
                 case "fb", "front-back", "frontback" -> Mirror.FRONT_BACK;
                 case "none" -> Mirror.NONE;
                 default -> {
-                    player.sendMessage("&cUnknown mirror type. Use &eleft-right&c or &efront-back&c.");
+                    player.sendMessage("<red>Unknown mirror type. Use <yellow>left-right<red> or <yellow>front-back<red>.");
                     yield null;
                 }
             };

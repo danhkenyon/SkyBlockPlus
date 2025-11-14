@@ -11,6 +11,11 @@ import java.util.*;
 
 import static uk.ac.bsfc.sbp.utils.SBConstants.Island.UNKNOWN_ISLAND_UUID;
 
+/**
+ * Represents a database table dedicated to managing island membership information.
+ * This table stores information about members associated with specific islands,
+ * their unique identifiers, and their roles within the island.
+ */
 public class IslandMemberTable extends DatabaseTable<Member> {
     private static final ThreadLocal<Set<UUID>> loading = ThreadLocal.withInitial(HashSet::new);
 
@@ -35,7 +40,7 @@ public class IslandMemberTable extends DatabaseTable<Member> {
             String rankStr = (String) row.get("rank");
 
             Rank rank = Rank.valueOf(rankStr);
-            Member member = Member.of(SBPlayer.from(uuid).to(SBPlayer.class), rank);
+            Member member = Member.of((SBPlayer) SBPlayer.from(uuid), rank);
 
             if (!UNKNOWN_ISLAND_UUID.equals(islandId)) {
                 member.setIsland(islandId);
@@ -81,7 +86,7 @@ public class IslandMemberTable extends DatabaseTable<Member> {
                 "DELETE FROM " + this.getTableName() + " WHERE island_id = ?",
                 id
         );
-        SBLogger.info("[IslandMemberTable] &cDeleted all members for island ID &b" + id);
+        SBLogger.info("[IslandMemberTable] <red>Deleted all members for island ID <aqua>" + id);
     }
 
     public List<Member> getIslandMembers(UUID id) {

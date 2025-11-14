@@ -8,6 +8,32 @@ import uk.ac.bsfc.sbp.utils.data.database.QueryExecutor;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * SBDatabase is a singleton class that provides a simplified interface for interacting
+ * with a database. It manages database connections using a ConnectionPool and executes
+ * queries through a QueryExecutor. The class supports various SQL operations, including
+ * querying, updating, and inserting data.
+ *
+ * It ensures thread-safe access to the database and maintains a single instance of the
+ * connection pool and query executor.
+ *
+ * Features:
+ * - Singleton pattern for centralized database management.
+ * - Easy retrieval of the connection pool and query executor.
+ * - Asynchronous query execution with synchronous behavior for results.
+ * - Automatic resource management upon closure.
+ *
+ * Methods:
+ * - `getInstance()`: Retrieves the singleton instance of SBDatabase.
+ * - `getInstance(boolean createNew)`: Retrieves the singleton instance or creates a new one if specified.
+ * - `reload()`: Reloads and recreates the database connection.
+ * - `query(String sql, Object... params)`: Executes a SQL query and returns the result as a list of maps.
+ * - `update(String sql, Object... params)`: Executes a SQL update and returns the number of affected rows.
+ * - `insert(String sql, Object... params)`: Executes a SQL insert and returns the generated ID.
+ * - `getAllColumnValues(String table, String column)`: Retrieves all unique values for a specified column in a table.
+ * - `isConnected()`: Checks if the database connection is active.
+ * - `close()`: Closes the database connection and releases resources.
+ */
 public class SBDatabase implements AutoCloseable {
     private final ConnectionPool pool;
     private final QueryExecutor executor;
@@ -52,7 +78,7 @@ public class SBDatabase implements AutoCloseable {
 
     public static List<Map<String, Object>> query(String sql, Object... params) {
         try {
-            return SBDatabase.getInstance().getExecutor().query(sql, params);
+            return SBDatabase.getInstance().getExecutor().asyncQuery(sql, params).join();
         } catch (RuntimeException e) {
             SBLogger.err("[SBDatabase] RuntimeException occurred during SQL query! Message: " + e.getMessage());
             throw new RuntimeException();
@@ -76,12 +102,12 @@ public class SBDatabase implements AutoCloseable {
     }
 
     public static List<String> getAllColumnValues(String table, String column) {
-        return SBDatabase.getInstance().getExecutor().getAllColumnValues(table, column);
+        return SBDatabase.getInstance().getExecutor().getAllColumnValues(table, column).join();
     }
 
     @Override
     public void close() {
-        SBLogger.info("[Database] &cClosing database connection!");
+        SBLogger.info("[Database] <red>Closing database connection!");
         pool.close();
     }
 }

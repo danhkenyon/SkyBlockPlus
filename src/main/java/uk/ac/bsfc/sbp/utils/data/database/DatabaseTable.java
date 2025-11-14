@@ -10,6 +10,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Represents an abstract database table with generic row mapping capability.
+ * This class provides methods for querying and manipulating data in a database table.
+ * Each implementation must define how rows are mapped from the database and ensure the table exists.
+ *
+ * @param <T> The type of object that represents a row in the table.
+ */
 public abstract class DatabaseTable<T> {
     protected final SBDatabase database = SBDatabase.getInstance();
     protected final String tableName;
@@ -49,10 +56,10 @@ public abstract class DatabaseTable<T> {
         return results.isEmpty() ? null : mapRow(results.getFirst());
     }
     public boolean exists(String fieldName, Object value) {
-        List<Map<String, Object>> results = SBDatabase.getInstance().getExecutor().query(
+        List<Map<String, Object>> results = SBDatabase.getInstance().getExecutor().asyncQuery(
                 "SELECT 1 FROM " + this.getTableName() + " WHERE " + fieldName + " = ? LIMIT 1;",
                 value
-        );
+        ).join();
         return !results.isEmpty();
     }
     public T getRow(String column, Object value) {
@@ -75,6 +82,8 @@ public abstract class DatabaseTable<T> {
                 value
         ).stream().map(this::mapRow).toList();
     }
+
+
     public int delete(Object value) {
         return SBDatabase.update(
                 "DELETE FROM " + this.tableName + " WHERE " + this.primaryKey + " = ?;",
@@ -107,15 +116,15 @@ public abstract class DatabaseTable<T> {
                     }
                 }
             } catch (Exception e) {
-                SBLogger.err("&cFailed to instantiate class &b" + clazz.getSimpleName() + "&c: " + e.getMessage());
+                SBLogger.err("<red>Failed to instantiate class <aqua>" + clazz.getSimpleName() + "<red>: " + e.getMessage());
             }
         }
 
         tables.sort(Comparator.comparingInt(DatabaseTable::getWeight));
 
-        SBLogger.info("[Database] &aFound &b" + tables.size() + " &aTable(s).");
+        SBLogger.info("[Database] <green>Found " + tables.size() + " <green>Table(s).");
         for (DatabaseTable<?> table : tables) {
-            SBLogger.info("[Database] &a-| Table: &b" + table.getTableName() + " &7(Weight: " + table.getWeight() + ")");
+            SBLogger.info("[Database] <green>-| Table: <aqua>" + table.getTableName() + " <gray>(Weight: " + table.getWeight() + ")");
         }
 
         return tables;

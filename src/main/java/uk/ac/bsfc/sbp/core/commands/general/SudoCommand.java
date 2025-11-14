@@ -8,6 +8,24 @@ import uk.ac.bsfc.sbp.utils.user.SBUser;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a command that allows executing another command as a specified user.
+ *
+ * The SudoCommand extends the SBCommand class, providing functionality to execute
+ * commands or chat messages on behalf of another user, including the console.
+ *
+ * Key Features:
+ * - Executes a command or chat message as another user.
+ * - Allows targeting the console or online players.
+ * - Optionally repeats the command multiple times.
+ * - Provides argument-based suggestions for ease of use.
+ *
+ * Usage details:
+ * - Name: sudo
+ * - Description: Execute a command as another user.
+ * - Usage: /sudo <user> [amount] <command>
+ * - Required Permission: sbp.command.sudo
+ */
 public class SudoCommand extends SBCommand {
     public SudoCommand() {
         super();
@@ -21,7 +39,7 @@ public class SudoCommand extends SBCommand {
 
     public @Override void execute() {
         if (args.length < 2) {
-            getUser().sendMessage("&cUsage: &f" + usage());
+            getUser().sendMessage("<red>Usage: <white>" + usage());
             return;
         }
         String targetName = args[0];
@@ -32,7 +50,7 @@ public class SudoCommand extends SBCommand {
         } else {
             Player targetPlayer = Bukkit.getPlayerExact(targetName);
             if (targetPlayer == null) {
-                getUser().sendMessage("&cUser &f" + targetName + " &cis not online!");
+                getUser().sendMessage("<red>User <white>" + targetName + " <red>is not online!");
                 return;
             }
             target = SBUser.from(targetPlayer.getUniqueId());
@@ -55,7 +73,7 @@ public class SudoCommand extends SBCommand {
         String command = sb.toString().trim();
 
         if (command.isEmpty()) {
-            super.getUser().sendMessage("&cYou must specify a command or chat message to execute!");
+            super.getUser().sendMessage("<red>You must specify a command or chat message to execute!");
             return;
         }
 
