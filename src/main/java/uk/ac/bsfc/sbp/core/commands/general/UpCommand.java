@@ -41,7 +41,7 @@ public class UpCommand extends SBCommand {
                     loc.getYaw(),
                     loc.getPitch()
             ));
-            player.sendMessage("{messages.commands.up-success}", Placeholder.of("%blocks%", blocks));
+            player.sendMessage("{messages.commands.up-;success}", Placeholder.of("%blocks%", blocks));
         } catch (NumberFormatException e) {
             user.sendMessage("&cInvalid number of blocks: " + args[0]);
         }
