@@ -1,9 +1,6 @@
 package uk.ac.bsfc.sbp.utils.schematic;
 
 import com.google.gson.Gson;
-import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.NBTBlock;
-import de.tr7zw.changeme.nbtapi.NBTContainer;
 import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -159,13 +156,7 @@ public class SchematicPlacer {
             snbt.deleteCharAt(snbt.length() - 1);
             snbt.append("}");
 
-            NBTContainer container = (NBTContainer) NBT.parseNBT(String.valueOf(snbt));
-            System.out.println(container);
-
-            NBTBlock nbtBlock = new NBTBlock(block);
-
-            nbtBlock.getData().addCompound(container.toString());
-            System.out.println(nbtBlock.getData());
+            //TODO: Write NBT data handing. that api was a load of shit
         } catch (Exception e) {
             SBLogger.err("Failed to apply NBT to block at " + block.getLocation() + ": " + e);
         }

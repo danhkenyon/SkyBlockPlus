@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class StackManager {
-
     private final Map<UUID, SBEntity> entities = new HashMap<>();
 
     public SBMob spawnStackedMob(Location loc, EntityType type, int stackSize) {
@@ -32,7 +31,6 @@ public class StackManager {
         entities.values().forEach(SBEntity::kill);
         entities.clear();
     }
-
     public Map<UUID, SBEntity> getAll() {
         return entities;
     }

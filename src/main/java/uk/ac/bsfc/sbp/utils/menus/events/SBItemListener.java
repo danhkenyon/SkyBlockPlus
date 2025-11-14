@@ -1,4 +1,4 @@
-package uk.ac.bsfc.sbp.utils.menus;
+package uk.ac.bsfc.sbp.utils.menus.events;
 
 import io.papermc.paper.event.player.PlayerPickItemEvent;
 import org.bukkit.entity.Player;
@@ -10,76 +10,72 @@ import org.bukkit.event.player.*;
 
 import org.bukkit.inventory.ItemStack;
 import uk.ac.bsfc.sbp.Main;
+import uk.ac.bsfc.sbp.utils.menus.SBItem;
 
 public class SBItemListener implements Listener {
     public static void register() {
         Main.getInstance().getServer().getPluginManager().registerEvents(new SBItemListener(), Main.getInstance());
     }
 
-    private SBItem getSBItem(ItemStack item) {
-        return SBItem.fromBukkit(item);
-    }
-
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        var sbItem = getSBItem(event.getItem());
+        var sbItem = SBItem.fromBukkit(event.getItem());
         if (sbItem != null && sbItem.getOnInteract() != null)
             sbItem.getOnInteract().accept(event.getPlayer(), event);
     }
-
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
-        var sbItem = getSBItem(event.getItemDrop().getItemStack());
+        var sbItem = SBItem.fromBukkit(event.getItemDrop().getItemStack());
         if (sbItem.getOnDrop() != null) {
             sbItem.getOnDrop().accept(event.getPlayer(), event);
         }
     }
-
     @EventHandler
     public void onPickup(PlayerPickItemEvent event) {
-        var sbItem = getSBItem(event.getPlayer().getPickItemStack());
-        if (sbItem != null && sbItem.getOnPickup() != null)
+        var sbItem = SBItem.fromBukkit(event.getPlayer().getPickItemStack());
+        if (sbItem != null && sbItem.getOnPickup() != null) {
             sbItem.getOnPickup().accept(event.getPlayer(), event);
+        }
     }
-
     @EventHandler
     public void onHeld(PlayerItemHeldEvent event) {
         Player player = event.getPlayer();
         ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
-        var sbItem = getSBItem(newItem);
-        if (sbItem != null && sbItem.getOnHeld() != null)
+        var sbItem = SBItem.fromBukkit(newItem);
+        if (sbItem != null && sbItem.getOnHeld() != null) {
             sbItem.getOnHeld().accept(player, event);
+        }
     }
-
     @EventHandler
     public void onConsume(PlayerItemConsumeEvent event) {
-        var sbItem = getSBItem(event.getItem());
-        if (sbItem != null && sbItem.getOnConsume() != null)
+        var sbItem = SBItem.fromBukkit(event.getItem());
+        if (sbItem != null && sbItem.getOnConsume() != null) {
             sbItem.getOnConsume().accept(event.getPlayer(), event);
+        }
     }
-
     @EventHandler
     public void onSwap(PlayerSwapHandItemsEvent event) {
-        var sbItem = getSBItem(event.getOffHandItem());
-        if (sbItem != null && sbItem.getOnSwapHand() != null)
+        var sbItem = SBItem.fromBukkit(event.getOffHandItem());
+        if (sbItem != null && sbItem.getOnSwapHand() != null) {
             sbItem.getOnSwapHand().accept(event.getPlayer(), event);
+        }
     }
-
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
-        var sbItem = getSBItem(event.getCurrentItem());
-        if (sbItem != null && sbItem.getOnInventoryClick() != null)
+        var sbItem = SBItem.fromBukkit(event.getCurrentItem());
+        if (sbItem != null && sbItem.getOnInventoryClick() != null) {
             sbItem.getOnInventoryClick().accept(player, event);
+        }
     }
-
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
         for (ItemStack item : event.getNewItems().values()) {
-            var sbItem = getSBItem(item);
-            if (sbItem != null && sbItem.getOnInventoryDrag() != null)
+            var sbItem = SBItem.fromBukkit(item);
+            if (sbItem != null && sbItem.getOnInventoryDrag() != null) {
                 sbItem.getOnInventoryDrag().accept(player, event);
+            }
         }
     }
 }

@@ -1,8 +1,6 @@
 package uk.ac.bsfc.sbp.utils.schematic;
 
 import com.google.gson.*;
-import de.tr7zw.changeme.nbtapi.NBTBlock;
-import de.tr7zw.changeme.nbtapi.NBTCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -123,16 +121,7 @@ public class SchematicParser {
 
                         BlockState state = block.getState();
                         if (state instanceof TileState) {
-                            try {
-                                NBTBlock nbtBlock = new NBTBlock(block);
-                                NBTCompound data = nbtBlock.getData();
-                                if (data != null && !data.getKeys().isEmpty()) {
-                                    JsonObject nbtJson = JsonParser.parseString(data.toString()).getAsJsonObject();
-                                    blockObj.add("nbt", nbtJson);
-                                }
-                            } catch (Exception e) {
-                                SBLogger.warn("Failed to get NBT for " + block.getType() + " at " + x + "," + y + "," + z);
-                            }
+                            //TODO: Write NBT data handing. that api was a load of shit
                         }
 
                         blockArray.add(blockObj);

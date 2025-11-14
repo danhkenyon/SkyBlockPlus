@@ -33,8 +33,6 @@ dependencies {
 
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
     implementation 'com.zaxxer:HikariCP:6.3.0'
-
-    implementation 'de.tr7zw:item-nbt-api:2.15.3'
 }
 
 tasks {
@@ -48,7 +46,6 @@ tasks {
         dependencies {
             include(dependency("org.mariadb.jdbc:mariadb-java-client:3.4.1"))
             include(dependency("com.zaxxer:HikariCP:6.3.0"))
-            include(dependency("de.tr7zw:item-nbt-api:2.15.3"))
         }
 
         into('META-INF') {
@@ -60,8 +57,6 @@ tasks {
             }
             rename { '.mojang-mapped' }
         }
-
-        relocate("de.tr7zw.changeme.nbtapi", "uk.ac.bsfc.libs.nbtapi")
     }
 
     build {

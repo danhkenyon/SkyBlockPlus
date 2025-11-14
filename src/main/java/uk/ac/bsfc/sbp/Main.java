@@ -1,6 +1,5 @@
 package uk.ac.bsfc.sbp;
 
-import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.Bukkit;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,7 +10,8 @@ import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.entity.StackManager;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
 import uk.ac.bsfc.sbp.utils.menus.SBItem;
-import uk.ac.bsfc.sbp.utils.menus.SBItemListener;
+import uk.ac.bsfc.sbp.utils.menus.events.SBItemListener;
+import uk.ac.bsfc.sbp.utils.menus.events.SBMenuListener;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
 /**
@@ -54,12 +54,6 @@ public final class Main extends JavaPlugin {
         stackManager = new StackManager();
         this.setNaggable(SBConfig.getBoolean("bukkit-logging"));
         SBLogger.info("<green>Loading plugin...");
-
-        if (!NBT.preloadApi()) {
-            SBLogger.warn("NBT-API wasn't initialized properly, disabling the plugin");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
     }
 
     @Override
@@ -75,6 +69,7 @@ public final class Main extends JavaPlugin {
 
             SBItem.loadRegistry();
             SBItemListener.register();
+            SBMenuListener.register();
 
             assert Bukkit.getWorlds().getFirst() != null;
             globalContainer = Bukkit.getWorlds().getFirst().getPersistentDataContainer();
