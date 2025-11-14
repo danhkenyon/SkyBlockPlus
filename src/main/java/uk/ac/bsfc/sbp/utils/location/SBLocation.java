@@ -18,10 +18,6 @@ public class SBLocation extends Wrapper<Location> implements Cloneable {
     private final double x, y, z;
     private final float yaw, pitch;
 
-    /*
-     * |>--<| CONSTRUCTORS |>--<|
-     */
-
     private SBLocation(Location location) {
         this.world = SBWorld.getWorld(location.getWorld().getName());
         this.worldName = location.getWorld().getName();
@@ -49,10 +45,6 @@ public class SBLocation extends Wrapper<Location> implements Cloneable {
         this.yaw = yaw;
         this.pitch = pitch;
     }
-
-    /*
-     * |>--<| FACTORY METHODS |>--<|
-     */
 
     public static SBLocation of(Location location) {
         return new SBLocation(location);
@@ -84,10 +76,6 @@ public class SBLocation extends Wrapper<Location> implements Cloneable {
     public static SBLocation of() {
         return new SBLocation("world", 0.5, 0, 0.5, 0, 0);
     }
-
-    /*
-     * |>--<| GETTERS |>--<|
-     */
 
     @Override
     public Location toBukkit() {

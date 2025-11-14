@@ -76,7 +76,7 @@ public class SBCommandHandler {
         ) {
             @Override
             public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-                SBUser user = SBUser.from(sender);
+                SBUser user = SBUser.from(sender.getName());
 
                 if (!command.isEnabled() && !user.toBukkit(Player.class).hasPermission("sbp.command-bypass")){
                     user.sendMessage("<red>This command is disabled!");
@@ -103,7 +103,7 @@ public class SBCommandHandler {
 
             @Override
             public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) {
-                SBUser user = SBUser.from(sender);
+                SBUser user = SBUser.from(sender.getName());
                 try {
                     command.args(args);
                     command.user = user;

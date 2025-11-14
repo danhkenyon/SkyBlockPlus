@@ -18,8 +18,8 @@ package uk.ac.bsfc.sbp.utils.strings;
  * - `obj`: Retrieves the value (object) of the Placeholder.
  */
 public class Placeholder {
-    private String val;
-    private Object obj;
+    private final String val;
+    private final Object obj;
 
     private Placeholder(String val, Object obj) {
         this.val = val;

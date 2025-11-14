@@ -40,7 +40,9 @@ import java.io.PrintStream;
  * other statically initialized components. Ensure proper thread-safety in
  * dependent components (e.g., SBConfig) to avoid concurrency issues.
  */
-public class SBLogger {
+public final class SBLogger {
+    private SBLogger() {}
+
     private static final boolean bukkitLogging = SBConfig.getBoolean("bukkit-logging");
     private static final boolean timeStamps = SBConfig.getBoolean("log-timestamp");
     private static final SBTimeFormat timeFormat = SBTimeFormat.of(SBConfig.getString("log-timestamp-format"));

@@ -37,7 +37,7 @@ public class EventBridge implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         e.setJoinMessage("");
-        Main.getInstance().getEventRegister().fire(new UserJoinEvent(SBUser.from(e.getPlayer())));
+        Main.getInstance().getEventRegister().fire(new UserJoinEvent(SBUser.from(e.getPlayer().getUniqueId())));
     }
 
 

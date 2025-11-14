@@ -16,7 +16,9 @@ import java.util.jar.JarFile;
  * Provides utility methods for performing reflection-based operations, such as discovering classes
  * in a specified package that inherit from or implement a given superclass or interface.
  */
-public class SBReflectionUtils {
+public final class SBReflectionUtils {
+    private SBReflectionUtils() {}
+
     public static List<Class<?>> find(String basePackage, Class<?> superClass) {
         List<Class<?>> classes = new ArrayList<>();
         String path = basePackage.replace('.', '/');

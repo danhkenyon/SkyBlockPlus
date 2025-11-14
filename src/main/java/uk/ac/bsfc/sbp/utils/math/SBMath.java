@@ -1,4 +1,4 @@
-package uk.ac.bsfc.sbp.utils;
+package uk.ac.bsfc.sbp.utils.math;
 
 /**
  * The SBMath class provides a utility method for mathematical operations,
@@ -13,7 +13,9 @@ package uk.ac.bsfc.sbp.utils;
  * The method is thread-safe as it operates on local variables and does
  * not rely on shared or mutable state.
  */
-public class SBMath {
+public final class SBMath {
+    private SBMath() {}
+
     public static double round(double value, int precision) {
         int scale = (int) Math.pow(10, precision);
         return (double) Math.round(value * scale) / scale;

@@ -3,7 +3,7 @@ package uk.ac.bsfc.sbp.utils.event.player;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.event.SBEvent;
-import uk.ac.bsfc.sbp.utils.game.SBServer;
+import uk.ac.bsfc.sbp.utils.server.SBServer;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
 import static uk.ac.bsfc.sbp.utils.SBConstants.Messages.DEFAULT_JOIN_MESSAGE;

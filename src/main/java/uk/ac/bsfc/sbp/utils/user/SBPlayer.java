@@ -1,9 +1,9 @@
 package uk.ac.bsfc.sbp.utils.user;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import uk.ac.bsfc.sbp.utils.SBLogger;
-import uk.ac.bsfc.sbp.utils.game.SBGameMode;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.schematic.Clipboard;
@@ -34,7 +34,6 @@ public class SBPlayer extends SBUser {
     protected SBPlayer(String name, UUID uuid) {
         super(name, uuid, false);
 
-        // Initialize clipboard
         if (ClipboardUtils.getInstance().hasClipboard(this)) {
             clipboard = ClipboardUtils.getInstance().getClipboard(this);
         } else {
@@ -42,29 +41,20 @@ public class SBPlayer extends SBUser {
             ClipboardUtils.getInstance().getClipboards().put(this, clipboard);
         }
 
-        // Default player properties
         skinUrl = "";
         chatColour = "<white>";
         gameMode = SBGameMode.SURVIVAL;
         allowFlight = false;
         flying = false;
 
-        // Get the Bukkit player if online
         Player player = super.toBukkit(Player.class);
 
-        // Ensure world exists
         SBWorld defaultWorld;
-        if (player != null && player.getWorld() != null) {
+        if (player != null) {
             defaultWorld = SBWorld.getWorld(player.getWorld().getName());
-            if (defaultWorld == null) {
-                defaultWorld = SBWorld.load(player.getWorld().getName());
-            }
             this.location = SBLocation.of(player.getLocation());
         } else {
             defaultWorld = SBWorld.getWorld("world");
-            if (defaultWorld == null) {
-                defaultWorld = SBWorld.load("world"); // Load or create default world
-            }
             this.location = SBLocation.of(defaultWorld, 0.5, 0, 0.5);
         }
         this.currentWorld = defaultWorld;
@@ -185,11 +175,31 @@ public class SBPlayer extends SBUser {
         this.location(loc);
     }
 
-    @Override
-    public void sendMessage(String message) {
-        super.sendMessage(message, this.playerPlaceholders);
+    public enum SBGameMode {
+        SURVIVAL,
+        CREATIVE,
+        ADVENTURE,
+        SPECTATOR;
+
+        public org.bukkit.GameMode getGameMode() {
+            return org.bukkit.GameMode.valueOf(this.name());
+        }
+
+        @Override
+        public String toString() {
+            char[] arr = this.name().toLowerCase().toCharArray();
+            arr[0] = Character.toUpperCase(arr[0]);
+            return new String(arr);
+        }
     }
 
+
+    public @Override void sendMessage(String message) {
+        super.sendMessage(message, this.playerPlaceholders);
+    }
+    public @Override void sendMessage(Component message) {
+        super.sendMessage(message, this.playerPlaceholders);
+    }
     @Override
     public String toString() {
         return "SBPlayer[username=" + this.getName() +

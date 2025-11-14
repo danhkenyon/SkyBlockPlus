@@ -15,7 +15,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
  * - Serialize Adventure {@code Component} objects into MiniMessage strings.
  * - Deserialize MiniMessage strings into Adventure {@code Component} objects.
  */
-public class SBColourUtils {
+public final class SBColourUtils {
+    private SBColourUtils() {}
+
     public static Component format(String string){
         return MiniMessage.miniMessage().deserialize(string);
     }

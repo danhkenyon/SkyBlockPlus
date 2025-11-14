@@ -1,4 +1,3 @@
-
 package uk.ac.bsfc.sbp.utils.event;
 
 import org.bukkit.event.Listener;

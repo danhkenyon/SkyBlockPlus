@@ -29,11 +29,8 @@ public class SBItemListener implements Listener {
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
-        System.out.println("a");
         var sbItem = getSBItem(event.getItemDrop().getItemStack());
-        System.out.println(sbItem.getName());
-        if (sbItem != null && sbItem.getOnDrop() != null) {
-            System.out.println("b");
+        if (sbItem.getOnDrop() != null) {
             sbItem.getOnDrop().accept(event.getPlayer(), event);
         }
     }

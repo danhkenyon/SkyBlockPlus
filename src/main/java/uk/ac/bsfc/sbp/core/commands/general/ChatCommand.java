@@ -1,8 +1,8 @@
 package uk.ac.bsfc.sbp.core.commands.general;
 
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
-import uk.ac.bsfc.sbp.utils.game.SBServer;
-import uk.ac.bsfc.sbp.utils.user.SBUserType;
+import uk.ac.bsfc.sbp.utils.server.SBServer;
+import uk.ac.bsfc.sbp.utils.user.SBUser;
 
 /**
  * Represents a command that allows the console to broadcast a chat message to all players.
@@ -34,7 +34,7 @@ public class ChatCommand extends SBCommand {
 
     @Override
     public void execute() {
-        if (super.getUser().getUserType() == SBUserType.PLAYER || super.getUser().getUserType() == SBUserType.UNDEFINED) {
+        if (super.getUser().getUserType() == SBUser.SBUserType.PLAYER || super.getUser().getUserType() == SBUser.SBUserType.UNDEFINED) {
             super.getUser().sendMessage("<red>Only the console can use this command.");
             return;
         }

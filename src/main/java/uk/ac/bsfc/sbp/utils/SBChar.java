@@ -11,6 +11,7 @@ package uk.ac.bsfc.sbp.utils;
  * Example:
  * Use these constants in text or UI components for consistency and clarity.
  */
+@Deprecated
 public class SBChar {
     public static final String ARROW = "➤";
 }
