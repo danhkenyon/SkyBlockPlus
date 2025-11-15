@@ -18,6 +18,9 @@ repositories {
         name = "CodeMC"
         url = uri("https://repo.codemc.io/repository/maven-public/")
     }
+    maven {
+        url 'https://repo.xenondevs.xyz/releases'
+    }
 }
 
 apply plugin: 'java-library'
@@ -33,6 +36,8 @@ dependencies {
 
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
     implementation 'com.zaxxer:HikariCP:6.3.0'
+
+    implementation 'xyz.xenondevs.invui:invui:1.47'
 }
 
 tasks {
@@ -79,7 +84,7 @@ processResources {
     def props = [version: version]
     inputs.properties props
     filteringCharset 'UTF-8'
-    filesMatching('plugin.yml') {
+    filesMatching('paper-plugin.yml') {
         expand props
     }
 }

@@ -13,6 +13,7 @@ import uk.ac.bsfc.sbp.utils.menus.SBItem;
 import uk.ac.bsfc.sbp.utils.menus.events.SBItemListener;
 import uk.ac.bsfc.sbp.utils.menus.events.SBMenuListener;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
+import xyz.xenondevs.invui.InvUI;
 
 /**
  * Represents the main class of the plugin extending the JavaPlugin framework.
@@ -59,6 +60,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
+            InvUI.getInstance().setPlugin(this);
             commandHandler = SBCommandHandler.getInstance();
             commandHandler.register();
             eventRegister = SBEventRegister.getInstance();
