@@ -13,10 +13,8 @@ import uk.ac.bsfc.sbp.utils.user.SBUser;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("UnstableApiUsage")
 @ApiStatus.Experimental
 public class TestCommand extends SBCommand {
-
     MiniMessage mm = MiniMessage.miniMessage();
 
     public TestCommand() {
