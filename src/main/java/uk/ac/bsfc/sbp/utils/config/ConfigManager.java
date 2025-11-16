@@ -58,10 +58,10 @@ public class ConfigManager {
             if (Files.exists(file)) {
                 Config cfg = ConfigFactory.parseFile(file.toFile()).resolve();
                 applyConfigToObject(instance, cfg);
-            } else {
-                String rendered = renderDefaults(instance, 0);
-                Files.writeString(file, rendered);
             }
+
+            String rendered = renderDefaults(instance, 0);
+            Files.writeString(file, rendered);
 
             configs.put(clazz, instance);
 
@@ -76,20 +76,20 @@ public class ConfigManager {
             String key = field.getName();
             Class<?> type = field.getType();
 
-            if (type.isPrimitive() || type == String.class || Number.class.isAssignableFrom(type) || type == Boolean.class) {
-                if (cfg.hasPath(key)) field.set(target, castValue(cfg.getAnyRef(key), type));
-            } else if (type.isEnum()) {
-                if (cfg.hasPath(key)) {
+            if (cfg.hasPath(key)) {
+                if (type.isPrimitive() || type == String.class || Number.class.isAssignableFrom(type) || type == Boolean.class || type == Character.class || type == char.class) {
+                    field.set(target, castValue(cfg.getAnyRef(key), type));
+                } else if (type.isEnum()) {
                     String str = cfg.getString(key);
                     field.set(target, Enum.valueOf((Class<Enum>) type, str));
+                } else {
+                    Object nestedInstance = field.get(target);
+                    if (nestedInstance == null) {
+                        nestedInstance = type.getDeclaredConstructor().newInstance();
+                        field.set(target, nestedInstance);
+                    }
+                    applyConfigToObject(nestedInstance, cfg.getConfig(key));
                 }
-            } else {
-                Object nestedInstance = field.get(target);
-                if (nestedInstance == null) {
-                    nestedInstance = type.getDeclaredConstructor().newInstance();
-                    field.set(target, nestedInstance);
-                }
-                if (cfg.hasPath(key)) applyConfigToObject(nestedInstance, cfg.getConfig(key));
             }
         }
     }
@@ -100,6 +100,10 @@ public class ConfigManager {
         if (type == double.class || type == Double.class) return ((Number) value).doubleValue();
         if (type == float.class || type == Float.class) return ((Number) value).floatValue();
         if (type == boolean.class || type == Boolean.class) return value;
+        if (type == char.class || type == Character.class) {
+            String s = value.toString();
+            return s.isEmpty() ? '\0' : s.charAt(0);
+        }
         if (type == String.class) return value.toString();
         return value;
     }
@@ -123,6 +127,8 @@ public class ConfigManager {
 
             if (type.isPrimitive() || Number.class.isAssignableFrom(type) || type == Boolean.class) {
                 sb.append(indent).append(key).append(" = ").append(value).append("\n");
+            } else if (type == char.class || type == Character.class) {
+                sb.append(indent).append(key).append(" = \"").append(value).append("\"\n");
             } else if (type == String.class) {
                 sb.append(indent).append(key).append(" = \"").append(value).append("\"\n");
             } else if (type.isEnum()) {

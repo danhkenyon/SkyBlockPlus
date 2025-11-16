@@ -3,12 +3,14 @@ package uk.ac.bsfc.sbp.utils.config;
 @ConfigFile("server-config")
 public class ServerConfig implements ReloadableConfig{
     public boolean bukkitLogging = false;
-    public boolean logTimestamp = true;
+    public boolean logTimestamp = false;
     public String logTimestampFormat = "hh:mm:ss";
 
     @Comment("Database connection setup")
     public Database database = new Database();
 
+    @Comment("Test 'update' on the config")
+    public char test = 'a';
 
 
 
