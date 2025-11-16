@@ -5,6 +5,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
+import uk.ac.bsfc.sbp.utils.config.ConfigManager;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.entity.StackManager;
@@ -36,18 +37,14 @@ import xyz.xenondevs.invui.InvUI;
  */
 public final class Main extends JavaPlugin {
     private static Main instance;
-    public static Main getInstance() {
-        return instance;
-    }
+    public static Main getInstance() { return instance; }
+
     private static StackManager stackManager;
-    public static StackManager getStackManager(){
-        return stackManager;
-    }
+    public static StackManager getStackManager() { return stackManager; }
 
     private PersistentDataContainer globalContainer;
     private SBCommandHandler commandHandler;
     private SBEventRegister eventRegister;
-
 
     @Override
     public void onLoad() {
@@ -61,6 +58,9 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         try {
             InvUI.getInstance().setPlugin(this);
+
+            ConfigManager.loadConfigs("uk.ac.bsfc.sbp.utils.config");
+
             commandHandler = SBCommandHandler.getInstance();
             commandHandler.register();
             eventRegister = SBEventRegister.getInstance();
@@ -91,13 +91,11 @@ public final class Main extends JavaPlugin {
         SBLogger.info("<red>Plugin Disabled!");
     }
 
-    public SBCommandHandler getCommandHandler() {
-        return commandHandler;
-    }
-    public SBEventRegister getEventRegister() {
-        return eventRegister;
-    }
-    public PersistentDataContainer getGlobalContainer(){
-        return globalContainer;
+    public SBCommandHandler getCommandHandler() { return commandHandler; }
+    public SBEventRegister getEventRegister() { return eventRegister; }
+    public PersistentDataContainer getGlobalContainer() { return globalContainer; }
+
+    public <T> T getConfig(Class<T> clazz) {
+        return ConfigManager.getConfig(clazz);
     }
 }
