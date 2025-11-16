@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("com.gradleup.shadow") version "8.3.9"
+    id "xyz.jpenilla.run-paper" version "2.3.1"
+    id "com.gradleup.shadow" version "8.3.9"
 }
 
 group = 'uk.ac.bsfc'
@@ -18,21 +18,46 @@ repositories {
         name = "CodeMC"
         url = uri("https://repo.codemc.io/repository/maven-public/")
     }
+    maven {
+        url 'https://repo.xenondevs.xyz/releases'
+    }
 }
 
 apply plugin: 'java-library'
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
+    compileOnly "io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT"
 
     api 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.google.guava:guava:32.0.1-android'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
     implementation 'com.zaxxer:HikariCP:6.3.0'
+    implementation "com.typesafe:config:1.4.3"
+
+    implementation 'xyz.xenondevs.invui:invui:1.47'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('paper-plugin.yml') {
+        expand props
+    }
 }
 
 tasks {
@@ -46,13 +71,16 @@ tasks {
         dependencies {
             include(dependency("org.mariadb.jdbc:mariadb-java-client:3.4.1"))
             include(dependency("com.zaxxer:HikariCP:6.3.0"))
+            include(dependency("com.typesafe:config:1.4.3"))
         }
+
+        relocate 'com.typesafe.config', 'uk.ac.bsfc.sbp.shaded.typesafe.config'
 
         into('META-INF') {
             from {
                 def temp = file("${buildDir}/tmp/.mojang-mapped")
                 temp.parentFile.mkdirs()
-                temp.text = "" // empty content
+                temp.text = ""
                 temp
             }
             rename { '.mojang-mapped' }
@@ -61,25 +89,5 @@ tasks {
 
     build {
         dependsOn(shadowJar)
-    }
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-
-processResources {
-    def props = [version: version]
-    inputs.properties props
-    filteringCharset 'UTF-8'
-    filesMatching('plugin.yml') {
-        expand props
     }
 }
