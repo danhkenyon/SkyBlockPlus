@@ -2,6 +2,7 @@ package uk.ac.bsfc.sbp.core.events;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -43,7 +44,7 @@ public class MobStackerHandler extends SBEventHandler {
         }
         spawnLock.put(key, now);
 
-        int spawnCount = 1;
+        int spawnCount = getSpawnCountFromSpawner(event.getSpawner());
 
         long currentStacksInChunk = stackManager.getAll().values().stream()
                 .filter(sb -> sb instanceof SBMob sbMob
@@ -58,13 +59,25 @@ public class MobStackerHandler extends SBEventHandler {
 
         SBMob existing = findExistingStackNotFull(chunk, entity, mobCfg.maxStack);
         if (existing != null) {
-            existing.incrementStack(spawnCount);
+            int availableSpace = mobCfg.maxStack - existing.getStackSize();
+            int amountToAdd = Math.min(spawnCount, availableSpace);
+
+            existing.incrementStack(amountToAdd);
             entity.remove();
+
+            if (amountToAdd < spawnCount) {
+                SBLogger.raw("<yellow>Mob stack reached max size (" + mobCfg.maxStack + "), only added " + amountToAdd + " of " + spawnCount + " mobs");
+            }
         } else {
-            SBMob sbMob = new SBMob(entity, spawnCount);
+            int stackSize = Math.min(spawnCount, mobCfg.maxStack);
+            SBMob sbMob = new SBMob(entity, stackSize);
             stackManager.getAll().put(entity.getUniqueId(), sbMob);
             if (mobCfg.disableAI && entity instanceof Mob mob) {
                 mob.setAware(false);
+            }
+
+            if (stackSize < spawnCount) {
+                SBLogger.raw("<yellow>Mob stack limited to max size (" + mobCfg.maxStack + "), spawned " + stackSize + " of " + spawnCount + " mobs");
             }
         }
     }
@@ -110,5 +123,30 @@ public class MobStackerHandler extends SBEventHandler {
                 .map(sb -> (SBMob) sb)
                 .findFirst()
                 .orElse(null);
+    }
+
+    private int getSpawnCountFromSpawner(CreatureSpawner spawner) {
+        FeatureConfig.SpawnerStacker spawnerCfg = Main.getInstance().getConfig(FeatureConfig.class).spawnerStacker;
+
+        if (!spawnerCfg.enabled) {
+            return 1;
+        }
+
+        var spawnerManager = Main.getSpawnerManager();
+        var spawnerData = spawnerManager.get(spawner.getLocation());
+
+        if (spawnerData.isPresent()) {
+            int stackSize = spawnerData.get().getStackSize();
+            int level = spawnerData.get().getLevel();
+
+            int baseSpawnCount = 1;
+            double spawnMultiplier = 1 + (stackSize - 1) * spawnerCfg.spawnMultiplierPerStack +
+                    level * spawnerCfg.spawnMultiplierPerLevel;
+            int spawnCount = (int) Math.round(baseSpawnCount * spawnMultiplier);
+
+            return Math.max(1, Math.min(spawnCount, spawnerCfg.maxStack));
+        }
+
+        return 1;
     }
 }

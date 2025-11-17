@@ -7,8 +7,10 @@ import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.SBReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,21 +69,34 @@ public class ConfigManager {
 
         } catch (Exception e) {
             SBLogger.err("<red>Failed to load config for " + clazz.getSimpleName() + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     private static void applyConfigToObject(Object target, Config cfg) throws Exception {
         for (Field field : target.getClass().getDeclaredFields()) {
+            int mods = field.getModifiers();
+            if (Modifier.isStatic(mods) || Modifier.isFinal(mods) || field.isSynthetic() || Modifier.isTransient(mods))
+                continue;
+
             field.setAccessible(true);
             String key = field.getName();
             Class<?> type = field.getType();
 
             if (cfg.hasPath(key)) {
-                if (type.isPrimitive() || type == String.class || Number.class.isAssignableFrom(type) || type == Boolean.class || type == Character.class || type == char.class) {
+                if (type.isPrimitive() || type == String.class || Number.class.isAssignableFrom(type) ||
+                        type == Boolean.class || type == Character.class || type == char.class) {
                     field.set(target, castValue(cfg.getAnyRef(key), type));
                 } else if (type.isEnum()) {
                     String str = cfg.getString(key);
                     field.set(target, Enum.valueOf((Class<Enum>) type, str));
+                } else if (List.class.isAssignableFrom(type)) {
+                    List<?> configList = cfg.getList(key);
+                    List<String> stringList = new ArrayList<>();
+                    for (Object item : configList) {
+                        stringList.add(item.toString());
+                    }
+                    field.set(target, stringList);
                 } else {
                     Object nestedInstance = field.get(target);
                     if (nestedInstance == null) {
@@ -113,6 +128,10 @@ public class ConfigManager {
         String indent = "  ".repeat(indentLevel);
 
         for (Field field : obj.getClass().getDeclaredFields()) {
+            int mods = field.getModifiers();
+            if (Modifier.isStatic(mods) || Modifier.isFinal(mods) || field.isSynthetic() || Modifier.isTransient(mods))
+                continue;
+
             field.setAccessible(true);
             Object value = field.get(obj);
             if (value == null) continue;
@@ -130,16 +149,43 @@ public class ConfigManager {
             } else if (type == char.class || type == Character.class) {
                 sb.append(indent).append(key).append(" = \"").append(value).append("\"\n");
             } else if (type == String.class) {
-                sb.append(indent).append(key).append(" = \"").append(value).append("\"\n");
+                String escapedString = escapeHoconString(value.toString());
+                sb.append(indent).append(key).append(" = \"").append(escapedString).append("\"\n");
             } else if (type.isEnum()) {
                 sb.append(indent).append(key).append(" = \"").append(value.toString()).append("\"\n");
+            } else if (List.class.isAssignableFrom(type)) {
+                List<?> list = (List<?>) value;
+                if (!list.isEmpty()) {
+                    sb.append(indent).append(key).append(" = [\n");
+                    for (int i = 0; i < list.size(); i++) {
+                        String escapedItem = escapeHoconString(list.get(i).toString());
+                        sb.append(indent).append("  \"").append(escapedItem).append("\"");
+                        if (i < list.size() - 1) {
+                            sb.append(",");
+                        }
+                        sb.append("\n");
+                    }
+                    sb.append(indent).append("]\n");
+                } else {
+                    sb.append(indent).append(key).append(" = []\n");
+                }
             } else {
                 sb.append(indent).append(key).append(" {\n");
                 sb.append(renderDefaults(value, indentLevel + 1));
                 sb.append(indent).append("}\n");
             }
+
+            sb.append("\n");
         }
 
         return sb.toString();
+    }
+
+    private static String escapeHoconString(String str) {
+        return str.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\t", "\\t")
+                .replace("\r", "\\r");
     }
 }
