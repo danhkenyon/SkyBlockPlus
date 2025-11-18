@@ -1,5 +1,6 @@
 package uk.ac.bsfc.sbp.core.commands.general;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -112,14 +113,14 @@ public class SpawnerGiveCommand extends SBCommand {
         ItemStack spawner = new ItemStack(Material.SPAWNER, amount);
         ItemMeta meta = spawner.getItemMeta();
 
-        meta.setDisplayName("§e" + type.name() + " Spawner §7(Level " + level + ")");
-        meta.setLore(Arrays.asList(
-                "§7Type: §f" + type.name(),
-                "§7Stack Size: §f" + amount,
-                "§7Level: §f" + level,
-                "",
-                "§aRight-click to place"
-        ));
+        meta.displayName(MiniMessage.miniMessage().deserialize("<yellow>" + type.name() + " Spawner <gray>(Level " + level + ")"));
+        meta.lore(Arrays.asList(
+                MiniMessage.miniMessage().deserialize("<gray>Type: <white>" + type.name()),
+                MiniMessage.miniMessage().deserialize("<gray>Stack Size: <white>" + amount),
+                MiniMessage.miniMessage().deserialize("<gray>Level: <white>" + level),
+                MiniMessage.miniMessage().deserialize(""),
+                MiniMessage.miniMessage().deserialize("<green>Right-click to place"
+                )));
 
         meta.getPersistentDataContainer().set(
                 NKeys.getKey("spawner_type"),

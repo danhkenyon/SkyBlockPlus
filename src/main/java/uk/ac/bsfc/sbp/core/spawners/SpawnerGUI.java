@@ -1,5 +1,6 @@
 package uk.ac.bsfc.sbp.core.spawners;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -7,6 +8,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
@@ -43,9 +45,9 @@ public class SpawnerGUI {
                 )
                 .addIngredient('#', new SimpleItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName(" ")))
                 .addIngredient('i', new InfoItem(data))
-                .addIngredient('u', new UpgradeItem(data, manager, dao, player))
-                .addIngredient('d', new DowngradeItem(data, manager, dao, player))
-                .addIngredient('p', new PickupItem(data, manager, dao, player))
+                .addIngredient('u', new UpgradeItem(data, manager, dao))
+                .addIngredient('d', new DowngradeItem(data, manager, dao))
+                .addIngredient('p', new PickupItem(data, manager, dao))
                 .build();
 
         Window window = Window.single()
@@ -77,21 +79,24 @@ public class SpawnerGUI {
 
             ItemStack item = new ItemStack(Material.SPAWNER);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName("§eSpawner Info");
-            meta.setLore(Arrays.asList(
-                    "§7Type: §f" + data.getType().name(),
-                    "§7Stack Size: §f" + data.getStackSize(),
-                    "§7Level: §f" + data.getLevel(),
-                    "",
-                    "§7Spawn Multiplier: §f" + String.format("%.2f", (1 + (data.getStackSize() - 1) * config.spawnMultiplierPerStack + data.getLevel() * config.spawnMultiplierPerLevel)) + "x",
-                    "§7Spawn Delay: §f" + Math.max(10, 20 - data.getLevel() * config.spawnDelayReductionPerLevel) + " ticks"
+
+            meta.displayName(MiniMessage.miniMessage().deserialize("<yellow>Spawner Info"));
+            meta.lore(Arrays.asList(
+                    MiniMessage.miniMessage().deserialize("<gray>Type: <white>" + data.getType().name()),
+                    MiniMessage.miniMessage().deserialize("<gray>Stack Size: <white>" + data.getStackSize()),
+                    MiniMessage.miniMessage().deserialize("<gray>Level: <white>" + data.getLevel()),
+                    MiniMessage.miniMessage().deserialize(""),
+                    MiniMessage.miniMessage().deserialize("<gray>Spawn Multiplier: <white>" + String.format("%.2f", (1 + (data.getStackSize() - 1) * config.spawnMultiplierPerStack + data.getLevel() * config.spawnMultiplierPerLevel)) + "x"),
+                    MiniMessage.miniMessage().deserialize("<gray>Spawn Delay: <white>" + Math.max(10, 20 - data.getLevel() * config.spawnDelayReductionPerLevel) + " ticks")
             ));
+
             item.setItemMeta(meta);
             return new ItemBuilder(item);
         }
 
+
         @Override
-        public void handleClick(ClickType clickType, Player player, InventoryClickEvent event) {
+        public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
             //444
         }
     }
@@ -100,13 +105,11 @@ public class SpawnerGUI {
         private final SpawnerData data;
         private final SpawnerStackManager manager;
         private final SpawnerDAO dao;
-        private final Player player;
 
-        public UpgradeItem(SpawnerData data, SpawnerStackManager manager, SpawnerDAO dao, Player player) {
+        public UpgradeItem(SpawnerData data, SpawnerStackManager manager, SpawnerDAO dao) {
             this.data = data;
             this.manager = manager;
             this.dao = dao;
-            this.player = player;
         }
 
         @Override
@@ -116,31 +119,36 @@ public class SpawnerGUI {
 
             ItemStack item = new ItemStack(canUpgrade ? Material.EXPERIENCE_BOTTLE : Material.BARRIER);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(canUpgrade ? "§aUpgrade Spawner" : "§cMax Level Reached");
+
+            meta.displayName(MiniMessage.miniMessage().deserialize(
+                    canUpgrade ? "<green>Upgrade Spawner" : "<red>Max Level Reached"
+            ));
 
             if (canUpgrade) {
                 int cost = config.baseUpgradeCost * (data.getLevel() + 1);
-                meta.setLore(Arrays.asList(
-                        "§7Current Level: §f" + data.getLevel(),
-                        "§7Next Level: §f" + (data.getLevel() + 1),
-                        "§7Cost: §6" + cost + " XP",
-                        "",
-                        "§eClick to upgrade!"
+                meta.lore(Arrays.asList(
+                        MiniMessage.miniMessage().deserialize("<gray>Current Level: <white>" + data.getLevel()),
+                        MiniMessage.miniMessage().deserialize("<gray>Next Level: <white>" + (data.getLevel() + 1)),
+                        MiniMessage.miniMessage().deserialize("<gray>Cost: <gold>" + cost + " XP"),
+                        MiniMessage.miniMessage().deserialize(""),
+                        MiniMessage.miniMessage().deserialize("<yellow>Click to upgrade!")
                 ));
             } else {
-                meta.setLore(Arrays.asList(
-                        "§7Current Level: §f" + data.getLevel(),
-                        "§7Max Level: §f" + config.maxLevel,
-                        "",
-                        "§cCannot upgrade further!"
+                meta.lore(Arrays.asList(
+                        MiniMessage.miniMessage().deserialize("<gray>Current Level: <white>" + data.getLevel()),
+                        MiniMessage.miniMessage().deserialize("<gray>Max Level: <white>" + config.maxLevel),
+                        MiniMessage.miniMessage().deserialize(""),
+                        MiniMessage.miniMessage().deserialize("<red>Cannot upgrade further!")
                 ));
             }
+
             item.setItemMeta(meta);
             return new ItemBuilder(item);
         }
 
+
         @Override
-        public void handleClick(ClickType clickType, Player player, InventoryClickEvent event) {
+        public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
             FeatureConfig.SpawnerStacker config = Main.getInstance().getConfig(FeatureConfig.class).spawnerStacker;
 
             if (data.getLevel() >= config.maxLevel) {
@@ -167,13 +175,11 @@ public class SpawnerGUI {
         private final SpawnerData data;
         private final SpawnerStackManager manager;
         private final SpawnerDAO dao;
-        private final Player player;
 
-        public DowngradeItem(SpawnerData data, SpawnerStackManager manager, SpawnerDAO dao, Player player) {
+        public DowngradeItem(SpawnerData data, SpawnerStackManager manager, SpawnerDAO dao) {
             this.data = data;
             this.manager = manager;
             this.dao = dao;
-            this.player = player;
         }
 
         @Override
@@ -183,31 +189,36 @@ public class SpawnerGUI {
 
             ItemStack item = new ItemStack(canDowngrade ? Material.GLASS_BOTTLE : Material.BARRIER);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(canDowngrade ? "§6Downgrade Spawner" : "§cMinimum Level");
+
+            meta.displayName(MiniMessage.miniMessage().deserialize(
+                    canDowngrade ? "<gold>Downgrade Spawner" : "<red>Minimum Level"
+            ));
 
             if (canDowngrade) {
                 int refund = config.baseUpgradeCost * data.getLevel() / 2;
-                meta.setLore(Arrays.asList(
-                        "§7Current Level: §f" + data.getLevel(),
-                        "§7Next Level: §f" + (data.getLevel() - 1),
-                        "§7Refund: §6" + refund + " XP",
-                        "",
-                        "§eClick to downgrade!"
+                meta.lore(Arrays.asList(
+                        MiniMessage.miniMessage().deserialize("<gray>Current Level: <white>" + data.getLevel()),
+                        MiniMessage.miniMessage().deserialize("<gray>Next Level: <white>" + (data.getLevel() - 1)),
+                        MiniMessage.miniMessage().deserialize("<gray>Refund: <gold>" + refund + " XP"),
+                        MiniMessage.miniMessage().deserialize(""),
+                        MiniMessage.miniMessage().deserialize("<yellow>Click to downgrade!")
                 ));
             } else {
-                meta.setLore(Arrays.asList(
-                        "§7Current Level: §f" + data.getLevel(),
-                        "§7Minimum Level: §f1",
-                        "",
-                        "§cCannot downgrade further!"
+                meta.lore(Arrays.asList(
+                        MiniMessage.miniMessage().deserialize("<gray>Current Level: <white>" + data.getLevel()),
+                        MiniMessage.miniMessage().deserialize("<gray>Minimum Level: <white>1"),
+                        MiniMessage.miniMessage().deserialize(""),
+                        MiniMessage.miniMessage().deserialize("<red>Cannot downgrade further!")
                 ));
             }
+
             item.setItemMeta(meta);
             return new ItemBuilder(item);
         }
 
+
         @Override
-        public void handleClick(ClickType clickType, Player player, InventoryClickEvent event) {
+        public void handleClick(@NotNull ClickType clickType, @NotNull Player player, @NotNull InventoryClickEvent event) {
             FeatureConfig.SpawnerStacker config = Main.getInstance().getConfig(FeatureConfig.class).spawnerStacker;
 
             if (data.getLevel() <= 1) {
@@ -229,33 +240,31 @@ public class SpawnerGUI {
         private final SpawnerData data;
         private final SpawnerStackManager manager;
         private final SpawnerDAO dao;
-        private final Player player;
 
-        public PickupItem(SpawnerData data, SpawnerStackManager manager, SpawnerDAO dao, Player player) {
+        public PickupItem(SpawnerData data, SpawnerStackManager manager, SpawnerDAO dao) {
             this.data = data;
             this.manager = manager;
             this.dao = dao;
-            this.player = player;
         }
 
         @Override
         public ItemProvider getItemProvider() {
             ItemStack item = new ItemStack(Material.CHEST_MINECART);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName("§6Pickup Spawner Stack");
-            meta.setLore(Arrays.asList(
-                    "§7Stack Size: §f" + data.getStackSize(),
-                    "§7Level: §f" + data.getLevel(),
-                    "",
-                    "§eClick to pickup the entire stack!",
-                    "§cWarning: This will remove the spawner from the world!"
-            ));
+            meta.displayName(MiniMessage.miniMessage().deserialize("<gold>Pickup Spawner Stack"));
+            meta.lore(Arrays.asList(
+                    MiniMessage.miniMessage().deserialize("<gray>Stack Size: <white>" + data.getStackSize()),
+                    MiniMessage.miniMessage().deserialize("<gray>Level: <white>" + data.getLevel()),
+                    MiniMessage.miniMessage().deserialize(""),
+                    MiniMessage.miniMessage().deserialize("<yellow>Click to pickup the entire stack!"),
+                    MiniMessage.miniMessage().deserialize("<red>Warning: This will remove the spawner from the world!"
+            )));
             item.setItemMeta(meta);
             return new ItemBuilder(item);
         }
 
         @Override
-        public void handleClick(ClickType clickType, Player player, InventoryClickEvent event) {
+        public void handleClick(@NotNull ClickType clickType, Player player, @NotNull InventoryClickEvent event) {
             FeatureConfig.SpawnerStacker config = Main.getInstance().getConfig(FeatureConfig.class).spawnerStacker;
 
             ItemStack spawnerItem = createSpawnerItem(data.getType(), data.getStackSize(), data.getLevel());
@@ -281,14 +290,14 @@ public class SpawnerGUI {
         private ItemStack createSpawnerItem(org.bukkit.entity.EntityType type, int stackSize, int level) {
             ItemStack spawner = new ItemStack(Material.SPAWNER, stackSize);
             ItemMeta meta = spawner.getItemMeta();
-            meta.setDisplayName("§e" + type.name() + " Spawner §7(Level " + level + ")");
-            meta.setLore(Arrays.asList(
-                    "§7Type: §f" + type.name(),
-                    "§7Stack Size: §f" + stackSize,
-                    "§7Level: §f" + level,
-                    "",
-                    "§aRight-click to place"
-            ));
+            meta.displayName(MiniMessage.miniMessage().deserialize("<yellow>" + type.name() + " Spawner <gray>(Level " + level + ")"));
+            meta.lore(Arrays.asList(
+                    MiniMessage.miniMessage().deserialize("<gray>Type: <white>" + type.name()),
+                    MiniMessage.miniMessage().deserialize("<gray>Stack Size: <white>" + stackSize),
+                    MiniMessage.miniMessage().deserialize("<gray>Level: <white>" + level),
+                    MiniMessage.miniMessage().deserialize(""),
+                    MiniMessage.miniMessage().deserialize("<green>Right-click to place"
+                    )));
 
             meta.getPersistentDataContainer().set(
                     NKeys.getKey("spawner_type"),
