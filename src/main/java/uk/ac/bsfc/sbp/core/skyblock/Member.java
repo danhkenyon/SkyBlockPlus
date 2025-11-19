@@ -13,6 +13,7 @@ import java.util.UUID;
  * Represents a member of an island in a game. A Member extends the SBPlayer class,
  * adding additional functionality related to their rank and associated island.
  */
+@Deprecated(forRemoval = true)
 public class Member extends SBPlayer {
     private UUID islandId;
     private Rank rank;

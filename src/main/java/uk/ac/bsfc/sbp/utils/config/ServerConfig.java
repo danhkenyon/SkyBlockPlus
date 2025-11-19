@@ -1,7 +1,7 @@
 package uk.ac.bsfc.sbp.utils.config;
 
 @ConfigFile("server-config")
-public class ServerConfig implements ReloadableConfig{
+public class ServerConfig implements ReloadableConfig {
     public boolean bukkitLogging = false;
     public boolean logTimestamp = false;
     public String logTimestampFormat = "hh:mm:ss";

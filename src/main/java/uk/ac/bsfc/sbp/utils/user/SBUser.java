@@ -29,15 +29,23 @@ public abstract class SBUser {
     protected final Class<? extends SBUser> clazz = this.getClass();
     protected final SBUserType userType = SBUserType.fromClass(clazz.getSimpleName());
 
-    protected final String name;
     protected final UUID uuid;
+    protected final String name;
+    protected long flight_time;
+    protected UUID island_id;
+    protected String island_rank;
     protected final boolean console;
 
     protected List<Placeholder> userPlaceholders;
 
-    protected SBUser(String name, UUID uuid, boolean console) {
+    protected SBUser(String name, UUID uuid, long flight_time, UUID island_id, String island_rank, boolean console) {
         this.name = name;
         this.uuid = uuid;
+
+        this.flight_time = flight_time;
+        this.island_id = island_id;
+        this.island_rank = island_rank;
+
         this.console = console;
 
         userPlaceholders = List.of(
@@ -78,12 +86,12 @@ public abstract class SBUser {
         return user;
     }
 
-    public static @NotNull SBUser from(UUID uuid, String username) {
+    public static @NotNull SBUser create(UUID uuid, String username, long flight_time, UUID island_id, String island_rank) {
         if (uuid == UUID.fromString("00000000-0000-0000-0000-000000000000")) {
             return new SBConsole();
         }
 
-        return new SBPlayer(username, uuid);
+        return new SBPlayer(username, uuid, flight_time, island_id, island_rank);
     }
 
     public boolean isConsole() {
@@ -95,14 +103,33 @@ public abstract class SBUser {
     public String getName() {
         return name;
     }
+    public long getFlightTime() {
+        return flight_time;
+    }
+    public UUID getIslandId() {
+        return island_id;
+    }
+    public String getIslandRank() {
+        return island_rank;
+    }
     public SBUserType getUserType() {
         return userType;
+    }
+
+    public void setFlightTime(long flight_time) {
+        this.flight_time = flight_time;
+    }
+    public void setIslandId(UUID island_id) {
+        this.island_id = island_id;
+    }
+    public void setIslandRank(String island_rank) {
+        this.island_rank = island_rank;
     }
 
     public <T extends SBUser> T to(Class<T> clazz) {
         if (clazz.isInstance(this)) return clazz.cast(this);
         if (clazz == SBConsole.class && this.isConsole()) return clazz.cast(new SBConsole());
-        if (clazz == SBPlayer.class && !this.isConsole()) return clazz.cast(new SBPlayer(this.name, this.uuid));
+        if (clazz == SBPlayer.class && !this.isConsole()) return clazz.cast(new SBPlayer(this.name, this.uuid, this.flight_time, this.island_id, this.island_rank));
         if (clazz == SBUser.class) return clazz.cast(this);
 
         SBLogger.err("<red>Cannot convert " + this.getClass().getSimpleName() + " to " + clazz.getSimpleName());
@@ -148,7 +175,6 @@ public abstract class SBUser {
             this.sendMessage(message);
         }
     }
-
     private void msg(String message, Placeholder[] userPlaceholders) {
         Component formatted = SBColourUtils.format(Messages.get(message, userPlaceholders));
         if (this.isConsole()) {
@@ -204,7 +230,6 @@ public abstract class SBUser {
             default -> SBLogger.err("<red>[SUDO] Unknown sudo type!");
         }
     }
-
     private void forceChat(@NotNull SBUser user, String chat, int amt) {
         SBLogger.raw("<white>[SUDO] (<green>"+user.getName()+"<white>) <yellow>Forcing <white>"+this.getName()+" <yellow>to say \"<white>"+chat+"<yellow>\" <white>(<yellow>"+amt+"x<white>)");
         for (int i = 0; i < amt; i++) {

@@ -44,7 +44,7 @@ public class CopyCommand extends SBCommand {
         }
 
         Region region = RegionUtils.getInstance().getRegion(player);
-        if (!region.isComplete()) {
+        if (region.isComplete()) {
             player.sendMessage("{messages.world-edit.no_region_selected}");
             return;
         }

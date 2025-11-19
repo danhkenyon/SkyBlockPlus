@@ -29,8 +29,8 @@ public class SBPlayer extends SBUser {
     private SBWorld currentWorld;
     private SBLocation location;
 
-    protected SBPlayer(String name, UUID uuid) {
-        super(name, uuid, false);
+    protected SBPlayer(String name, UUID uuid, long flight_time, UUID island_id, String island_rank) {
+        super(name, uuid, flight_time, island_id, island_rank, false);
 
         if (ClipboardUtils.getInstance().hasClipboard(this)) {
             clipboard = ClipboardUtils.getInstance().getClipboard(this);

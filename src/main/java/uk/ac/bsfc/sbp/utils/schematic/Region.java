@@ -45,6 +45,12 @@ public class Region extends BlockSet {
     protected Region(@Nullable SBLocation loc1, @Nullable SBLocation loc2) {
         this.loc1 = loc1 == null ? null : loc1.clone();
         this.loc2 = loc2 == null ? null : loc2.clone();
+
+        if (this.loc1 != null && this.loc2 != null) {
+            if (this.loc1.getWorld() != this.loc2.getWorld()) {
+                throw new IllegalArgumentException("Region corners must be in the same world.");
+            }
+        }
     }
 
     public static Region of(@Nullable SBLocation loc1, @Nullable SBLocation loc2) {
@@ -67,10 +73,7 @@ public class Region extends BlockSet {
                 && z >= loc1.getZ() && z <= loc2.getZ();
     }
     public boolean isComplete() {
-        if (loc1 == null || loc2 == null) {
-            SBLogger.err("Region is not complete. loc1 or loc2 is null.");
-        }
-        return loc1 != null && loc2 != null;
+        return loc1 != null || loc2 != null;
     }
     public void fill(Material material) {
         if (loc1 == null || loc2 == null) {
@@ -178,9 +181,19 @@ public class Region extends BlockSet {
 
     public void setLoc1(@NotNull SBLocation loc1) {
         this.loc1 = loc1;
+        if (this.loc2 != null) {
+            if (this.loc1.getWorld() != this.loc2.getWorld()) {
+                throw new IllegalArgumentException("Region corners must be in the same world.");
+            }
+        }
     }
     public void setLoc2(@NotNull SBLocation loc2) {
         this.loc2 = loc2;
+        if (this.loc1 != null) {
+            if (this.loc1.getWorld() != this.loc2.getWorld()) {
+                throw new IllegalArgumentException("Region corners must be in the same world.");
+            }
+        }
     }
 
     public @Nullable SBLocation getLoc1() {

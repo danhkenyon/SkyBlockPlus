@@ -50,7 +50,7 @@ public class SetCommand extends SBCommand {
             return;
         }
         Region region = RegionUtils.getInstance().getRegion(player);
-        if (region == null || !region.isComplete()) {
+        if (region == null || region.isComplete()) {
             player.sendMessage("{messages.world-edit.no-region-selected}");
             return;
         }

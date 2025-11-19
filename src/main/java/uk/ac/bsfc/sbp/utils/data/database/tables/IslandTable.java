@@ -23,6 +23,7 @@ import static uk.ac.bsfc.sbp.utils.SBConstants.Island.UNKNOWN_ISLAND_UUID;
  * for table operations. This class includes methods to map database rows to Island objects,
  * ensure the Islands table exists, and perform various table operations like retrieval and insertion.
  */
+@Deprecated
 public class IslandTable extends DatabaseTable<Island> {
     public IslandTable() {
         super(SBConstants.Database.TABLE_ISLANDS, 2);
