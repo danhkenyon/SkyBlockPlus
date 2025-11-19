@@ -13,17 +13,14 @@ import uk.ac.bsfc.sbp.utils.data.JsonFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Represents an SBWorld, a wrapper around a Bukkit {@link World} object that provides additional functionality
  * for managing worlds in a server environment. The class includes methods for creating, loading, unloading,
  * saving, and deleting worlds, as well as handling their associated metadata.
  */
-public class SBWorld extends Wrapper<World> {
+public abstract class SBWorld extends Wrapper<World> {
     private final JsonFile worldsJson = JSON.get("worlds");
 
     private final UUID uuid;
@@ -42,7 +39,7 @@ public class SBWorld extends Wrapper<World> {
         this.seed = world.getSeed();
         this.loaded = true;
     }
-    protected SBWorld(String name, String env, long seed, boolean loaded) {
+    protected SBWorld(String name, WorldEnvironment env, long seed, boolean loaded) {
         this.uuid = UUID.nameUUIDFromBytes(name.getBytes());
         this.name = name;
 
@@ -57,7 +54,7 @@ public class SBWorld extends Wrapper<World> {
 
         this.worldDirectory = worldDir;
 
-        this.env = WorldEnvironment.valueOf(env.toUpperCase());
+        this.env = env;
         this.seed = seed;
         this.loaded = loaded;
     }
@@ -80,9 +77,9 @@ public class SBWorld extends Wrapper<World> {
         SBWorld world;
 
         if (data instanceof Map<?, ?> map) {
-            world = fromMap((Map<Object, Object>) map);
+            world = SBWorld.fromMap((Map<Object, Object>) map);
         } else {
-            world = new SBWorld(name, "NORMAL", System.currentTimeMillis(), false);
+            world = new SBWorld(name, WorldEnvironment.valueOf("NORMAL"), System.currentTimeMillis(), false);
         }
 
         world.load();
@@ -90,7 +87,7 @@ public class SBWorld extends Wrapper<World> {
         world.save();
         return world;
     }
-    public static SBWorld create(String name, String env, long seed) {
+    public static SBWorld create(String name, WorldEnvironment env, long seed) {
         if (SBWorldUtils.getInstance().getLoadedWorlds().contains(SBWorld.getWorld(name))) {
             return SBWorld.getWorld(name);
         }
@@ -153,7 +150,7 @@ public class SBWorld extends Wrapper<World> {
     public static SBWorld fromMap(Map<Object, Object> data) {
         String directory = String.valueOf(data.get("directory"));
         String name = new File(directory).getName();
-        String env = String.valueOf(data.getOrDefault("environment", "NORMAL"));
+        WorldEnvironment env = WorldEnvironment.valueOf(String.valueOf(data.getOrDefault("environment", "NORMAL")).toUpperCase());
         long seed = ((Number) data.getOrDefault("seed", System.currentTimeMillis())).longValue();
         boolean loaded = (boolean) data.getOrDefault("loaded", false);
         return new SBWorld(name, env, seed, loaded);
@@ -209,4 +206,6 @@ public class SBWorld extends Wrapper<World> {
         }
         return world;
     }
+
+    public
 }

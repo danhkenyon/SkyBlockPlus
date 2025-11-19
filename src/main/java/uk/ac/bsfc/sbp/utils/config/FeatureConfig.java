@@ -9,6 +9,16 @@ public class FeatureConfig implements ReloadableConfig {
     @Comment("Settings for the mob stacker feature")
     public MobStacker mobStacker = new MobStacker();
     public SpawnerStacker spawnerStacker = new SpawnerStacker();
+    @Comment("Settings for skyblock islands")
+    public Skyblock skyblock = new Skyblock();
+
+    public static class Skyblock {
+        @Comment("The most amount of islands that can be contained in a single world")
+        public int maxIslandsPerWorld = 1000;
+
+        @Comment("The name of the worlds where islands are generated")
+        public String base_world_name = "islands";
+    }
 
     public static class MobStacker {
 

@@ -17,11 +17,14 @@ public class Island {
     private final IslandRegion region;
     private final long timeCreated;
 
-    protected Island(UUID id, String name, SBLocation loc1) {
+    protected Island(UUID id, String name, SBLocation loc1, long timeCreated) {
         this.id = id;
         this.name = name;
         this.region = IslandRegion.of(loc1);
         this.timeCreated = SBTime.now().millis();
+    }
+    protected Island(UUID id, String name, SBLocation loc1) {
+        this(id, name, loc1, SBTime.now().millis());
     }
 
     public static Island create(UUID id, String name, SBLocation loc1, List<SBUser> members) {
@@ -37,6 +40,10 @@ public class Island {
     public static Island create(String name, SBUser user) {
         return create(UUID.randomUUID(), name, null /* TODO: Get ISLAND LOCATION */, List.of(user));
     }
+    public static Island get(UUID id, String name, SBLocation loc1, long timeCreated) {
+        return new Island(id, name, loc1, timeCreated);
+    }
+
 
     public UUID uuid() {
         return id;
