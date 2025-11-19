@@ -6,7 +6,10 @@ import io.papermc.paper.plugin.loader.library.impl.MavenLibraryResolver;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.jetbrains.annotations.ApiStatus;
 
+@SuppressWarnings("UnstableApiUsage")
+@ApiStatus.Experimental
 public class SBPluginLoader implements PluginLoader {
     @Override
     public void classloader(PluginClasspathBuilder classpathBuilder) {

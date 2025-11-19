@@ -1,15 +1,14 @@
 package uk.ac.bsfc.sbp.utils.entity;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Entity;
 
+import static uk.ac.bsfc.sbp.utils.SBConstants.mm;
 
 public abstract class SBEntity {
 
     protected final Entity entity;
     protected int stackSize;
-    protected static final MiniMessage mm = MiniMessage.miniMessage();
 
     public SBEntity(Entity entity, int initialStack) {
         this.entity = entity;
@@ -60,7 +59,6 @@ public abstract class SBEntity {
     public void kill() {
         if (entity.isValid()) entity.remove();
     }
-
 
     protected abstract String getDisplayName();
 }

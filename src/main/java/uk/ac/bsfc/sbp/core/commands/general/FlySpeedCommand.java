@@ -48,7 +48,7 @@ public class FlySpeedCommand extends SBCommand {
         }
 
         float realNum = i / 10f;
-        player.setFlySpeed(realNum);
+        player.flySpeed(realNum);
         player.sendMessage("<green>Fly speed set to <gold>" + i + "<green>!");
 
 

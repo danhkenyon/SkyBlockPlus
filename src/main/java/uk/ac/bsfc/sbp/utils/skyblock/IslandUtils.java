@@ -7,10 +7,7 @@ import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Utility class for managing and interacting with islands in the SkyBlock+ system.
@@ -47,30 +44,15 @@ public class IslandUtils {
         SBLogger.info("<green>Loaded <aqua>" + islands.size() + " <green>islands from database.");
     }
 
-    public Island getIsland(UUID id) {
-        for (UUID uuid : islands.keySet()) {
-            if (id == uuid) {
-                return islands.get(uuid);
-            }
-        }
-
-        return null;
-    }
-    public Island getIsland(String name) {
-        for (Island island : islands.values()) {
-            if (island.name().equalsIgnoreCase(name)) {
-                return island;
-            }
-        }
-        return null;
-    }
-
-    public void registerIsland(Island island) {
-        islands.put(island.uuid(), island);
-    }
-
     private static int index = 0;
     public static SBLocation nextLocation() {
+        Optional<Island> optLast = IslandTable.getInstance().getRows().stream().max(Comparator.comparingLong(Island::timeCreated));
+        if (optLast.isEmpty()) {
+            return SBLocation.of(SBConstants.Island.ISLAND_WORLD, 0, 100, 0);
+        }
+
+        Island last = optLast.get();
+
         SBWorld world = SBConstants.Island.ISLAND_WORLD;
         int spacing = SBConstants.Island.BASE_ISLAND_SIZE + 1000;
 

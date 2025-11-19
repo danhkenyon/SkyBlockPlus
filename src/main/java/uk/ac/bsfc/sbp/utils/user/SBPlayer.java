@@ -24,10 +24,8 @@ public class SBPlayer extends SBUser {
     private String skinUrl;
     private String chatColour;
     private SBGameMode gameMode;
-
     private boolean allowFlight;
     private boolean flying;
-
     private SBWorld currentWorld;
     private SBLocation location;
 
@@ -133,16 +131,6 @@ public class SBPlayer extends SBUser {
         }
     }
 
-
-    public void setFlySpeed(float speed){
-        Player player = super.toBukkit(Player.class);
-        if (player == null){
-            return;
-        }
-
-        player.setFlySpeed(speed);
-    }
-
     public void currentWorld(SBWorld world) {
         this.currentWorld = world;
 
@@ -173,6 +161,15 @@ public class SBPlayer extends SBUser {
     public void teleport(SBLocation loc) {
         this.currentWorld = loc.getWorld();
         this.location(loc);
+    }
+
+    public void flySpeed(float speed){
+        Player player = super.toBukkit(Player.class);
+        if (player == null){
+            return;
+        }
+
+        player.setFlySpeed(speed);
     }
 
     public enum SBGameMode {

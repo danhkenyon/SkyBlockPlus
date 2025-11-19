@@ -65,16 +65,16 @@ public class IslandTable extends DatabaseTable<Island> {
     public void ensureTableExists() {
         super.database.getExecutor().update("Island Table Creation",
                 "CREATE TABLE IF NOT EXISTS " + this.getTableName() + " (" +
-                        "id CHAR(36) PRIMARY KEY," +
-                        "name VARCHAR(64) NOT NULL UNIQUE," +
-                        "size INT NOT NULL DEFAULT " + BASE_ISLAND_SIZE + "," +
-                        "world VARCHAR(64) NOT NULL," +
-                        "x DOUBLE NOT NULL," +
-                        "y DOUBLE NOT NULL," +
-                        "z DOUBLE NOT NULL," +
-                        "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-                        "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" +
-                        ");"
+                "id CHAR(36) PRIMARY KEY," +
+                "name VARCHAR(64) NOT NULL UNIQUE," +
+                "size INT NOT NULL DEFAULT " + BASE_ISLAND_SIZE + "," +
+                "world VARCHAR(64) NOT NULL," +
+                "x DOUBLE NOT NULL," +
+                "y DOUBLE NOT NULL," +
+                "z DOUBLE NOT NULL," +
+                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" +
+                ");"
         );
     }
 
@@ -119,7 +119,7 @@ public class IslandTable extends DatabaseTable<Island> {
     public boolean exists(UUID id) {
         return super.exists("id", id);
     }
-    public boolean existsByName(String name) {
+    public boolean exists(String name) {
         return super.exists("name", name);
     }
 }

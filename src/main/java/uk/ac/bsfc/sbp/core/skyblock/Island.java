@@ -6,6 +6,7 @@ import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
+import uk.ac.bsfc.sbp.utils.time.SBTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,33 +23,33 @@ public class Island {
     private final UUID id;
     private String name;
     private final List<Member> members;
-
     private final IslandRegion region;
+
+    private final long timeCreated;
 
     protected Island(UUID id, String name, SBLocation loc1, List<Member> members) {
         this.id = id;
         this.name = name;
         this.region = IslandRegion.of(loc1);
         this.members = members;
+
+        timeCreated = SBTime.now().millis();
     }
     protected Island(String name, List<Member> members) {
         this.name = name;
         this.members = members;
         this.region = new IslandRegion(IslandUtils.nextLocation());
-
         this.id = IslandTable.getInstance().insert(this, region.getLoc1().toBukkit());
 
-        IslandUtils.getInstance().registerIsland(this);
+        timeCreated = SBTime.now().millis();
+
         members.forEach(m -> m.setIsland(this));
 
         Objects.requireNonNull(Bukkit.getWorld(region.getLoc1().getWorld().toBukkit().getUID())).
                 getBlockAt(region.getLoc1().toBukkit()).setType(Material.BEDROCK);
-        // paste island
     }
     protected Island(Member member) {
-        this(SBConstants.Island.DEFAULT_ISLAND_NAME.replace("%leader%", member.getName()), new ArrayList<>(){{
-            add(member);
-        }});
+        this(SBConstants.Island.DEFAULT_ISLAND_NAME.replace("%leader%", member.getName()), new ArrayList<>(){{add(member);}});
     }
 
     public static Island createIsland(String name, List<Member> members) {
@@ -73,6 +74,13 @@ public class Island {
     public List<Member> members() {
         return members;
     }
+    public IslandRegion region() {
+        return region;
+    }
+    public long timeCreated() {
+        return timeCreated;
+    }
+
     public Member leader() {
         for (Member member : members) {
             if (member.getRank() == Rank.LEADER) {
@@ -96,9 +104,6 @@ public class Island {
             }
         }
         return null;
-    }
-    public IslandRegion region() {
-        return region;
     }
     public boolean hasMember(UUID uuid) {
         for (Member member : members) {

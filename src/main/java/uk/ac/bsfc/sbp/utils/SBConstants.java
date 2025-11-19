@@ -1,5 +1,6 @@
 package uk.ac.bsfc.sbp.utils;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.time.SBTime;
@@ -13,6 +14,8 @@ import java.util.UUID;
  */
 public final class SBConstants {
     private SBConstants() {}
+
+    public static final MiniMessage mm = MiniMessage.miniMessage();
 
     public static final String PLUGIN_NAME = "SkyBlockPlus";
     public static final String PLUGIN_TITLE = "SkyBlock+";
