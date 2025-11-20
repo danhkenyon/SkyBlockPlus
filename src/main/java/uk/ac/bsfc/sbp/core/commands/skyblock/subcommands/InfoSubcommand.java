@@ -1,16 +1,6 @@
 package uk.ac.bsfc.sbp.core.commands.skyblock.subcommands;
 
-import uk.ac.bsfc.sbp.core.skyblock.Island;
-import uk.ac.bsfc.sbp.core.skyblock.Member;
-import uk.ac.bsfc.sbp.core.skyblock.Rank;
-import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
-import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
-import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * The InfoSubcommand class provides functionality to display detailed information about
@@ -37,11 +27,10 @@ import java.util.List;
  * - If the user belongs to an island, the members are sorted by rank and their information
  *   is included in the response.
  *
- * @param cmd The SBCommand instance used to execute this subcommand, containing the
- *            user context and necessary data to retrieve island information.
  */
 public class InfoSubcommand {
     public static void execute(SBCommand cmd) {
+        /*
         var user = cmd.getUser();
         Member member = IslandMemberTable.getInstance().getRow("player_uuid", user.getUniqueID());
         SBLogger.info(member.toString());
@@ -74,5 +63,7 @@ public class InfoSubcommand {
         member.sendMessage(
                 info.toArray(String[]::new)
         );
+
+         */
     }
 }

@@ -1,15 +1,9 @@
 package uk.ac.bsfc.sbp.utils.data.database.tables;
 
 import uk.ac.bsfc.sbp.core.skyblock.Member;
-import uk.ac.bsfc.sbp.core.skyblock.Rank;
-import uk.ac.bsfc.sbp.utils.SBConstants;
-import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
-import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
-import java.util.*;
-
-import static uk.ac.bsfc.sbp.utils.SBConstants.Island.UNKNOWN_ISLAND_UUID;
+import java.util.Map;
 
 /**
  * Represents a database table dedicated to managing island membership information.
@@ -17,6 +11,20 @@ import static uk.ac.bsfc.sbp.utils.SBConstants.Island.UNKNOWN_ISLAND_UUID;
  * their unique identifiers, and their roles within the island.
  */
 public class IslandMemberTable extends DatabaseTable<Member> {
+    protected IslandMemberTable(String tableName) {
+        super(tableName);
+    }
+
+    @Override
+    public Member mapRow(Map<String, Object> row) {
+        return null;
+    }
+
+    @Override
+    public void ensureTableExists() {
+
+    }
+    /*
     private static final ThreadLocal<Set<UUID>> loading = ThreadLocal.withInitial(HashSet::new);
 
     public IslandMemberTable() {
@@ -95,4 +103,6 @@ public class IslandMemberTable extends DatabaseTable<Member> {
     public boolean exists(UUID id) {
         return super.exists("player_uuid", id.toString());
     }
+
+     */
 }

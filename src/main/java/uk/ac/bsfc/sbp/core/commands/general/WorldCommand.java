@@ -7,6 +7,7 @@ import uk.ac.bsfc.sbp.utils.command.SBCommand;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.location.SBWorldUtils;
+import uk.ac.bsfc.sbp.utils.location.WorldEnvironment;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
 import java.util.Arrays;
@@ -54,7 +55,7 @@ public class WorldCommand extends SBCommand {
 
                 SBWorld.create(
                         args[1],
-                        (args.length >= 3) ? args[2].toUpperCase() : "NORMAL",
+                        WorldEnvironment.valueOf((args.length >= 3) ? args[2].toUpperCase() : "NORMAL"),
                         (args.length >= 4) ? Long.parseLong(args[3]) : 1L
                 );
                 player.sendMessage("World '" + args[1] + "' created successfully!");

@@ -15,18 +15,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
-/**
- * Represents an SBWorld, a wrapper around a Bukkit {@link World} object that provides additional functionality
- * for managing worlds in a server environment. The class includes methods for creating, loading, unloading,
- * saving, and deleting worlds, as well as handling their associated metadata.
- */
 public abstract class SBWorld extends Wrapper<World> {
     private final JsonFile worldsJson = JSON.get("worlds");
 
+    private final File worldDirectory;
     private final UUID uuid;
     private final String name;
-    private final File worldDirectory;
-
     private WorldEnvironment env;
     private long seed;
     private boolean loaded;
@@ -44,19 +38,20 @@ public abstract class SBWorld extends Wrapper<World> {
         this.name = name;
 
         File worldDir = new File(Bukkit.getWorldContainer(), name);
+
+        this.worldDirectory = worldDir;
+        this.env = env;
+        this.seed = seed;
+        this.loaded = loaded;
+
         try {
             if (worldDir.mkdirs()) {
+                this.toBukkit();
                 SBLogger.raw("<green>World <gold>" + name + "<green> has been created");
             }
         }catch (SecurityException e){
             SBLogger.err(e.getMessage());
         }
-
-        this.worldDirectory = worldDir;
-
-        this.env = env;
-        this.seed = seed;
-        this.loaded = loaded;
     }
 
     public static SBWorld getWorld(UUID uuid) {
@@ -79,7 +74,15 @@ public abstract class SBWorld extends Wrapper<World> {
         if (data instanceof Map<?, ?> map) {
             world = SBWorld.fromMap((Map<Object, Object>) map);
         } else {
-            world = new SBWorld(name, WorldEnvironment.valueOf("NORMAL"), System.currentTimeMillis(), false);
+            world = new SBWorld(name, WorldEnvironment.NORMAL, System.currentTimeMillis(), false) {
+                @Override
+                public WorldCreator getWorldCreator() {
+                    return new WorldCreator(this.getName())
+                            .environment(Environment.valueOf(getEnvironment().name()))
+                            .seed(getSeed())
+                            .type(WorldType.NORMAL);
+                }
+            };
         }
 
         world.load();
@@ -91,7 +94,15 @@ public abstract class SBWorld extends Wrapper<World> {
         if (SBWorldUtils.getInstance().getLoadedWorlds().contains(SBWorld.getWorld(name))) {
             return SBWorld.getWorld(name);
         }
-        SBWorld world = new SBWorld(name, env, seed, false);
+        SBWorld world = new SBWorld(name, env, seed, false) {
+            @Override
+            public WorldCreator getWorldCreator() {
+                return new WorldCreator(this.getName())
+                        .environment(Environment.valueOf(getEnvironment().name()))
+                        .seed(getSeed())
+                        .type(WorldType.NORMAL);
+            }
+        };
         world.load();
         SBWorldUtils.getInstance().register(world);
         world.save();
@@ -153,7 +164,15 @@ public abstract class SBWorld extends Wrapper<World> {
         WorldEnvironment env = WorldEnvironment.valueOf(String.valueOf(data.getOrDefault("environment", "NORMAL")).toUpperCase());
         long seed = ((Number) data.getOrDefault("seed", System.currentTimeMillis())).longValue();
         boolean loaded = (boolean) data.getOrDefault("loaded", false);
-        return new SBWorld(name, env, seed, loaded);
+        return new SBWorld(name, env, seed, loaded) {
+            @Override
+            public WorldCreator getWorldCreator() {
+                return new WorldCreator(this.getName())
+                        .environment(Environment.valueOf(getEnvironment().name()))
+                        .seed(getSeed())
+                        .type(WorldType.NORMAL);
+            }
+        };
     }
 
     public UUID getUniqueId() {
@@ -194,12 +213,7 @@ public abstract class SBWorld extends Wrapper<World> {
             }catch (SecurityException e){
                 SBLogger.err(e.getMessage());
             }
-
-
-            WorldCreator creator = new WorldCreator(name)
-                    .environment(Environment.valueOf(env.name()))
-                    .seed(seed)
-                    .type(WorldType.NORMAL);
+            WorldCreator creator = this.getWorldCreator();
 
             world = creator.createWorld();
             loaded = (world != null);
@@ -207,5 +221,5 @@ public abstract class SBWorld extends Wrapper<World> {
         return world;
     }
 
-    public
+    public abstract WorldCreator getWorldCreator();
 }

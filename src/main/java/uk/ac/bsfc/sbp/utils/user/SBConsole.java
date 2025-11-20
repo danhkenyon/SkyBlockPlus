@@ -20,6 +20,6 @@ import java.util.UUID;
  */
 public class SBConsole extends SBUser {
     protected SBConsole() {
-        super("CONSOLE", new UUID(0, 0), true);
+        super("CONSOLE", new UUID(0, 0), 0L, new UUID(0, 0), "RECRUIT", true);
     }
 }

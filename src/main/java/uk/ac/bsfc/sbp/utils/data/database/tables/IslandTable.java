@@ -1,21 +1,9 @@
 package uk.ac.bsfc.sbp.utils.data.database.tables;
 
-import org.bukkit.Location;
 import uk.ac.bsfc.sbp.core.skyblock.Island;
-import uk.ac.bsfc.sbp.core.skyblock.Member;
-import uk.ac.bsfc.sbp.utils.SBConstants;
-import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
-import uk.ac.bsfc.sbp.utils.location.SBLocation;
-import uk.ac.bsfc.sbp.utils.location.SBWorld;
-import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-
-import static uk.ac.bsfc.sbp.utils.SBConstants.Island.BASE_ISLAND_SIZE;
-import static uk.ac.bsfc.sbp.utils.SBConstants.Island.UNKNOWN_ISLAND_UUID;
 
 /**
  * The IslandTable class is responsible for handling database interactions specific to
@@ -25,6 +13,20 @@ import static uk.ac.bsfc.sbp.utils.SBConstants.Island.UNKNOWN_ISLAND_UUID;
  */
 @Deprecated
 public class IslandTable extends DatabaseTable<Island> {
+    protected IslandTable(String tableName) {
+        super(tableName);
+    }
+
+    @Override
+    public Island mapRow(Map<String, Object> row) {
+        return null;
+    }
+
+    @Override
+    public void ensureTableExists() {
+
+    }
+    /*
     public IslandTable() {
         super(SBConstants.Database.TABLE_ISLANDS, 2);
     }
@@ -123,4 +125,6 @@ public class IslandTable extends DatabaseTable<Island> {
     public boolean exists(String name) {
         return super.exists("name", name);
     }
+
+     */
 }

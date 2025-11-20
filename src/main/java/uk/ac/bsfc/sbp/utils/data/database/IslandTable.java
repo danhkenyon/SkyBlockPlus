@@ -6,6 +6,7 @@ import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.config.FeatureConfig;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
+import uk.ac.bsfc.sbp.utils.location.WorldEnvironment;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class IslandTable extends DatabaseTable<Island> {
                 .count();
 
         if (countInThisWorld < maxPerWorld) {
-            SBWorld.create(Main.getInstance().getConfig(FeatureConfig.class).skyblock.base_world_name + (worldNumber + 1), "NORMAL", 0);
+            SBWorld.create(Main.getInstance().getConfig(FeatureConfig.class).skyblock.base_world_name + (worldNumber + 1), WorldEnvironment.valueOf("NORMAL"), 0);
         }
 
         SBLocation next = (countInThisWorld < maxPerWorld) ? SBLocation.of(

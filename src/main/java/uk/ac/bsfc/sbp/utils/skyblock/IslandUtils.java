@@ -1,13 +1,11 @@
 package uk.ac.bsfc.sbp.utils.skyblock;
 
 import uk.ac.bsfc.sbp.core.skyblock.Island;
-import uk.ac.bsfc.sbp.utils.SBConstants;
-import uk.ac.bsfc.sbp.utils.SBLogger;
-import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
-import uk.ac.bsfc.sbp.utils.location.SBWorld;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Utility class for managing and interacting with islands in the SkyBlock+ system.
@@ -34,6 +32,7 @@ public class IslandUtils {
     }
 
     public void init() {
+        /*
         List<Island> rows = IslandTable.getInstance().getRows();
 
         for (Island island : rows) {
@@ -42,10 +41,13 @@ public class IslandUtils {
         }
 
         SBLogger.info("<green>Loaded <aqua>" + islands.size() + " <green>islands from database.");
+
+         */
     }
 
     private static int index = 0;
     public static SBLocation nextLocation() {
+        /*
         Optional<Island> optLast = IslandTable.getInstance().getRows().stream().max(Comparator.comparingLong(Island::timeCreated));
         if (optLast.isEmpty()) {
             return SBLocation.of(SBConstants.Island.ISLAND_WORLD, 0, 100, 0);
@@ -79,5 +81,8 @@ public class IslandUtils {
 
         index++;
         return SBLocation.of(world, x * spacing, 100, z * spacing);
+
+         */
+        return null;
     }
 }

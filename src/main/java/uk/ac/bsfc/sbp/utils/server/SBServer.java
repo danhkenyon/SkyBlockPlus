@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import uk.ac.bsfc.sbp.utils.SBLogger;
-import uk.ac.bsfc.sbp.utils.data.database.tables.UserTable;
 import uk.ac.bsfc.sbp.utils.user.SBUser;
 
 import java.util.List;
@@ -49,6 +48,6 @@ public class SBServer {
                 .toList();
     }
     public static List<SBUser> getAllUsers() {
-        return UserTable.getInstance().getRows();
+        return null; //UserTable.getInstance().getRows();
     }
 }

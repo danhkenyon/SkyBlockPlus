@@ -15,7 +15,7 @@ import java.util.UUID;
  * It extends the DatabaseTable class with specific implementation for the SBUser entity.
  * This class provides methods for inserting, retrieving, and validating user data in the database.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class UserTable extends DatabaseTable<SBUser> {
     public UserTable() {
         super(SBConstants.Database.TABLE_USERS, 1);
@@ -90,9 +90,9 @@ public class UserTable extends DatabaseTable<SBUser> {
 
     @Override
     public SBUser mapRow(Map<String, Object> row) {
-        return SBUser.from(
+        return SBUser.create(
                 UUID.fromString((String) row.get("uuid")),
-                (String) row.get("name")
+                (String) row.get("name"), 0L, UUID.fromString("00000000-0000-0000-0000-000000000000"), ""
         );
     }
 }

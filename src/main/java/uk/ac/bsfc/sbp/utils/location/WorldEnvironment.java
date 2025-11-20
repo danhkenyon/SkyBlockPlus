@@ -1,5 +1,7 @@
 package uk.ac.bsfc.sbp.utils.location;
 
+import org.bukkit.WorldType;
+
 /**
  * Represents the specific environment of a world in the server.
  * This enum associates a world type with its corresponding environmental context,
@@ -14,4 +16,8 @@ public enum WorldEnvironment {
     NORMAL,
     NETHER,
     THE_END;
+
+    public WorldType toBukkit() {
+        return WorldType.valueOf(toString().toUpperCase());
+    }
 }

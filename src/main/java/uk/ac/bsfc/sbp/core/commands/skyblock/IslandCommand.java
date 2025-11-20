@@ -1,10 +1,11 @@
 package uk.ac.bsfc.sbp.core.commands.skyblock;
 
-import uk.ac.bsfc.sbp.core.commands.skyblock.subcommands.*;
-import uk.ac.bsfc.sbp.core.skyblock.Member;
+import uk.ac.bsfc.sbp.core.commands.skyblock.subcommands.CreateSubcommand;
+import uk.ac.bsfc.sbp.core.commands.skyblock.subcommands.DeleteSubcommand;
+import uk.ac.bsfc.sbp.core.commands.skyblock.subcommands.HelpSubcommand;
+import uk.ac.bsfc.sbp.core.commands.skyblock.subcommands.InfoSubcommand;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
-import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
 import uk.ac.bsfc.sbp.utils.user.SBConsole;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
@@ -45,21 +46,21 @@ public class IslandCommand extends SBCommand {
         }
 
         assert super.getUser() instanceof SBPlayer;
-        Member member = IslandMemberTable.getInstance().getRow("player_uuid", super.getUser().getUniqueID());
+        // Member member = IslandMemberTable.getInstance().getRow("player_uuid", super.getUser().getUniqueID());
 
         if (args.length == 0) {
-            if (member == null) {
+            // if (member == null) {
                 user.sendMessage("<yellow>/island info <gray>| <white>View information about your island.");
                 return;
-            }
-            member.sendMessage("<yellow>/island create <gray>| <white>Create a new island.");
-            return;
+            // }
+            // member.sendMessage("<yellow>/island create <gray>| <white>Create a new island.");
         }
 
         if (args[0].equalsIgnoreCase("help")) HelpSubcommand.execute(this);
         else if (args[0].equalsIgnoreCase("create")) CreateSubcommand.execute(this);
         else if (args[0].equalsIgnoreCase("info")) InfoSubcommand.execute(this);
         else if (args[0].equalsIgnoreCase("delete")) DeleteSubcommand.execute(this);
+        /*
         else if (args[0].equalsIgnoreCase("invite")) {
             // /island invite <player> [player_rank]
             // /island invite accept <island_name>
@@ -79,6 +80,8 @@ public class IslandCommand extends SBCommand {
         else {
             member.sendMessage("<red>Unknown subcommand. Use <yellow><b>/island help <red>for assistance.");
         }
+
+         */
 
 
     }

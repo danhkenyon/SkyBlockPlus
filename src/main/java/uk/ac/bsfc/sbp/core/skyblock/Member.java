@@ -1,20 +1,19 @@
 package uk.ac.bsfc.sbp.core.skyblock;
 
-import org.jetbrains.annotations.NotNull;
-import uk.ac.bsfc.sbp.utils.SBConstants;
-import uk.ac.bsfc.sbp.utils.SBLogger;
-import uk.ac.bsfc.sbp.utils.data.database.tables.IslandMemberTable;
 import uk.ac.bsfc.sbp.utils.user.SBPlayer;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
  * Represents a member of an island in a game. A Member extends the SBPlayer class,
  * adding additional functionality related to their rank and associated island.
  */
-@Deprecated(forRemoval = true)
+@Deprecated(forRemoval = false)
 public class Member extends SBPlayer {
+    protected Member(String name, UUID uuid, long flight_time, UUID island_id, String island_rank) {
+        super(name, uuid, flight_time, island_id, island_rank);
+    }
+    /*
     private UUID islandId;
     private Rank rank;
 
@@ -97,4 +96,8 @@ public class Member extends SBPlayer {
     public String toString() {
         return "Member[name=" + getName() + ", uuid=" + getUniqueID() + ", rank=" + rank + ", islandId=" + islandId + "]";
     }
+
+     */
 }
+
+

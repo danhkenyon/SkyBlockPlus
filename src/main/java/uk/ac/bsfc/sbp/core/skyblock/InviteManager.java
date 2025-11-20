@@ -1,21 +1,11 @@
 package uk.ac.bsfc.sbp.core.skyblock;
 
-import org.bukkit.Bukkit;
-import uk.ac.bsfc.sbp.Main;
-import uk.ac.bsfc.sbp.utils.SBLogger;
-import uk.ac.bsfc.sbp.utils.data.database.tables.IslandTable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Manages island invitations and provides functionalities for sending, revoking,
  * accepting, and denying invites between islands and members.
  */
 public class InviteManager {
+    /*
     private final Map<UUID, List<Member>> invites = new ConcurrentHashMap<>();
 
     private static InviteManager INSTANCE;
@@ -77,4 +67,7 @@ public class InviteManager {
             member.sendMessage("<red>You don't have a invite from that island!");
         }
     }
+
+     */
 }
+

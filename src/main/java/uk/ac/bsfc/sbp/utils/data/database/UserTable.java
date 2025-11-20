@@ -147,7 +147,10 @@ public class UserTable extends DatabaseTable<SBUser> {
     public SBUser mapRow(Map<String, Object> row) {
         return SBUser.create(
                 UUID.fromString((String) row.get("uuid")),
-                (String) row.get("username")
+                (String) row.get("username"),
+                ((Number)row.get("flight_time")).longValue(),
+                UUID.fromString((String) row.get("island_id")),
+                (String) row.get("island_rank")
         );
     }
 
