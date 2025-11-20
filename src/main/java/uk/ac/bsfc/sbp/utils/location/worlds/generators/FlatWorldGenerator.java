@@ -36,6 +36,8 @@ public class FlatWorldGenerator extends ChunkGenerator {
     ) {
         int baseY = chunkData.getMinHeight();
 
+        System.out.println(layers);
+
         int currentY = baseY;
         for (Layer layer : layers) {
             for (int i = 0; i < layer.thickness(); i++) {
