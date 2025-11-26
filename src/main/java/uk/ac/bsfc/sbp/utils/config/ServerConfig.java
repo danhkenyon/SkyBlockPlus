@@ -9,11 +9,6 @@ public class ServerConfig implements ReloadableConfig {
     @Comment("Database connection setup")
     public Database database = new Database();
 
-    @Comment("Test 'update' on the config")
-    public char test = 'a';
-
-
-
     public static class Database {
         @Comment("Driver name, you can mostly ignore this")
         public String driver = "com.mysql.jdbc.Driver";
