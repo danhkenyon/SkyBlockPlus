@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public final class Main extends JavaPlugin {
+    //Git test
     private static Main instance;
     public static Main getInstance() { return instance; }
 
