@@ -1,6 +1,8 @@
 package uk.ac.bsfc.sbp;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.ac.bsfc.sbp.core.spawners.SpawnerDAO;
@@ -9,6 +11,7 @@ import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.analytics.AnalyticsRunnable;
 import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
 import uk.ac.bsfc.sbp.utils.config.ConfigManager;
+import uk.ac.bsfc.sbp.utils.config.FeatureConfig;
 import uk.ac.bsfc.sbp.utils.entity.StackManager;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
 import uk.ac.bsfc.sbp.utils.location.SBWorldUtils;
@@ -17,10 +20,6 @@ import uk.ac.bsfc.sbp.utils.menus.events.SBItemListener;
 import uk.ac.bsfc.sbp.utils.menus.events.SBMenuListener;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
 import xyz.xenondevs.invui.InvUI;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public final class Main extends JavaPlugin {
     private static Main instance;
@@ -46,47 +45,19 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
-        reloadConfig();
-
-        Boolean optIn = (Boolean) getConfig().get("analyticsOptIn", null);
-
-        if (optIn == null) {
-            SBLogger.raw("<green>-------------------------------------------------");
-            SBLogger.raw("<red>Analytics opt-in not set. Please type 'true' or 'false' in the console to continue:");
-            SBLogger.raw("<red><b>Note: This is completely anonymous and not required to use the plugin.</b>");
-            SBLogger.raw("<green>-------------------------------------------------");
-            new Thread(() -> {
-                try {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                    while (true) {
-                        String input = reader.readLine();
-                        if (input == null) continue;
-                        input = input.trim().toLowerCase();
-                        if (input.equals("true") || input.equals("false")) {
-                            Boolean choice = Boolean.parseBoolean(input);
-                            analyticsOptIn = choice;
-                            getConfig().set("analyticsOptIn", choice);
-                            saveConfig();
-                            SBLogger.raw("<green>You chose: " + choice);
-                            break;
-                        } else {
-                            getLogger().info("<red>Invalid input! Type 'true' or 'false'.");
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-            // leaving this here as a reminder to laykon that hes really fucking stupid
-            // return;
-        } else {
-            analyticsOptIn = optIn;
-        }
-
         try {
             InvUI.getInstance().setPlugin(this);
             ConfigManager.loadConfigs("uk.ac.bsfc.sbp.utils.config");
+
+            FeatureConfig featureConfig = getConfig(FeatureConfig.class);
+            Boolean optIn = featureConfig.analytics;
+
+            if (optIn == null) {
+                enterSetupMode();
+                return;
+            }
+
+            analyticsOptIn = optIn;
 
             spawnerDAO = new SpawnerDAO();
             spawnerManager = new SpawnerStackManager(spawnerDAO);
@@ -98,14 +69,13 @@ public final class Main extends JavaPlugin {
             eventRegister.register();
 
             worldUtils = SBWorldUtils.getInstance();
-            worldUtils.loadAllWorlds(); // Laykon test this
+            worldUtils.loadAllWorlds();
 
             IslandUtils.getInstance().init();
             SBItem.loadRegistry();
             SBItemListener.register();
             SBMenuListener.register();
 
-            assert Bukkit.getWorlds().getFirst() != null;
             globalContainer = Bukkit.getWorlds().getFirst().getPersistentDataContainer();
 
             SBLogger.info("<green>Plugin enabled!");
@@ -115,7 +85,7 @@ public final class Main extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         }
 
-        if (analyticsOptIn){
+        if (Boolean.TRUE.equals(analyticsOptIn)) {
             new AnalyticsRunnable(20 * (60 * 5)).start();
         }
     }
@@ -131,15 +101,71 @@ public final class Main extends JavaPlugin {
     public SBCommandHandler getCommandHandler() { return commandHandler; }
     public SBEventRegister getEventRegister() { return eventRegister; }
     public PersistentDataContainer getGlobalContainer() { return globalContainer; }
-    public SBWorldUtils getWorldUtils() {
-
-        return worldUtils;
-    }
+    public SBWorldUtils getWorldUtils() { return worldUtils; }
     public static StackManager getStackManager() { return stackManager; }
     public static SpawnerStackManager getSpawnerManager() { return spawnerManager; }
     public static SpawnerDAO getSpawnerDAO() { return spawnerDAO; }
 
     public <T> T getConfig(Class<T> clazz) {
         return ConfigManager.getConfig(clazz);
+    }
+
+    private void enterSetupMode() {
+        SBLogger.raw("<green>-------------------------------------------------");
+        SBLogger.raw("<red>Analytics opt-in is NOT SET!");
+        SBLogger.raw("<red>You must choose before SkyBlockPlus can finish loading.");
+        SBLogger.raw("");
+        SBLogger.raw("<yellow>Use one of the commands:");
+        SBLogger.raw("<yellow>  /analytics opt-in");
+        SBLogger.raw("<yellow>  /analytics opt-out");
+        SBLogger.raw("");
+        SBLogger.raw("<red>After choosing, please RESTART the server.");
+        SBLogger.raw("<green>-------------------------------------------------");
+
+        Bukkit.getCommandMap().register("analytics", new BukkitCommand("analytics") {
+            @Override
+            public boolean execute(CommandSender sender, String label, String[] args) {
+                return handleAnalyticsCommand(sender, args);
+            }
+        });
+
+        SBLogger.info("<yellow>SkyBlockPlus is now in SETUP MODE. Nothing else will load.");
+    }
+
+    public boolean handleAnalyticsCommand(CommandSender sender, String[] args) {
+        if (!sender.isOp()) {
+            sender.sendMessage("You must be an operator to use this command!");
+            return true;
+        }
+
+        if (args.length != 1) {
+            sender.sendMessage("Usage: /analytics <opt-in|opt-out>");
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("opt-in")) {
+            updateAnalyticsChoice(true, sender);
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("opt-out")) {
+            updateAnalyticsChoice(false, sender);
+            return true;
+        }
+
+        sender.sendMessage("Usage: /analytics <opt-in|opt-out>");
+        return true;
+    }
+
+    private void updateAnalyticsChoice(boolean value, CommandSender sender) {
+        FeatureConfig cfg = getConfig(FeatureConfig.class);
+        cfg.analytics = value;
+
+        ConfigManager.saveConfig(cfg);
+
+        sender.sendMessage("Analytics has been set to: " + value);
+        sender.sendMessage("Please restart the server to finish setup.");
+
+        SBLogger.info("Analytics choice set to " + value + ". Restart required.");
     }
 }

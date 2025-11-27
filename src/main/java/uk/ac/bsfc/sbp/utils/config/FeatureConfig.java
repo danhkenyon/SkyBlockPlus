@@ -6,6 +6,23 @@ import java.util.List;
 @ConfigFile("features")
 public class FeatureConfig implements ReloadableConfig {
 
+
+
+    @Comment("These analytics are pseudonymous, meaning a unique identifier is generated for your server")
+    @Comment("However this identifier is 1 way hashed and there isnt a way to reverse it.")
+    @Comment("This is the data we collect:")
+    @Comment("Technically IP, however this isn't stored and is simply live logged (gone once server reboots)")
+    @Comment("Server ID (the unique identifier mentioned earlier)")
+    @Comment("Timestamp")
+    @Comment("player count")
+    @Comment("Ram usage")
+    @Comment("CPU usage")
+    @Comment("Average TPS")
+    @Comment("Plugin version")
+    @Comment("Server Software (paper, folia, ect) + Version")
+    public Boolean analytics = null;
+
+
     @Comment("Settings for the mob stacker feature")
     public MobStacker mobStacker = new MobStacker();
     public SpawnerStacker spawnerStacker = new SpawnerStacker();

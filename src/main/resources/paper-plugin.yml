@@ -3,3 +3,6 @@ version: "1.0-SNAPSHOT"
 main: uk.ac.bsfc.sbp.Main
 api-version: "1.21"
 loader: uk.ac.bsfc.sbp.SBPluginLoader
+
+commands:
+  analytics:

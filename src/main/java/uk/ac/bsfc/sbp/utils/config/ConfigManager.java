@@ -138,9 +138,14 @@ public class ConfigManager {
             Object value = field.get(obj);
             if (value == null) continue;
 
-            Comment comment = field.getAnnotation(Comment.class);
-            if (comment != null) {
-                sb.append(indent).append("# ").append(comment.value()).append("\n");
+            Comment[] comments = field.getAnnotationsByType(Comment.class);
+            for (Comment c : comments) {
+                String text = c.value();
+                if (text.isEmpty()) {
+                    sb.append(indent).append("#").append("\n");
+                } else {
+                    sb.append(indent).append("# ").append(text).append("\n");
+                }
             }
 
             Class<?> type = field.getType();
@@ -190,4 +195,35 @@ public class ConfigManager {
                 .replace("\t", "\\t")
                 .replace("\r", "\\r");
     }
+
+    public static void saveConfig(Object configInstance) {
+        try {
+            Class<?> clazz = configInstance.getClass();
+
+            if (!clazz.isAnnotationPresent(ConfigFile.class)) {
+                SBLogger.err("[ConfigManager] Cannot save config: " + clazz.getSimpleName() + " is missing @ConfigFile");
+                return;
+            }
+
+            ConfigFile annotation = clazz.getAnnotation(ConfigFile.class);
+            String name = annotation.value().isEmpty()
+                    ? clazz.getSimpleName().toLowerCase()
+                    : annotation.value();
+
+            Path file = Main.getInstance().getDataFolder().toPath().resolve(name + ".conf");
+
+            Files.createDirectories(file.getParent());
+
+            String rendered = renderDefaults(configInstance, 0);
+
+            Files.writeString(file, rendered);
+
+            SBLogger.info("<green>Saved config: " + name + ".conf");
+
+        } catch (Exception e) {
+            SBLogger.err("[ConfigManager] Failed to save config: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 }
