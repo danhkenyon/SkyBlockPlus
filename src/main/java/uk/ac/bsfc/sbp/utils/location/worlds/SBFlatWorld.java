@@ -12,7 +12,7 @@ import java.util.List;
 public class SBFlatWorld extends SBWorld {
     private final List<FlatWorldGenerator.Layer> layers;
 
-    protected SBFlatWorld(String name, WorldEnvironment env, long seed, List<FlatWorldGenerator.Layer> layers) {
+    public SBFlatWorld(String name, WorldEnvironment env, long seed, List<FlatWorldGenerator.Layer> layers) {
         super(name, env, seed, false);
         this.layers = layers;
     }

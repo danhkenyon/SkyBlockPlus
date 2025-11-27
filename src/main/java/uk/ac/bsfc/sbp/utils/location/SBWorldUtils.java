@@ -5,6 +5,7 @@ import uk.ac.bsfc.sbp.utils.data.JSON;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -52,6 +53,21 @@ public class SBWorldUtils {
     public void saveAll() {
         for (SBWorld world : loadedWorlds) {
             world.save();
+        }
+    }
+
+    public void loadAllWorlds() {
+        Object data = worldsJson.getData().get("worlds");
+
+        if (data instanceof Map<?, ?> worldsMap) {
+            for (Object value : worldsMap.values()) {
+                if (value instanceof Map<?, ?> worldData) {
+                    @SuppressWarnings("unchecked")
+                    SBWorld world = SBWorld.fromMap((Map<Object, Object>) worldData);
+                    world.load();
+                    register(world);
+                }
+            }
         }
     }
 }
