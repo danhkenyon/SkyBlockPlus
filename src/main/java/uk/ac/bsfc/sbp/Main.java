@@ -12,6 +12,7 @@ import uk.ac.bsfc.sbp.utils.config.ConfigManager;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.entity.StackManager;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
+import uk.ac.bsfc.sbp.utils.location.SBWorldUtils;
 import uk.ac.bsfc.sbp.utils.menus.SBItem;
 import uk.ac.bsfc.sbp.utils.menus.events.SBItemListener;
 import uk.ac.bsfc.sbp.utils.menus.events.SBMenuListener;
@@ -23,19 +24,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public final class Main extends JavaPlugin {
-    //Git test
     private static Main instance;
     public static Main getInstance() { return instance; }
 
     private static StackManager stackManager;
-    public static StackManager getStackManager() { return stackManager; }
-
     private static SpawnerStackManager spawnerManager;
     private static SpawnerDAO spawnerDAO;
 
     private PersistentDataContainer globalContainer;
     private SBCommandHandler commandHandler;
     private SBEventRegister eventRegister;
+    private SBWorldUtils worldUtils;
 
     public static Boolean analyticsOptIn = null;
 
@@ -96,9 +95,11 @@ public final class Main extends JavaPlugin {
 
             commandHandler = SBCommandHandler.getInstance();
             commandHandler.register();
-
             eventRegister = SBEventRegister.getInstance();
             eventRegister.register();
+
+            worldUtils = SBWorldUtils.getInstance();
+            worldUtils.loadAllWorlds(); // Laykon test this
 
             IslandUtils.getInstance().init();
             SBItem.loadRegistry();
@@ -118,7 +119,6 @@ public final class Main extends JavaPlugin {
         if (analyticsOptIn){
             new AnalyticsRunnable(20 * (60 * 5)).start();
         }
-
     }
 
     @Override
@@ -132,7 +132,11 @@ public final class Main extends JavaPlugin {
     public SBCommandHandler getCommandHandler() { return commandHandler; }
     public SBEventRegister getEventRegister() { return eventRegister; }
     public PersistentDataContainer getGlobalContainer() { return globalContainer; }
+    public SBWorldUtils getWorldUtils() {
 
+        return worldUtils;
+    }
+    public static StackManager getStackManager() { return stackManager; }
     public static SpawnerStackManager getSpawnerManager() { return spawnerManager; }
     public static SpawnerDAO getSpawnerDAO() { return spawnerDAO; }
 

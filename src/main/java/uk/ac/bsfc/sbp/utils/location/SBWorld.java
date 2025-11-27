@@ -9,6 +9,7 @@ import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.Wrapper;
 import uk.ac.bsfc.sbp.utils.data.JSON;
 import uk.ac.bsfc.sbp.utils.data.JsonFile;
+import uk.ac.bsfc.sbp.utils.location.worlds.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,23 +34,21 @@ public abstract class SBWorld extends Wrapper<World> {
         this.seed = world.getSeed();
         this.loaded = true;
     }
+
     protected SBWorld(String name, WorldEnvironment env, long seed, boolean loaded) {
         this.uuid = UUID.nameUUIDFromBytes(name.getBytes());
         this.name = name;
-
-        File worldDir = new File(Bukkit.getWorldContainer(), name);
-
-        this.worldDirectory = worldDir;
+        this.worldDirectory = new File(Bukkit.getWorldContainer(), name);
         this.env = env;
         this.seed = seed;
         this.loaded = loaded;
 
         try {
-            if (worldDir.mkdirs()) {
+            if (worldDirectory.mkdirs()) {
                 this.toBukkit();
                 SBLogger.raw("<green>World <gold>" + name + "<green> has been created");
             }
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             SBLogger.err(e.getMessage());
         }
     }
@@ -57,6 +56,7 @@ public abstract class SBWorld extends Wrapper<World> {
     public static SBWorld getWorld(UUID uuid) {
         return SBWorldUtils.getInstance().getWorld(uuid);
     }
+
     public static SBWorld getWorld(String name) {
         SBWorld world = SBWorldUtils.getInstance().getWorld(name);
         if (world == null) {
@@ -65,8 +65,8 @@ public abstract class SBWorld extends Wrapper<World> {
         return world;
     }
 
-
-    public @SuppressWarnings("unchecked") static SBWorld load(String name) {
+    @SuppressWarnings("unchecked")
+    public static SBWorld load(String name) {
         JsonFile json = JSON.get("worlds");
         Object data = json.get(name);
         SBWorld world;
@@ -90,6 +90,7 @@ public abstract class SBWorld extends Wrapper<World> {
         world.save();
         return world;
     }
+
     public static SBWorld create(String name, WorldEnvironment env, long seed) {
         if (SBWorldUtils.getInstance().getLoadedWorlds().contains(SBWorld.getWorld(name))) {
             return SBWorld.getWorld(name);
@@ -114,6 +115,7 @@ public abstract class SBWorld extends Wrapper<World> {
             toBukkit();
         }
     }
+
     public void unload(boolean save) {
         if (isLoaded()) {
             Bukkit.unloadWorld(name, save);
@@ -134,6 +136,7 @@ public abstract class SBWorld extends Wrapper<World> {
             return false;
         }
     }
+
     private void deleteRecursively(File file) throws IOException {
         if (!file.exists()) return;
         if (file.isDirectory()) {
@@ -152,27 +155,31 @@ public abstract class SBWorld extends Wrapper<World> {
     public Map<String, Object> toMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("uuid", uuid.toString());
-        map.put("environment", env);
+        map.put("environment", env.name());
         map.put("seed", seed);
         map.put("loaded", loaded);
         map.put("directory", worldDirectory.getAbsolutePath());
+        map.put("type", this.getClass().getSimpleName());
         return map;
     }
+
     public static SBWorld fromMap(Map<Object, Object> data) {
         String directory = String.valueOf(data.get("directory"));
         String name = new File(directory).getName();
         WorldEnvironment env = WorldEnvironment.valueOf(String.valueOf(data.getOrDefault("environment", "NORMAL")).toUpperCase());
         long seed = ((Number) data.getOrDefault("seed", System.currentTimeMillis())).longValue();
-        boolean loaded = (boolean) data.getOrDefault("loaded", false);
-        return new SBWorld(name, env, seed, loaded) {
-            @Override
-            public WorldCreator getWorldCreator() {
-                return new WorldCreator(this.getName())
-                        .environment(Environment.valueOf(getEnvironment().name()))
-                        .seed(getSeed())
-                        .type(WorldType.NORMAL);
-            }
-        };
+        String type = String.valueOf(data.getOrDefault("type", "SBNormalWorld"));
+
+        SBWorld world;
+        switch (type) {
+            case "SBFlatWorld" -> world = new SBFlatWorld(name, env, seed, List.of());
+            case "SBVoidWorld" -> world = new SBVoidWorld(name, env);
+            case "SBNetherWorld" -> world = new SBNetherWorld(name, seed);
+            case "SBEndWorld" -> world = new SBEndWorld(name, seed);
+            default -> world = new SBNormalWorld(name, seed); // i dont know why this is erroring???
+        }
+
+        return world;
     }
 
     public UUID getUniqueId() {
@@ -193,7 +200,6 @@ public abstract class SBWorld extends Wrapper<World> {
     public boolean isLoaded() {
         return loaded && Bukkit.getWorld(name) != null;
     }
-
     public void setEnvironment(WorldEnvironment env) {
         this.env = env;
     }
@@ -210,7 +216,7 @@ public abstract class SBWorld extends Wrapper<World> {
         if (world == null) {
             try {
                 boolean ignored = worldDirectory.mkdirs();
-            }catch (SecurityException e){
+            } catch (SecurityException e) {
                 SBLogger.err(e.getMessage());
             }
             WorldCreator creator = this.getWorldCreator();

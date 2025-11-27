@@ -34,21 +34,7 @@ public class FlatWorldGenerator extends ChunkGenerator {
             int chunkZ,
             @NotNull ChunkData chunkData
     ) {
-        int baseY = chunkData.getMinHeight();
-
-        System.out.println(layers);
-
-        int currentY = baseY;
-        for (Layer layer : layers) {
-            for (int i = 0; i < layer.thickness(); i++) {
-                for (int x = 0; x < 16; x++) {
-                    for (int z = 0; z < 16; z++) {
-                        chunkData.setBlock(x, currentY - baseY, z, layer.material());
-                    }
-                }
-                currentY++;
-            }
-        }
+        // TODO: i dont wanna do it someone else do it please (preferably sage because shes done it before)
     }
 
     public @Override boolean shouldGenerateNoise(
