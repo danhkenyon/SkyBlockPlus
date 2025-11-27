@@ -8,7 +8,7 @@ import uk.ac.bsfc.sbp.utils.location.worlds.generators.EndWorldGenerator;
 
 public class SBEndWorld extends SBWorld {
     public SBEndWorld(String name, long seed) {
-        super(name, WorldEnvironment.THE_END, seed, false);
+        super(name, WorldEnvironment.THE_END, seed);
     }
 
     @Override
@@ -21,7 +21,7 @@ public class SBEndWorld extends SBWorld {
 
     public static SBEndWorld create(String name, long seed) {
         SBEndWorld world = new SBEndWorld(name, seed);
-        world.load();
+        world.loadWorld();
         SBWorldUtils.getInstance().register(world);
         world.save();
         return world;

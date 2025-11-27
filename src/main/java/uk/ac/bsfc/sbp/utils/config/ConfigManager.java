@@ -52,6 +52,8 @@ public class ConfigManager {
                     ? clazz.getSimpleName().toLowerCase()
                     : annotation.value();
 
+            SBLogger.info("Loading config: " + name);
+
             Path file = Main.getInstance().getDataFolder().toPath().resolve(name + ".conf");
             Files.createDirectories(file.getParent());
 

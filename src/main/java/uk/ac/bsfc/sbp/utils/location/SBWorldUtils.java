@@ -1,18 +1,19 @@
 package uk.ac.bsfc.sbp.utils.location;
 
-import uk.ac.bsfc.sbp.utils.data.JsonFile;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.data.JSON;
+import uk.ac.bsfc.sbp.utils.data.JsonFile;
+import uk.ac.bsfc.sbp.utils.location.worlds.SBEndWorld;
+import uk.ac.bsfc.sbp.utils.location.worlds.SBNetherWorld;
+import uk.ac.bsfc.sbp.utils.location.worlds.SBNormalWorld;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Utility class for managing the lifecycle and retrieval of {@link SBWorld} objects.
- * Provides functionality to register, unregister, retrieve, and save instances of SBWorld.
- * This class follows the singleton pattern to ensure a single instance is used globally.
- */
 public class SBWorldUtils {
     private final List<SBWorld> loadedWorlds = new ArrayList<>();
     private final JsonFile worldsJson = JSON.get("worlds");
@@ -28,18 +29,20 @@ public class SBWorldUtils {
     }
 
     public void register(SBWorld world) {
-        if (!loadedWorlds.contains(world)) loadedWorlds.add(world);
+        if (!loadedWorlds.contains(world)) {
+            loadedWorlds.add(world);
+        }
     }
     public void unregister(SBWorld world) {
         loadedWorlds.remove(world);
     }
-    public List<SBWorld> getLoadedWorlds() {
-        return loadedWorlds;
-    }
 
+    public List<SBWorld> getLoadedWorlds() {
+        return new ArrayList<>(loadedWorlds);
+    }
     public SBWorld getWorld(UUID uuid) {
         return loadedWorlds.stream()
-                .filter(w -> w.getUniqueId() == uuid)
+                .filter(w -> w.getUniqueId().equals(uuid))
                 .findFirst()
                 .orElse(null);
     }
@@ -55,19 +58,47 @@ public class SBWorldUtils {
             world.save();
         }
     }
-
     public void loadAllWorlds() {
-        Object data = worldsJson.getData().get("worlds");
+        for (World bukkitWorld : Bukkit.getWorlds()) {
+            if (getWorld(bukkitWorld.getName()) == null) {
+                SBWorld wrapped = wrapExistingWorld(bukkitWorld);
+                register(wrapped);
+                wrapped.save();
+                SBLogger.raw("<green>Wrapped existing world: <gold>" + bukkitWorld.getName());
+            }
+        }
+        Object data = worldsJson.getData();
 
         if (data instanceof Map<?, ?> worldsMap) {
-            for (Object value : worldsMap.values()) {
-                if (value instanceof Map<?, ?> worldData) {
-                    @SuppressWarnings("unchecked")
-                    SBWorld world = SBWorld.fromMap((Map<Object, Object>) worldData);
-                    world.load();
-                    register(world);
+            for (Map.Entry<?, ?> entry : worldsMap.entrySet()) {
+                String worldName = String.valueOf(entry.getKey());
+
+                if (getWorld(worldName) != null) {
+                    continue;
+                }
+                if (entry.getValue() instanceof Map<?, ?> worldData) {
+                    try {
+                        @SuppressWarnings("unchecked")
+                        SBWorld world = SBWorld.fromMap((Map<Object, Object>) worldData);
+                        world.loadWorld();
+                        register(world);
+                        SBLogger.raw("<green>Loaded world from JSON: <gold>" + worldName);
+                    } catch (Exception e) {
+                        SBLogger.err("Failed to load world " + worldName + ": " + e.getMessage());
+                    }
                 }
             }
         }
+    }
+
+    private SBWorld wrapExistingWorld(World bukkitWorld) {
+        String name = bukkitWorld.getName();
+        long seed = bukkitWorld.getSeed();
+
+        return switch (bukkitWorld.getEnvironment()) {
+            case NETHER -> new SBNetherWorld(name, seed);
+            case THE_END -> new SBEndWorld(name, seed);
+            default -> new SBNormalWorld(name, seed);
+        };
     }
 }

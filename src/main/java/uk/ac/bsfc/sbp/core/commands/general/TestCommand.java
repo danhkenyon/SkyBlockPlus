@@ -23,7 +23,7 @@ public class  TestCommand extends SBCommand {
     }
     @Override
     public void execute() {
-        SBFlatWorld world = SBFlatWorld.create(SBTime.now().millis()+"-world", WorldEnvironment.NORMAL, 0,
+        SBFlatWorld world = SBFlatWorld.create(SBTime.now().millis()+"-world", WorldEnvironment.NETHER, 0,
                 new FlatWorldGenerator.Layer(org.bukkit.Material.BEDROCK, 1),
                 new FlatWorldGenerator.Layer(org.bukkit.Material.DIRT, 2),
                 new FlatWorldGenerator.Layer(org.bukkit.Material.GRASS_BLOCK, 1)

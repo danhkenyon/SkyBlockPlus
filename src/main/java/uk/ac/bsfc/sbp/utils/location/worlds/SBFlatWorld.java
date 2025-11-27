@@ -13,7 +13,7 @@ public class SBFlatWorld extends SBWorld {
     private final List<FlatWorldGenerator.Layer> layers;
 
     public SBFlatWorld(String name, WorldEnvironment env, long seed, List<FlatWorldGenerator.Layer> layers) {
-        super(name, env, seed, false);
+        super(name, env, seed);
         this.layers = layers;
     }
 
@@ -28,16 +28,20 @@ public class SBFlatWorld extends SBWorld {
 
     public static SBFlatWorld create(String name, WorldEnvironment env, long seed, List<FlatWorldGenerator.Layer> layers) {
         SBFlatWorld world = new SBFlatWorld(name, env, seed, layers);
-        world.load();
+        world.loadWorld();
         SBWorldUtils.getInstance().register(world);
         world.save();
         return world;
     }
     public static SBFlatWorld create(String name, WorldEnvironment env, long seed, FlatWorldGenerator.Layer ... layers) {
         SBFlatWorld world = new SBFlatWorld(name, env, seed, List.of(layers));
-        world.load();
+        world.loadWorld();
         SBWorldUtils.getInstance().register(world);
         world.save();
         return world;
+    }
+
+    public List<FlatWorldGenerator.Layer> getLayers() {
+        return layers;
     }
 }

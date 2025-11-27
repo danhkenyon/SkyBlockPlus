@@ -9,7 +9,6 @@ import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.analytics.AnalyticsRunnable;
 import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
 import uk.ac.bsfc.sbp.utils.config.ConfigManager;
-import uk.ac.bsfc.sbp.utils.data.SBConfig;
 import uk.ac.bsfc.sbp.utils.entity.StackManager;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
 import uk.ac.bsfc.sbp.utils.location.SBWorldUtils;
@@ -42,7 +41,6 @@ public final class Main extends JavaPlugin {
     public void onLoad() {
         instance = this;
         stackManager = new StackManager();
-        this.setNaggable(SBConfig.getBoolean("bukkit-logging"));
         SBLogger.info("<green>Loading plugin...");
     }
 
@@ -80,7 +78,8 @@ public final class Main extends JavaPlugin {
                     e.printStackTrace();
                 }
             }).start();
-            return;
+            // leaving this here as a reminder to laykon that hes really fucking stupid
+            // return;
         } else {
             analyticsOptIn = optIn;
         }

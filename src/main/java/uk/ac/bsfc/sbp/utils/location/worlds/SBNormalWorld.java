@@ -8,7 +8,7 @@ import uk.ac.bsfc.sbp.utils.location.worlds.generators.NormalWorldGenerator;
 
 public class SBNormalWorld extends SBWorld {
     public SBNormalWorld(String name, long seed) {
-        super(name, WorldEnvironment.NORMAL, seed, false);
+        super(name, WorldEnvironment.NORMAL, seed);
     }
 
     @Override
@@ -21,7 +21,7 @@ public class SBNormalWorld extends SBWorld {
 
     public static SBNormalWorld create(String name, long seed) {
         SBNormalWorld world = new SBNormalWorld(name, seed);
-        world.load();
+        world.loadWorld();
         SBWorldUtils.getInstance().register(world);
         world.save();
         return world;

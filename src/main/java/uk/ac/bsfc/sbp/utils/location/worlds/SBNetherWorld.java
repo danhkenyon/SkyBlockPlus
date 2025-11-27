@@ -8,7 +8,7 @@ import uk.ac.bsfc.sbp.utils.location.worlds.generators.NetherWorldGenerator;
 
 public class SBNetherWorld extends SBWorld {
     public SBNetherWorld(String name, long seed) {
-        super(name, WorldEnvironment.NETHER, seed, false);
+        super(name, WorldEnvironment.NETHER, seed);
     }
 
     @Override
@@ -21,7 +21,7 @@ public class SBNetherWorld extends SBWorld {
 
     public static SBNetherWorld create(String name, long seed) {
         SBNetherWorld world = new SBNetherWorld(name, seed);
-        world.load();
+        world.loadWorld();
         SBWorldUtils.getInstance().register(world);
         world.save();
         return world;
