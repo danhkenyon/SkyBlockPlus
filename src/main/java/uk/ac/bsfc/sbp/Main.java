@@ -114,6 +114,8 @@ public final class Main extends JavaPlugin {
         SBLogger.raw("<green>-------------------------------------------------");
         SBLogger.raw("<red>Analytics opt-in is NOT SET!");
         SBLogger.raw("<red>You must choose before SkyBlockPlus can finish loading.");
+        SBLogger.raw("<red>The information we collect is used to improve SkyBlockPlus.");
+        SBLogger.raw("<red>You can see what information we collect inside /plugins/SkyBlockPlus/features.conf");
         SBLogger.raw("");
         SBLogger.raw("<yellow>Use one of the commands:");
         SBLogger.raw("<yellow>  /analytics opt-in");
