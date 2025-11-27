@@ -6,6 +6,9 @@ import uk.ac.bsfc.sbp.Main;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 
 import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -23,7 +26,11 @@ public class AnalyticsRunnable extends BukkitRunnable {
         if (Main.analyticsOptIn == null || !Main.analyticsOptIn) return;
 
         int avgPlayerCount = Bukkit.getServer().getOnlinePlayers().size();
-        double pluginRamMb = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024.0 / 1024.0;
+
+        MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heapUsage = memoryBean.getHeapMemoryUsage();
+        double pluginRamMb = heapUsage.getUsed() / 1024.0 / 1024.0;
+
 
         double pluginCpuPercent = 0;
         try {
