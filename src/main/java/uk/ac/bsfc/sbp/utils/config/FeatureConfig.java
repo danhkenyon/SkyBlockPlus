@@ -1,8 +1,5 @@
 package uk.ac.bsfc.sbp.utils.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @ConfigFile("features")
 public class FeatureConfig implements ReloadableConfig {
 
@@ -64,11 +61,11 @@ public class FeatureConfig implements ReloadableConfig {
         public boolean showHolograms = true;
 
         @Comment("Hologram text format (placeholders: {type}, {stack}, {level})")
-        public List<String> hologramLines = new ArrayList<>(List.of(
+        public String[] hologramLines = {
                 "&e{type} Spawner",
                 "&7Stack: &b{stack}",
                 "&7Level: &a{level}"
-        ));
+        };
 
         @Comment("Spawn count multiplier per additional stack (0.10 = spawn count increases by 0.10 per stack)")
         public double spawnMultiplierPerStack = 1.0;
