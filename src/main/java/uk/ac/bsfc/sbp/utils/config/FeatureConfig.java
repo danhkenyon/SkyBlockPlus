@@ -6,7 +6,7 @@ public class FeatureConfig implements ReloadableConfig {
 
 
     @Comment("These analytics are pseudonymous, meaning a unique identifier is generated for your server")
-    @Comment("However this identifier is 1 way hashed and there isnt a way to reverse it.")
+    @Comment("However this identifier is 1 way hashed and there isn't a way to reverse it.")
     @Comment("This is the data we collect:")
     @Comment("Technically IP, however this isn't stored and is simply live logged (gone once server reboots)")
     @Comment("Server ID (the unique identifier mentioned earlier)")
