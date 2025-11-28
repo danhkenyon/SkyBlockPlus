@@ -5,6 +5,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import uk.ac.bsfc.sbp.utils.Wrapper;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Represents a custom implementation of a location in a 3D space within a specific world.
  * This class is used to encapsulate and manage location data, including coordinates, yaw, and pitch,
@@ -102,6 +105,27 @@ public class SBLocation extends Wrapper<Location> implements Cloneable {
 
     public String format() {
         return String.format("(%.0f, %.0f, %.0f)", x, y, z);
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("world", worldName);
+        map.put("x", x);
+        map.put("y", y);
+        map.put("z", z);
+        map.put("yaw", yaw);
+        map.put("pitch", pitch);
+        return map;
+    }
+    public static SBLocation fromMap(Map<?, ?> map) {
+        return new SBLocation(
+                String.valueOf(map.get("world")),
+                ((Number) map.get("x")).doubleValue(),
+                ((Number) map.get("y")).doubleValue(),
+                ((Number) map.get("z")).doubleValue(),
+                map.containsKey("yaw") ? ((Number) map.get("yaw")).floatValue() : 0f,
+                map.containsKey("pitch") ? ((Number) map.get("pitch")).floatValue() : 0f
+        );
     }
 
     @Override

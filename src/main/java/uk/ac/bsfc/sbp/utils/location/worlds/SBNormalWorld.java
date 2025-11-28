@@ -1,16 +1,19 @@
 package uk.ac.bsfc.sbp.utils.location.worlds;
 
 import org.bukkit.WorldCreator;
+import uk.ac.bsfc.sbp.utils.location.SBLocation;
 import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.location.SBWorldUtils;
 import uk.ac.bsfc.sbp.utils.location.WorldEnvironment;
 import uk.ac.bsfc.sbp.utils.location.worlds.generators.NormalWorldGenerator;
 
 public class SBNormalWorld extends SBWorld {
-    public SBNormalWorld(String name, long seed) {
-        super(name, WorldEnvironment.NORMAL, seed);
+    public SBNormalWorld(String name, long seed, SBLocation spawnLoc) {
+        super(name, WorldEnvironment.NORMAL, seed, spawnLoc);
     }
-
+    public SBNormalWorld(String name, long seed) {
+        this(name, seed, null);
+    }
     @Override
     public WorldCreator getWorldCreator() {
         return new WorldCreator(this.getName())

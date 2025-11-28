@@ -13,17 +13,15 @@ import java.util.Random;
 
 public class FlatWorldGenerator extends ChunkGenerator {
     private final List<Layer> layers;
+    private boolean generateStructures = false;
+    private boolean generateCaves = false;
+    private boolean generateDecorations = false;
 
     public FlatWorldGenerator(List<Layer> layers) {
         this.layers = (layers == null) ? List.of() : layers;
     }
     public FlatWorldGenerator() {
         this.layers = List.of();
-    }
-
-    @Override
-    public @NotNull List<BlockPopulator> getDefaultPopulators(@NotNull World world) {
-        return List.of();
     }
 
     @Override
@@ -34,9 +32,7 @@ public class FlatWorldGenerator extends ChunkGenerator {
             int chunkZ,
             @NotNull ChunkData chunkData
     ) {
-        // TODO: i dont wanna do it someone else do it please (preferably sage because shes done it before)
-        int baseY = worldInfo.getMinHeight();
-        int currentY = baseY;
+        int currentY = worldInfo.getMinHeight();
 
         for (Layer layer : layers) {
             for (int y = currentY; y < currentY + layer.thickness(); y++) {
@@ -72,7 +68,7 @@ public class FlatWorldGenerator extends ChunkGenerator {
             int chunkX,
             int chunkZ
     ) {
-        return false;
+        return this.generateCaves();
     }
     public @Override boolean shouldGenerateDecorations(
             @NotNull WorldInfo worldInfo,
@@ -80,7 +76,7 @@ public class FlatWorldGenerator extends ChunkGenerator {
             int chunkX,
             int chunkZ
     ) {
-        return false;
+        return this.generateDecorations();
     }
     public @Override boolean shouldGenerateStructures(
             @NotNull WorldInfo worldInfo,
@@ -88,15 +84,43 @@ public class FlatWorldGenerator extends ChunkGenerator {
             int chunkX,
             int chunkZ
     ) {
-        return false;
+        return this.generateStructures();
     }
 
-    @Override
-    public @NotNull Location getFixedSpawnLocation(@NotNull World world, @NotNull Random random) {
+    public @Override @NotNull Location getFixedSpawnLocation(@NotNull World world, @NotNull Random random) {
         int base = world.getMinHeight();
         int totalThickness = layers.stream().mapToInt(Layer::thickness).sum();
         int spawnY = base + totalThickness + 2;
         return new Location(world, 0.5, spawnY, 0.5);
+    }
+    public @Override @NotNull List<BlockPopulator> getDefaultPopulators(@NotNull World world) {
+        return List.of();
+    }
+
+    public List<Layer> getLayers() {
+        return layers;
+    }
+
+    public boolean generateStructures() {
+        return generateStructures;
+    }
+    public FlatWorldGenerator generateStructures(boolean generateStructures) {
+        this.generateStructures = generateStructures;
+        return this;
+    }
+    public boolean generateCaves() {
+        return generateCaves;
+    }
+    public FlatWorldGenerator generateCaves(boolean generateCaves) {
+        this.generateCaves = generateCaves;
+        return this;
+    }
+    public boolean generateDecorations() {
+        return generateDecorations;
+    }
+    public FlatWorldGenerator generateDecorations(boolean generateDecorations) {
+        this.generateDecorations = generateDecorations;
+        return this;
     }
 
     public record Layer(Material material, int thickness) {}

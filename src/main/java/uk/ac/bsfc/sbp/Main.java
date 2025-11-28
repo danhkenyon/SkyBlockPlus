@@ -127,36 +127,32 @@ public final class Main extends JavaPlugin {
         Bukkit.getCommandMap().register("analytics", new BukkitCommand("analytics") {
             @Override
             public boolean execute(CommandSender sender, String label, String[] args) {
-                return handleAnalyticsCommand(sender, args);
+                if (!sender.isOp()) {
+                    sender.sendMessage("You must be an operator to use this command!");
+                    return true;
+                }
+
+                if (args.length != 1) {
+                    sender.sendMessage("Usage: /analytics <opt-in|opt-out>");
+                    return true;
+                }
+
+                if (args[0].equalsIgnoreCase("opt-in")) {
+                    updateAnalyticsChoice(true, sender);
+                    return true;
+                }
+
+                if (args[0].equalsIgnoreCase("opt-out")) {
+                    updateAnalyticsChoice(false, sender);
+                    return true;
+                }
+
+                sender.sendMessage("Usage: /analytics <opt-in|opt-out>");
+                return true;
             }
         });
 
         SBLogger.info("<yellow>SkyBlockPlus is now in SETUP MODE. Nothing else will load.");
-    }
-
-    public boolean handleAnalyticsCommand(CommandSender sender, String[] args) {
-        if (!sender.isOp()) {
-            sender.sendMessage("You must be an operator to use this command!");
-            return true;
-        }
-
-        if (args.length != 1) {
-            sender.sendMessage("Usage: /analytics <opt-in|opt-out>");
-            return true;
-        }
-
-        if (args[0].equalsIgnoreCase("opt-in")) {
-            updateAnalyticsChoice(true, sender);
-            return true;
-        }
-
-        if (args[0].equalsIgnoreCase("opt-out")) {
-            updateAnalyticsChoice(false, sender);
-            return true;
-        }
-
-        sender.sendMessage("Usage: /analytics <opt-in|opt-out>");
-        return true;
     }
 
     private void updateAnalyticsChoice(boolean value, CommandSender sender) {

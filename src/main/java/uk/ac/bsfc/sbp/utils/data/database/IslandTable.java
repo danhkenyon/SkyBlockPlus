@@ -5,9 +5,10 @@ import uk.ac.bsfc.sbp.core.skyblock.Island;
 import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.config.FeatureConfig;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
-import uk.ac.bsfc.sbp.utils.location.SBWorld;
 import uk.ac.bsfc.sbp.utils.location.WorldEnvironment;
+import uk.ac.bsfc.sbp.utils.location.worlds.SBVoidWorld;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -25,46 +26,69 @@ public class IslandTable extends DatabaseTable<Island> {
         return INSTANCE;
     }
 
-    private SBLocation getNextIslandLocation() {
+    public SBLocation getNextIslandLocation() {
         SBLocation last = getLastIslandLocation();
 
         if (last == null) {
-            return SBLocation.of(Main.getInstance().getConfig(FeatureConfig.class).skyblock.base_world_name+"_1", 0, 100, 0);
+            return SBLocation.of(
+                    Main.getInstance().getConfig(FeatureConfig.class).skyblock.base_world_name + "_1",
+                    0, 100, 0
+            );
         }
+        String baseName = Main.getInstance().getConfig(FeatureConfig.class).skyblock.base_world_name;
 
-        String worldName = last.getWorld().getName();
-        int worldNumber = extractWorldNumber(worldName);
+        String currentWorldName = last.getWorld().getName();
+        int worldNumber = extractWorldNumber(currentWorldName);
+
         int maxPerWorld = Main.getInstance().getConfig(FeatureConfig.class).skyblock.maxIslandsPerWorld;
-        long countInThisWorld = super.getRows().stream()
+        List<Island> islands = super.getRows();
+
+        long countInThisWorld = islands.stream()
                 .filter(i -> extractWorldNumber(i.region().getLoc1().getWorld().getName()) == worldNumber)
                 .count();
 
-        if (countInThisWorld < maxPerWorld) {
-            SBWorld.create(Main.getInstance().getConfig(FeatureConfig.class).skyblock.base_world_name + (worldNumber + 1), WorldEnvironment.valueOf("NORMAL"), 0);
+        String targetWorld;
+
+        if (countInThisWorld >= maxPerWorld) {
+            targetWorld = baseName + (worldNumber + 1);
+
+            SBVoidWorld.create(
+                    targetWorld,
+                    WorldEnvironment.NORMAL,
+                    0
+            );
+            return SBLocation.of(
+                    targetWorld,
+                    0,
+                    100,
+                    0
+            );
         }
 
-        SBLocation next = (countInThisWorld < maxPerWorld) ? SBLocation.of(
-                worldName,
+        return SBLocation.of(
+                currentWorldName,
                 last.x() + 250,
                 last.y(),
                 last.z()
-        ) : SBLocation.of(
-                Main.getInstance().getConfig(FeatureConfig.class).skyblock.base_world_name + (worldNumber + 1),
-                0,
-                100,
-                0
         );
-
-        return next;
     }
 
-    private SBLocation getLastIslandLocation() {
-        List<Island> islands = super.getRows();
+    public SBLocation getLastIslandLocation() {
+        List<Island> islands = new ArrayList<>(super.getRows());
+        System.out.println(islands);
+
         if (islands.isEmpty()) {
-            return null;
+            return SBLocation.of(
+                    Main.getInstance().getConfig(FeatureConfig.class).skyblock.base_world_name,
+                    0, 100, 0
+            );
         }
 
         islands.sort((a, b) -> {
+            if (a == null && b == null) return 0;
+            if (a == null) return -1;
+            if (b == null) return 1;
+
             int aWorld = this.extractWorldNumber(a.region().getLoc1().getWorld().getName());
             int bWorld = this.extractWorldNumber(b.region().getLoc1().getWorld().getName());
 
@@ -81,14 +105,20 @@ public class IslandTable extends DatabaseTable<Island> {
             return Double.compare(aLoc.z(), bLoc.z());
         });
         Island last = islands.getLast();
-        SBLocation loc = last.region().getLoc1();
 
-        return SBLocation.of(
-                loc.getWorld().getName(),
-                loc.x(),
-                loc.y(),
-                loc.z()
-        );
+        if (last != null) {
+            SBLocation loc = last.region().getLoc1();
+
+            return SBLocation.of(
+                    loc.getWorld().getName(),
+                    loc.x(),
+                    loc.y(),
+                    loc.z()
+            );
+        } else {
+            SBVoidWorld.create(Main.getInstance().getConfig(FeatureConfig.class).skyblock.base_world_name+"_1", WorldEnvironment.NORMAL, 0).toBukkit();
+            return SBLocation.of(Main.getInstance().getConfig(FeatureConfig.class).skyblock.base_world_name + "_1", 0, 100, 0);
+        }
     }
     private int extractWorldNumber(String worldName) {
         if (worldName == null || !worldName.contains("_")) return 0;
@@ -102,6 +132,9 @@ public class IslandTable extends DatabaseTable<Island> {
 
     @Override
     public Island mapRow(Map<String, Object> row) {
+        if (row == null || row.isEmpty() || row.get("uuid") == null || row.get("name") == null) {
+            return null;
+        }
         return Island.get(
                 UUID.fromString((String) row.get("uuid")),
                 (String) row.get("name"),

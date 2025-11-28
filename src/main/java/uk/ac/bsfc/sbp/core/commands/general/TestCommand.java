@@ -1,17 +1,11 @@
 package uk.ac.bsfc.sbp.core.commands.general;
 
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.ApiStatus;
 import uk.ac.bsfc.sbp.utils.command.SBCommand;
-import uk.ac.bsfc.sbp.utils.location.WorldEnvironment;
-import uk.ac.bsfc.sbp.utils.location.worlds.SBFlatWorld;
-import uk.ac.bsfc.sbp.utils.location.worlds.generators.FlatWorldGenerator;
-import uk.ac.bsfc.sbp.utils.time.SBTime;
+import uk.ac.bsfc.sbp.utils.data.database.IslandTable;
 
 @ApiStatus.Experimental
 public class  TestCommand extends SBCommand {
-    MiniMessage mm = MiniMessage.miniMessage();
-
     public TestCommand() {
         super();
         super.name("test");
@@ -23,13 +17,20 @@ public class  TestCommand extends SBCommand {
     }
     @Override
     public void execute() {
-        SBFlatWorld world = SBFlatWorld.create(SBTime.now().millis()+"-world", WorldEnvironment.NETHER, 0,
-                new FlatWorldGenerator.Layer(org.bukkit.Material.BEDROCK, 1),
-                new FlatWorldGenerator.Layer(org.bukkit.Material.DIRT, 2),
-                new FlatWorldGenerator.Layer(org.bukkit.Material.GRASS_BLOCK, 1)
-        );
+        /*
+        SBFlatWorld world = SBFlatWorld.create(SBTime.now().millis()+"-world", WorldEnvironment.NORMAL, 696969696969696969L,
+                new FlatWorldGenerator.Layer(Material.TNT, 1),
+                new FlatWorldGenerator.Layer(Material.SAND, 1),
+                new FlatWorldGenerator.Layer(Material.STONE_PRESSURE_PLATE, 1)
+        ).generateCaves(true) // doesnt work
+        .generateStructures(true); // also doesnt work
 
         world.toBukkit();
+
+         */
+
+        user.sendMessage(IslandTable.getInstance().getLastIslandLocation().toString());
+        user.sendMessage(IslandTable.getInstance().getNextIslandLocation().toString());
     }
 }
 

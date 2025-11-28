@@ -1,6 +1,7 @@
 package uk.ac.bsfc.sbp.utils.location;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import uk.ac.bsfc.sbp.utils.SBLogger;
@@ -24,27 +25,30 @@ public abstract class SBWorld extends Wrapper<World> {
     private final WorldEnvironment env;
     private final long seed;
 
+    private final SBLocation spawnLoc;
+
     protected SBWorld(World world) {
         this.worldDirectory = world.getWorldFolder();
         this.uuid = world.getUID();
         this.name = world.getName();
         this.env = WorldEnvironment.valueOf(world.getEnvironment().name());
         this.seed = world.getSeed();
+        this.spawnLoc = SBLocation.of(world.getSpawnLocation());
     }
-    protected SBWorld(String name, WorldEnvironment env, long seed) {
+    protected SBWorld(String name, WorldEnvironment env, long seed, SBLocation spawnLoc) {
         this.worldDirectory = new File(Bukkit.getWorldContainer(), name);
         this.uuid = UUID.nameUUIDFromBytes(name.getBytes());
         this.name = name;
         this.env = env;
         this.seed = seed;
+        this.spawnLoc = spawnLoc;
 
-        try {
-            if (worldDirectory.mkdirs()) {
-                SBLogger.raw("<green>World <gold>" + name + "<green> directory created");
-            }
-        } catch (SecurityException e) {
-            SBLogger.err(e.getMessage());
+        if(worldDirectory.mkdirs()) {
+            SBLogger.raw("<green>World <gold>" + name + "<green> directory created");
         }
+    }
+    protected SBWorld(String name, WorldEnvironment env, long seed) {
+        this(name, env, seed, null);
     }
 
     public static SBWorld create(String name, WorldEnvironment env, long seed) {
@@ -109,7 +113,16 @@ public abstract class SBWorld extends Wrapper<World> {
         World existing = Bukkit.getWorld(name);
         if (existing == null) {
             WorldCreator creator = this.getWorldCreator();
-            creator.createWorld();
+            World world = creator.createWorld();
+
+            if (this.spawnLoc == null && world != null) {
+                Location spawn = world.getSpawnLocation();
+                world.setSpawnLocation(spawn);
+            } else if (this.spawnLoc != null) {
+                assert world != null;
+                world.setSpawnLocation(this.spawnLoc.toBukkit());
+            }
+
             SBLogger.raw("<green>World <gold>" + name + "<green> has been loaded");
         }
     }
@@ -154,6 +167,7 @@ public abstract class SBWorld extends Wrapper<World> {
         map.put("seed", seed);
         map.put("directory", worldDirectory.getAbsolutePath());
         map.put("type", this.getClass().getSimpleName());
+        map.put("spawn", spawnLoc);
 
         if (this instanceof SBFlatWorld flatWorld) {
             map.put("layers", flatWorld.getLayers());
@@ -170,19 +184,41 @@ public abstract class SBWorld extends Wrapper<World> {
         long seed = ((Number) data.getOrDefault("seed", System.currentTimeMillis())).longValue();
         String type = String.valueOf(data.getOrDefault("type", "SBNormalWorld"));
 
+        SBLocation spawnLoc = null;
+        if (data.containsKey("spawn") && data.get("spawn") instanceof Map<?, ?> spawnMap) {
+            try {
+                spawnLoc = SBLocation.fromMap(spawnMap);
+            } catch (Exception e) {
+                SBLogger.err("Failed to parse spawn location: " + e.getMessage());
+            }
+        }
+
         return switch (type) {
             case "SBFlatWorld" -> {
                 Object layersData = data.get("layers");
-                List<FlatWorldGenerator.Layer> layers = List.of();
+                List<FlatWorldGenerator.Layer> layers = new ArrayList<>();
                 if (layersData instanceof List<?> list) {
-                    layers = (List<FlatWorldGenerator.Layer>) list;
+                    for (Object layerObj : list) {
+                        if (layerObj instanceof Map<?, ?> layerMap) {
+                            try {
+                                String materialName = String.valueOf(layerMap.get("material"));
+                                int thickness = ((Number) layerMap.get("thickness")).intValue();
+                                layers.add(new FlatWorldGenerator.Layer(
+                                        org.bukkit.Material.valueOf(materialName.toUpperCase()),
+                                        thickness
+                                ));
+                            } catch (Exception e) {
+                                SBLogger.err("Failed to parse layer: " + e.getMessage());
+                            }
+                        }
+                    }
                 }
-                yield new SBFlatWorld(name, env, seed, layers);
+                yield new SBFlatWorld(name, env, seed, layers, spawnLoc);
             }
-            case "SBVoidWorld" -> new SBVoidWorld(name, env);
-            case "SBNetherWorld" -> new SBNetherWorld(name, seed);
-            case "SBEndWorld" -> new SBEndWorld(name, seed);
-            default -> new SBNormalWorld(name, seed);
+            case "SBVoidWorld" -> new SBVoidWorld(name, env, spawnLoc);
+            case "SBNetherWorld" -> new SBNetherWorld(name, seed, spawnLoc);
+            case "SBEndWorld" -> new SBEndWorld(name, seed, spawnLoc);
+            default -> new SBNormalWorld(name, seed, spawnLoc);
         };
     }
 
@@ -203,6 +239,9 @@ public abstract class SBWorld extends Wrapper<World> {
     }
     public boolean isLoaded() {
         return Bukkit.getWorld(name) != null;
+    }
+    public SBLocation getSpawnLoc() {
+        return spawnLoc;
     }
 
     @Override
