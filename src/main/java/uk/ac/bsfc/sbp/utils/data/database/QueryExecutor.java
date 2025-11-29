@@ -8,33 +8,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-/**
- * QueryExecutor is a singleton class responsible for executing SQL queries and updates
- * asynchronously and synchronously. It provides methods for executing queries, updating
- * database records, and mapping query results into custom objects or data structures.
- * It utilizes a ConnectionPool to manage database connections efficiently.
- *
- * This class supports:
- * - Asynchronous execution of SQL SELECT queries with mapping options.
- * - Synchronous execution of INSERT, UPDATE, and DELETE statements.
- * - Retrieving specific column values and mapping result rows to an object of a given type.
- *
- * This class uses the ConnectionPool to acquire database connections and ensures proper
- * resource handling.
- *
- * Note: Non-public utility methods within this class are used internally to simplify
- * query preparation, parameter binding, and result set processing.
- */
 public final class QueryExecutor {
     private final ConnectionPool pool;
+    private static final ExecutorService DB_EXECUTOR = Executors.newFixedThreadPool(Math.max(2, Runtime.getRuntime().availableProcessors()));
 
     private QueryExecutor(ConnectionPool pool) {
         this.pool = pool;
     }
 
     private static QueryExecutor INSTANCE;
-
     public static QueryExecutor getInstance(ConnectionPool pool) {
         if (INSTANCE == null) {
             INSTANCE = new QueryExecutor(pool);
@@ -42,9 +27,6 @@ public final class QueryExecutor {
         return INSTANCE;
     }
 
-    /**
-     * Executes a SQL query asynchronously and returns the first row as a Map.
-     */
     public CompletableFuture<List<Map<String, Object>>> asyncQuery(String sql, Object... params) {
         return CompletableFuture.supplyAsync(() -> {
             List<Map<String, Object>> results = new ArrayList<>();
@@ -57,13 +39,8 @@ public final class QueryExecutor {
                 SBLogger.err("[DB] Async query failed: " + e.getMessage());
             }
             return results;
-        });
+        }, DB_EXECUTOR);
     }
-
-
-    /**
-     * Executes a SQL query asynchronously and returns all result rows.
-     */
     public CompletableFuture<List<Map<String, Object>>> asyncQueryAll(String sql, Object... params) {
         return CompletableFuture.supplyAsync(() -> {
             List<Map<String, Object>> results = new ArrayList<>();
@@ -76,12 +53,8 @@ public final class QueryExecutor {
                 SBLogger.err("[DB] Async queryAll failed: " + e.getMessage());
             }
             return results;
-        });
+        }, DB_EXECUTOR);
     }
-
-    /**
-     * Executes a SQL query asynchronously and maps results into objects of type T.
-     */
     public <T> CompletableFuture<List<T>> asyncQuery(String sql, Class<T> type, Object... params) {
         return asyncQueryAll(sql, params).thenApply(rows -> {
             List<T> result = new ArrayList<>();
@@ -117,14 +90,9 @@ public final class QueryExecutor {
             return result;
         });
     }
-
-    /**
-     * Executes an update statement (INSERT, UPDATE, DELETE).
-     */
     public int update(String sql, Object... params) {
         return this.update(sql, sql, params);
     }
-
     public int update(String name, String sql, Object... params) {
         try (Connection conn = pool.getConnection();
              PreparedStatement stmt = prepareStatement(conn, sql, params)) {
@@ -137,14 +105,14 @@ public final class QueryExecutor {
             conn.commit();
             return affected;
         } catch (SQLException e) {
+            // try to rollback if possible
+            try {
+                pool.getConnection().rollback();
+            } catch (Exception ignored) {}
             throw new RuntimeException("[ERR] Update failed: " + sql, e);
         }
     }
-
-    /**
-     * Executes an INSERT and returns the generated key.
-     */
-    public @SuppressWarnings("unsafe") long insert(String sql, Object... params) {
+    public long insert(String sql, Object... params) {
         try (Connection conn = pool.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -157,14 +125,14 @@ public final class QueryExecutor {
             }
 
         } catch (SQLException e) {
+            // rollback attempt
+            try {
+                pool.getConnection().rollback();
+            } catch (Exception ignored) {}
             throw new RuntimeException("[ERR] Insert failed: " + sql, e);
         }
         return -1;
     }
-
-    /**
-     * Retrieves all values from a specific column asynchronously.
-     */
     public CompletableFuture<List<String>> getAllColumnValues(String table, String column) {
         String sql = "SELECT " + column + " FROM " + table;
         return asyncQueryAll(sql).thenApply(rows -> {
@@ -176,13 +144,11 @@ public final class QueryExecutor {
             return values;
         });
     }
-
     private PreparedStatement prepareStatement(Connection conn, String sql, Object... params) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement(sql);
         this.bindParameters(stmt, params);
         return stmt;
     }
-
     private void bindParameters(PreparedStatement stmt, Object... params) throws SQLException {
         if (params != null) {
             for (int i = 0; i < params.length; i++) {
@@ -190,7 +156,6 @@ public final class QueryExecutor {
             }
         }
     }
-
     public static void getResultSetMD(List<Map<String, Object>> results, ResultSet rs) throws SQLException {
         ResultSetMetaData meta = rs.getMetaData();
         int columns = meta.getColumnCount();

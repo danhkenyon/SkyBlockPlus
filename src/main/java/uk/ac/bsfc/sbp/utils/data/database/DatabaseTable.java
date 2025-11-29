@@ -35,14 +35,28 @@ public abstract class DatabaseTable<T> {
 
     private String findPrimaryKey() {
         try {
-            List<Map<String, Object>> result = SBDatabase.query(
-                    "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE " +
-                            "WHERE TABLE_NAME = ? AND CONSTRAINT_NAME = 'PRIMARY' LIMIT 1;",
-                    tableName
-            );
-            if (!result.isEmpty()) {
-                Object value = result.getFirst().get("COLUMN_NAME");
-                return value != null ? value.toString() : "id";
+            DatabaseType type = DatabaseConfig.getInstance().getType();
+            if (type == DatabaseType.SQLITE) {
+                List<Map<String, Object>> result = SBDatabase.query("PRAGMA table_info(" + tableName + ");");
+                for (Map<String, Object> row : result) {
+                    Object pk = row.get("pk");
+                    if (pk == null) pk = row.get("PK");
+                    if (pk instanceof Number && ((Number) pk).intValue() == 1) {
+                        Object name = row.get("name");
+                        if (name == null) name = row.get("NAME");
+                        if (name != null) return name.toString();
+                    }
+                }
+            } else {
+                List<Map<String, Object>> result = SBDatabase.query(
+                        "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE " +
+                                "WHERE TABLE_NAME = ? AND CONSTRAINT_NAME = 'PRIMARY' LIMIT 1;",
+                        tableName
+                );
+                if (!result.isEmpty()) {
+                    Object value = result.getFirst().get("COLUMN_NAME");
+                    return value != null ? value.toString() : "id";
+                }
             }
         } catch (Exception ignored) {}
         return "id";

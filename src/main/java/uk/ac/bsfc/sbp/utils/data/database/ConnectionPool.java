@@ -1,32 +1,21 @@
 package uk.ac.bsfc.sbp.utils.data.database;
 
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import uk.ac.bsfc.sbp.utils.SBLogger;
+import uk.ac.bsfc.sbp.utils.data.database.providers.DatabaseProvider;
+import uk.ac.bsfc.sbp.utils.data.database.providers.DatabaseProviderFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- * A thread-safe singleton connection pool manager using HikariCP for managing database connections.
- * This class provides methods for getting a connection, checking the connection status,
- * and closing the pool when no longer needed.
- * Implements AutoCloseable to ensure proper resource management.
- */
 public final class ConnectionPool implements AutoCloseable {
     private final HikariDataSource source;
 
     private ConnectionPool(DatabaseConfig config) {
-        HikariConfig hikari = new HikariConfig();
-        hikari.setJdbcUrl(config.getUrl());
-        hikari.setUsername(config.getUser());
-        hikari.setPassword(config.getPassword());
-        hikari.setDriverClassName(config.getDriver());
-        hikari.setMaximumPoolSize(config.getMaxPoolSize());
-        hikari.setAutoCommit(false);
+        DatabaseProvider provider = DatabaseProviderFactory.create(config);
+        this.source = new HikariDataSource(provider.createConfig());
 
-        this.source = new HikariDataSource(hikari);
-        SBLogger.info("[Database] <green>Connected to database.");
+        SBLogger.info("[Database] <green>Connected using <aqua>" + provider.getName());
     }
 
     private static ConnectionPool INSTANCE;
@@ -40,13 +29,10 @@ public final class ConnectionPool implements AutoCloseable {
         if (createNew) {
             return new ConnectionPool(config);
         }
-        return ConnectionPool.getInstance(config);
+        return getInstance(config);
     }
     public static ConnectionPool getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ConnectionPool(DatabaseConfig.getInstance());
-        }
-        return INSTANCE;
+        return getInstance(DatabaseConfig.getInstance());
     }
 
     public Connection getConnection() throws SQLException {
@@ -59,7 +45,9 @@ public final class ConnectionPool implements AutoCloseable {
             return false;
         }
     }
-    public @Override void close() {
+
+    @Override
+    public void close() {
         if (source != null && !source.isClosed()) {
             source.close();
         }

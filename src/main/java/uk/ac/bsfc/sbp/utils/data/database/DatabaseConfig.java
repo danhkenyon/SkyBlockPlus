@@ -2,28 +2,21 @@ package uk.ac.bsfc.sbp.utils.data.database;
 
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 
-import static uk.ac.bsfc.sbp.utils.SBConstants.Database.*;
-
-/**
- * Represents the configuration required to connect to a database. This class encapsulates
- * essential database connection parameters such as driver, URL, username, password, and
- * maximum pool size. It follows the singleton design pattern to provide a single shared
- * instance.
- *
- * The configuration values are typically loaded from a configuration source (e.g., a file)
- * using the {@link #getConfig()} method, which reads predefined keys and their corresponding
- * default values if missing.
- *
- * This class is immutable and thread-safe.
- */
 public final class DatabaseConfig {
+    private final DatabaseType type;
     private final String driver;
     private final String url;
     private final String user;
     private final String password;
     private final int maxPoolSize;
 
-    private DatabaseConfig(String driver, String url, String user, String password, int maxPoolSize) {
+    private DatabaseConfig(DatabaseType type,
+                           String driver,
+                           String url,
+                           String user,
+                           String password,
+                           int maxPoolSize) {
+        this.type = type;
         this.driver = driver;
         this.url = url;
         this.user = user;
@@ -34,11 +27,12 @@ public final class DatabaseConfig {
     private static DatabaseConfig INSTANCE;
     public static DatabaseConfig getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = DatabaseConfig.getConfig();
+            INSTANCE = getConfig();
         }
         return INSTANCE;
     }
 
+    public DatabaseType getType() { return type; }
     public String getDriver() { return driver; }
     public String getUrl() { return url; }
     public String getUser() { return user; }
@@ -46,12 +40,27 @@ public final class DatabaseConfig {
     public int getMaxPoolSize() { return maxPoolSize; }
 
     public static DatabaseConfig getConfig() {
-        return new DatabaseConfig(
-                SBConfig.getString("database.driver", DATABASE_DRIVER_NAME),
-                SBConfig.getString("database.url", DEFAULT_DATABASE_URL),
-                SBConfig.getString("database.user", DEFAULT_DATABASE_USER),
-                SBConfig.getString("database.password", DEFAULT_DATABASE_PASSWORD),
-                SBConfig.getInt("database.maxPoolSize", DEFAULT_DATABASE_POOL_SIZE)
+        DatabaseType type = DatabaseType.fromString(
+                SBConfig.getString("database.type", "sqlite")
         );
+
+        return switch (type) {
+            case SQLITE -> new DatabaseConfig(
+                    type,
+                    type.getDriver(),
+                    "jdbc:sqlite:" + SBConfig.getString("database.file", "database.db"),
+                    "",
+                    "",
+                    SBConfig.getInt("database.maxPoolSize", 10)
+            );
+            case MARIADB, MYSQL, POSTGRES -> new DatabaseConfig(
+                    type,
+                    type.getDriver(),
+                    SBConfig.getString("database.url"),
+                    SBConfig.getString("database.user"),
+                    SBConfig.getString("database.password"),
+                    SBConfig.getInt("database.maxPoolSize", 10)
+            );
+        };
     }
 }

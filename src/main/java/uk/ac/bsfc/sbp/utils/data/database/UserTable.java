@@ -45,11 +45,9 @@ public class UserTable extends DatabaseTable<SBUser> {
         return this.getRows("island_id", island.uuid().toString());
     }
     public List<SBUser> getUsers(UUID island_uuid) {
-        // TODO: Check if IslandTable contains island_uuid
         return this.getRows("island_id", island_uuid.toString());
     }
     public List<SBUser> getUsers(String island_name) {
-        // TODO: Get island id from IslandTable where island_name is name, then get users from the uuid.
         return null;
     }
 
@@ -76,40 +74,46 @@ public class UserTable extends DatabaseTable<SBUser> {
         return results.stream().map(this::mapRow).toList();
     }
     public List<SBUser> getUsersWithRank(String island_name, String rank) {
-        // TODO: Look up island by name from IslandTable
-        /*
-        Island island = IslandTable.getInstance().getIsland(island_name);
-        if (island == null) {
-            throw new NullPointerException("[UserTable] Could not find island: '" + island_name + "'");
-        }
-
-        List<Map<String, Object>> results = SBDatabase.query(
-                "SELECT * FROM " + tableName + " WHERE island_id = ? AND island_rank = ?;",
-                island.uuid().toString(),
-                rank
-        );
-
-        return results.stream().map(this::mapRow).toList();
-
-         */
-        return null;
+        return null; // todo
     }
 
     public void insert(SBUser user) {
-        super.database.getExecutor().insert(
-                "INSERT INTO " + this.getTableName() + " (uuid, username) VALUES (?, ?) ON DUPLICATE KEY UPDATE username = ?;",
-                user.getUniqueID().toString(),
-                user.getName(),
-                user.getName()
-        );
+        DatabaseType type = DatabaseConfig.getInstance().getType();
+        if (type == DatabaseType.SQLITE) {
+            super.database.getExecutor().insert(
+                    "INSERT INTO " + this.getTableName() + " (uuid, username) VALUES (?, ?) " +
+                            "ON CONFLICT(uuid) DO UPDATE SET username = excluded.username;",
+                    user.getUniqueID().toString(),
+                    user.getName()
+            );
+        } else {
+            super.database.getExecutor().insert(
+                    "INSERT INTO " + this.getTableName() + " (uuid, username) VALUES (?, ?) " +
+                            "ON DUPLICATE KEY UPDATE username = ?;",
+                    user.getUniqueID().toString(),
+                    user.getName(),
+                    user.getName()
+            );
+        }
     }
     public void insert(UUID uuid, String username) {
-        super.database.getExecutor().insert(
-                "INSERT INTO " + this.getTableName() + " (uuid, username) VALUES (?, ?) ON DUPLICATE KEY UPDATE username = ?;",
-                uuid.toString(),
-                username,
-                username
-        );
+        DatabaseType type = DatabaseConfig.getInstance().getType();
+        if (type == DatabaseType.SQLITE) {
+            super.database.getExecutor().insert(
+                    "INSERT INTO " + this.getTableName() + " (uuid, username) VALUES (?, ?) " +
+                            "ON CONFLICT(uuid) DO UPDATE SET username = excluded.username;",
+                    uuid.toString(),
+                    username
+            );
+        } else {
+            super.database.getExecutor().insert(
+                    "INSERT INTO " + this.getTableName() + " (uuid, username) VALUES (?, ?) " +
+                            "ON DUPLICATE KEY UPDATE username = ?;",
+                    uuid.toString(),
+                    username,
+                    username
+            );
+        }
     }
 
     public void updateUsername(UUID uuid, String username) {
@@ -134,14 +138,12 @@ public class UserTable extends DatabaseTable<SBUser> {
         );
     }
     public void updateIslandRank(UUID user_uuid, String island_rank) {
-        // TODO: Check the config values for the island ranks contains island_rank
         super.database.getExecutor().update(
                 "UPDATE " + this.getTableName() + " SET island_rank = ? WHERE uuid = ?;",
                 island_rank,
                 user_uuid.toString()
         );
     }
-
 
     @Override
     public SBUser mapRow(Map<String, Object> row) {
@@ -153,18 +155,19 @@ public class UserTable extends DatabaseTable<SBUser> {
                 (String) row.get("island_rank")
         );
     }
-
     @Override
     public void ensureTableExists() {
-        super.database.getExecutor().update(
-                "User Table Creation",
+        String rankColumn = "island_rank VARCHAR(16) NOT NULL DEFAULT 'RECRUIT' " +
+                "CHECK (island_rank IN ('LEADER','CO_LEADER','OFFICER','MEMBER','RECRUIT'))";
+        String islandDefault = "'" + SBConstants.Island.UNKNOWN_ISLAND_UUID + "'";
 
+        super.database.getExecutor().update("User Table Creation",
                 "CREATE TABLE IF NOT EXISTS " + tableName + " (" +
-                    "uuid VARCHAR(36) PRIMARY KEY," +
-                    "username VARCHAR(64) NOT NULL," +
-                    "flight_time BIGINT NOT NULL DEFAULT 0," +
-                    "island_id VARCHAR(36) NOT NULL DEFAULT" + SBConstants.Island.UNKNOWN_ISLAND_UUID + "," +
-                    "island_rank ENUM('LEADER', 'CO_LEADER', 'OFFICER', 'MEMBER', 'RECRUIT') NOT NULL DEFAULT 'RECRUIT'" + // TODO: Change ENUM values to config values, default as these
+                "uuid VARCHAR(36) PRIMARY KEY," +
+                "username VARCHAR(64) NOT NULL," +
+                "flight_time BIGINT NOT NULL DEFAULT 0," +
+                "island_id VARCHAR(36) NOT NULL DEFAULT " + islandDefault + "," +
+                rankColumn +
                 ");"
         );
     }

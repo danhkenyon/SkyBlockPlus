@@ -10,6 +10,8 @@ public class ServerConfig implements ReloadableConfig {
     public Database database = new Database();
 
     public static class Database {
+        @Comment("Type of database to use, can be 'sqlite' or 'mysql'")
+        public String type = "sqlite";
         @Comment("Driver name, you can mostly ignore this")
         public String driver = "com.mysql.jdbc.Driver";
         @Comment("Database connection URL")
