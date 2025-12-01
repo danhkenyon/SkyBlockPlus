@@ -7,15 +7,19 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.ac.bsfc.sbp.core.spawners.SpawnerDAO;
 import uk.ac.bsfc.sbp.core.spawners.SpawnerStackManager;
+import uk.ac.bsfc.sbp.utils.SBConstants;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.analytics.AnalyticsRunnable;
 import uk.ac.bsfc.sbp.utils.command.SBCommandHandler;
 import uk.ac.bsfc.sbp.utils.config.ConfigManager;
 import uk.ac.bsfc.sbp.utils.config.FeatureConfig;
+import uk.ac.bsfc.sbp.utils.data.SBDatabase;
+import uk.ac.bsfc.sbp.utils.data.database.DatabaseTable;
 import uk.ac.bsfc.sbp.utils.entity.StackManager;
 import uk.ac.bsfc.sbp.utils.event.SBEventRegister;
 import uk.ac.bsfc.sbp.utils.location.SBWorldUtils;
 import uk.ac.bsfc.sbp.utils.menus.SBItem;
+import uk.ac.bsfc.sbp.utils.menus.SBItemData;
 import uk.ac.bsfc.sbp.utils.menus.events.SBItemListener;
 import uk.ac.bsfc.sbp.utils.menus.events.SBMenuListener;
 import uk.ac.bsfc.sbp.utils.skyblock.IslandUtils;
@@ -77,6 +81,11 @@ public final class Main extends JavaPlugin {
             SBMenuListener.register();
 
             globalContainer = Bukkit.getWorlds().getFirst().getPersistentDataContainer();
+
+            /*
+             * i swear to god if someone fucking deleted this im gonna die on the spot
+             */
+            DatabaseTable.getAllTables().forEach(DatabaseTable::ensureTableExists);
 
             SBLogger.info("<green>Plugin enabled!");
         } catch (Exception e) {
