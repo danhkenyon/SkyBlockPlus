@@ -23,7 +23,8 @@ import java.util.Map;
 public class MobStackerHandler extends SBEventHandler {
 
     private final StackManager stackManager = Main.getStackManager();
-    private final Map<String, Long> spawnLock = new HashMap<>();
+
+    private final Map<String, Integer> spawnLock = new HashMap<>();
 
     @Event(async = false)
     public void onMobStacker(SpawnerSpawnEvent event) {
@@ -37,12 +38,13 @@ public class MobStackerHandler extends SBEventHandler {
         entity.getPassengers().forEach(Entity::remove);
 
         String key = chunk.getX() + "," + chunk.getZ() + ":" + entity.getType().name();
-        long now = System.currentTimeMillis();
-        if (spawnLock.containsKey(key) && (now - spawnLock.get(key)) < 5) {
+
+        int tick = Bukkit.getCurrentTick();
+        if (spawnLock.getOrDefault(key, -1) == tick) {
             entity.remove();
             return;
         }
-        spawnLock.put(key, now);
+        spawnLock.put(key, tick);
 
         int spawnCount = getSpawnCountFromSpawner(event.getSpawner());
 
@@ -66,18 +68,22 @@ public class MobStackerHandler extends SBEventHandler {
             entity.remove();
 
             if (amountToAdd < spawnCount) {
-                SBLogger.raw("<yellow>Mob stack reached max size (" + mobCfg.maxStack + "), only added " + amountToAdd + " of " + spawnCount + " mobs");
+                SBLogger.raw("<yellow>Mob stack reached max size (" + mobCfg.maxStack + "), only added "
+                        + amountToAdd + " of " + spawnCount + " mobs");
             }
+
         } else {
             int stackSize = Math.min(spawnCount, mobCfg.maxStack);
             SBMob sbMob = new SBMob(entity, stackSize);
             stackManager.getAll().put(entity.getUniqueId(), sbMob);
+
             if (mobCfg.disableAI && entity instanceof Mob mob) {
                 mob.setAware(false);
             }
 
             if (stackSize < spawnCount) {
-                SBLogger.raw("<yellow>Mob stack limited to max size (" + mobCfg.maxStack + "), spawned " + stackSize + " of " + spawnCount + " mobs");
+                SBLogger.raw("<yellow>Mob stack limited to max size (" + mobCfg.maxStack + "), spawned "
+                        + stackSize + " of " + spawnCount + " mobs");
             }
         }
     }
@@ -97,7 +103,9 @@ public class MobStackerHandler extends SBEventHandler {
 
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 entity.remove();
-                LivingEntity newEntity = (LivingEntity) entity.getWorld().spawnEntity(entity.getLocation(), entity.getType());
+                LivingEntity newEntity =
+                        (LivingEntity) entity.getWorld().spawnEntity(entity.getLocation(), entity.getType());
+
                 SBMob newStack = new SBMob(newEntity, sbMob.getStackSize());
                 newEntity.setSilent(true);
 
@@ -109,6 +117,7 @@ public class MobStackerHandler extends SBEventHandler {
                 stackManager.getAll().put(newEntity.getUniqueId(), newStack);
                 stackManager.remove(entity.getUniqueId());
             }, 1L);
+
         } else {
             stackManager.remove(entity.getUniqueId());
         }
@@ -140,8 +149,10 @@ public class MobStackerHandler extends SBEventHandler {
             int level = spawnerData.get().getLevel();
 
             int baseSpawnCount = 1;
-            double spawnMultiplier = 1 + (stackSize - 1) * spawnerCfg.spawnMultiplierPerStack +
+            double spawnMultiplier = 1 +
+                    (stackSize - 1) * spawnerCfg.spawnMultiplierPerStack +
                     level * spawnerCfg.spawnMultiplierPerLevel;
+
             int spawnCount = (int) Math.round(baseSpawnCount * spawnMultiplier);
 
             return Math.max(1, Math.min(spawnCount, spawnerCfg.maxStack));
