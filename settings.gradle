@@ -1,1 +1,28 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = "papermc-repo"
+            url = "https://repo.papermc.io/repository/maven-public/"
+        }
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "papermc-repo"
+            url = "https://repo.papermc.io/repository/maven-public/"
+        }
+        maven {
+            name = "CodeMC"
+            url = "https://repo.codemc.io/repository/maven-public/"
+        }
+        maven {
+            url = "https://repo.xenondevs.xyz/releases"
+        }
+    }
+}
+
 rootProject.name = 'SkyBlockPlus'
