@@ -1,7 +1,9 @@
 package uk.ac.bsfc.sbp.utils.user;
 
 import net.kyori.adventure.text.Component;
+import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import uk.ac.bsfc.sbp.utils.SBLogger;
 import uk.ac.bsfc.sbp.utils.location.SBLocation;
@@ -130,7 +132,6 @@ public class SBPlayer extends SBUser {
             SBLogger.info("<green>" + this.getName() + " is now <yellow>" + (flying() ? "flying" : "not flying") + "!");
         }
     }
-
     public void currentWorld(SBWorld world) {
         this.currentWorld = world;
 
@@ -157,12 +158,6 @@ public class SBPlayer extends SBUser {
                 Math.round(location.getY()) + ", " +
                 Math.round(location.getZ()) + ")");
     }
-
-    public void teleport(SBLocation loc) {
-        this.currentWorld = loc.getWorld();
-        this.location(loc);
-    }
-
     public void flySpeed(float speed){
         Player player = super.toBukkit(Player.class);
         if (player == null){
@@ -170,6 +165,26 @@ public class SBPlayer extends SBUser {
         }
 
         player.setFlySpeed(speed);
+    }
+
+    public void teleport(SBLocation loc) {
+        this.currentWorld = loc.getWorld();
+        this.location(loc);
+    }
+
+    public CraftPlayer getCraftPlayer() {
+        Player player = super.toBukkit(Player.class);
+        if (player != null) {
+            return (CraftPlayer) player;
+        }
+        return null;
+    }
+    public ServerPlayer getServerPlayer() {
+        Player player = super.toBukkit(Player.class);
+        if (player != null) {
+            return ((CraftPlayer) player).getHandle();
+        }
+        return null;
     }
 
     public enum SBGameMode {
@@ -190,13 +205,13 @@ public class SBPlayer extends SBUser {
         }
     }
 
-
     public @Override void sendMessage(String message) {
         super.sendMessage(message, this.playerPlaceholders);
     }
     public @Override void sendMessage(Component message) {
         super.sendMessage(message, this.playerPlaceholders);
     }
+
     @Override
     public String toString() {
         return "SBPlayer[username=" + this.getName() +

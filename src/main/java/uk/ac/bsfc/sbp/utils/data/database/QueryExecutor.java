@@ -33,7 +33,7 @@ public final class QueryExecutor {
             try (Connection conn = pool.getConnection();
                  PreparedStatement stmt = prepareStatement(conn, sql, params);
                  ResultSet rs = stmt.executeQuery()) {
-
+                System.out.println("[DB] " + sql);
                 getResultSetMD(results, rs);
             } catch (SQLException e) {
                 SBLogger.err("[DB] Async query failed: " + e.getMessage());
@@ -47,7 +47,7 @@ public final class QueryExecutor {
             try (Connection conn = pool.getConnection();
                  PreparedStatement stmt = prepareStatement(conn, sql, params);
                  ResultSet rs = stmt.executeQuery()) {
-
+                System.out.println("[DB] " + sql);
                 getResultSetMD(results, rs);
             } catch (SQLException e) {
                 SBLogger.err("[DB] Async queryAll failed: " + e.getMessage());
@@ -119,7 +119,7 @@ public final class QueryExecutor {
             bindParameters(stmt, params);
             stmt.executeUpdate();
             conn.commit();
-
+            System.out.println("[DB] Insert executed: " + sql);
             try (ResultSet keys = stmt.getGeneratedKeys()) {
                 if (keys.next()) return keys.getLong(1);
             }
@@ -140,6 +140,7 @@ public final class QueryExecutor {
             for (Map<String, Object> row : rows) {
                 Object value = row.get(column);
                 if (value != null) values.add(value.toString());
+                System.out.println("[DB] " + sql);
             }
             return values;
         });

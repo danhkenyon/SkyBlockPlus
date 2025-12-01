@@ -11,7 +11,7 @@ import java.util.Map;
  * for table operations. This class includes methods to map database rows to Island objects,
  * ensure the Islands table exists, and perform various table operations like retrieval and insertion.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class IslandTable extends DatabaseTable<Island> {
     protected IslandTable(String tableName) {
         super(tableName);

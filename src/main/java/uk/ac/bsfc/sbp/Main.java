@@ -63,6 +63,13 @@ public final class Main extends JavaPlugin {
 
             analyticsOptIn = optIn;
 
+            // ALL START CODE MUST OCCUR AFTER THIS POINT
+
+            /*
+             * i swear to god if someone fucking deleted this im gonna die on the spot
+             */
+            DatabaseTable.getAllTables().forEach(DatabaseTable::ensureTableExists);
+
             spawnerDAO = new SpawnerDAO();
             spawnerManager = new SpawnerStackManager(spawnerDAO);
             spawnerManager.loadAll(spawnerDAO.loadAllSpawners());
@@ -81,11 +88,6 @@ public final class Main extends JavaPlugin {
             SBMenuListener.register();
 
             globalContainer = Bukkit.getWorlds().getFirst().getPersistentDataContainer();
-
-            /*
-             * i swear to god if someone fucking deleted this im gonna die on the spot
-             */
-            DatabaseTable.getAllTables().forEach(DatabaseTable::ensureTableExists);
 
             SBLogger.info("<green>Plugin enabled!");
         } catch (Exception e) {

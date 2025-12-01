@@ -99,6 +99,7 @@ public class UserTable extends DatabaseTable<SBUser> {
     public void insert(UUID uuid, String username) {
         DatabaseType type = DatabaseConfig.getInstance().getType();
         if (type == DatabaseType.SQLITE) {
+            System.out.println("a");
             super.database.getExecutor().insert(
                     "INSERT INTO " + this.getTableName() + " (uuid, username) VALUES (?, ?) " +
                             "ON CONFLICT(uuid) DO UPDATE SET username = excluded.username;",
@@ -106,6 +107,7 @@ public class UserTable extends DatabaseTable<SBUser> {
                     username
             );
         } else {
+            System.out.println("b");
             super.database.getExecutor().insert(
                     "INSERT INTO " + this.getTableName() + " (uuid, username) VALUES (?, ?) " +
                             "ON DUPLICATE KEY UPDATE username = ?;",

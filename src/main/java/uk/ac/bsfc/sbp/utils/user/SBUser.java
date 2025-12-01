@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.bsfc.sbp.utils.SBColourUtils;
 import uk.ac.bsfc.sbp.utils.SBLogger;
-import uk.ac.bsfc.sbp.utils.data.database.tables.UserTable;
+import uk.ac.bsfc.sbp.utils.data.database.UserTable;
 import uk.ac.bsfc.sbp.utils.strings.Messages;
 import uk.ac.bsfc.sbp.utils.strings.Placeholder;
 
@@ -78,7 +78,7 @@ public abstract class SBUser {
             return new SBConsole();
         }
 
-        SBUser user = UserTable.getInstance().getRow("name", name);
+        SBUser user = UserTable.getInstance().getRow("username", name);
         if (user == null) {
             SBLogger.err("<red>Could not find user! Name["+name+"]");
             throw new NullPointerException();

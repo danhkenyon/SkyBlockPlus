@@ -1,5 +1,7 @@
 package uk.ac.bsfc.sbp.utils.data.database;
 
+import uk.ac.bsfc.sbp.Main;
+import uk.ac.bsfc.sbp.utils.config.ServerConfig;
 import uk.ac.bsfc.sbp.utils.data.SBConfig;
 
 public final class DatabaseConfig {
@@ -40,26 +42,25 @@ public final class DatabaseConfig {
     public int getMaxPoolSize() { return maxPoolSize; }
 
     public static DatabaseConfig getConfig() {
-        DatabaseType type = DatabaseType.fromString(
-                SBConfig.getString("database.type", "sqlite")
-        );
+        ServerConfig config = Main.getInstance().getConfig(ServerConfig.class);
+        DatabaseType type = DatabaseType.fromString(config.database.provider);
 
         return switch (type) {
             case SQLITE -> new DatabaseConfig(
                     type,
                     type.getDriver(),
-                    "jdbc:sqlite:" + SBConfig.getString("database.file", "database.db"),
+                    "jdbc:sqlite:" + Main.getInstance().getDataFolder().getAbsolutePath() + "/" + config.database.file,
                     "",
                     "",
-                    SBConfig.getInt("database.maxPoolSize", 10)
+                    config.database.maxPoolSize
             );
             case MARIADB, MYSQL, POSTGRES -> new DatabaseConfig(
                     type,
                     type.getDriver(),
-                    SBConfig.getString("database.url"),
-                    SBConfig.getString("database.user"),
-                    SBConfig.getString("database.password"),
-                    SBConfig.getInt("database.maxPoolSize", 10)
+                    config.database.url,
+                    config.database.username,
+                    config.database.password,
+                    config.database.maxPoolSize
             );
         };
     }

@@ -123,6 +123,8 @@ public abstract class DatabaseTable<T> {
 
         for (Class<?> clazz : SBReflectionUtils.find("uk.ac.bsfc.sbp.utils.data.database", DatabaseTable.class)) {
             try {
+                if (clazz.isAnnotationPresent(Deprecated.class)) continue;
+
                 if (!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers())) {
                     Object instance = clazz.getDeclaredConstructor().newInstance();
                     if (instance instanceof DatabaseTable<?> table) {

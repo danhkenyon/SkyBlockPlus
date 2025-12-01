@@ -10,6 +10,7 @@ import java.util.Map;
  * This table stores information about members associated with specific islands,
  * their unique identifiers, and their roles within the island.
  */
+@Deprecated(forRemoval = true)
 public class IslandMemberTable extends DatabaseTable<Member> {
     protected IslandMemberTable(String tableName) {
         super(tableName);

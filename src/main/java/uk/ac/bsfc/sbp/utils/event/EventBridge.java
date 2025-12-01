@@ -33,12 +33,5 @@ import uk.ac.bsfc.sbp.utils.user.SBUser;
  */
 public class EventBridge implements Listener {
 
-    @SuppressWarnings("deprecation")
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) {
-        e.setJoinMessage("");
-        Main.getInstance().getEventRegister().fire(new UserJoinEvent(SBUser.from(e.getPlayer().getUniqueId())));
-    }
-
 
 }
