@@ -1,9 +1,12 @@
 package uk.ac.bsfc.sbp.utils.npc;
 
-
 import com.mojang.authlib.GameProfile;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
@@ -22,8 +25,16 @@ public class NPC {
     }
 
     public void spawn() {
-        fakePlayer.level().addFreshEntity(fakePlayer);
+        MinecraftServer server = MinecraftServer.getServer();
+        ServerLevel level = fakePlayer.level();
 
+        server.getPlayerList().placeNewPlayer(
+                new Connection(PacketFlow.CLIENTBOUND),
+                fakePlayer,
+                CommonListenerCookie.createInitial(fakePlayer.getGameProfile(), false)
+        );
+
+        // Set custom name visibility
         fakePlayer.setCustomNameVisible(true);
     }
 
