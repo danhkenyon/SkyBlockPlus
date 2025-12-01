@@ -34,6 +34,8 @@ public class FeatureConfig implements ReloadableConfig {
         public String base_world_name = "islands";
     }
 
+    public boolean customSpawnerHandling = true;
+
     public static class MobStacker {
 
         @Comment("Enable or disable the mob stacker")
@@ -54,6 +56,7 @@ public class FeatureConfig implements ReloadableConfig {
         public boolean enabled = true;
         public int maxStack = 64;
         public int maxSpawnerStacksPerChunk = 4;
+        public int maxSpawnersInStack = 50;
         public boolean autoMerge = true;
         public boolean mustMatchSpawnerType = true;
 
