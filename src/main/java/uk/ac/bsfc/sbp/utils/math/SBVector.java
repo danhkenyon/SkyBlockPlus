@@ -1,9 +1,5 @@
 package uk.ac.bsfc.sbp.utils.math;
 
-/**
- * Represents a three-dimensional vector with immutable x, y, and z components.
- * This class is used to store and manipulate vector components in 3D space.
- */
 public class SBVector {
     private final double x;
     private final double y;
@@ -36,6 +32,28 @@ public class SBVector {
     }
     public double z() {
         return z;
+    }
+
+    public SBVector add(SBVector other) {
+        return new SBVector(
+                this.x + other.x,
+                this.y + other.y,
+                this.z + other.z
+        );
+    }
+    public SBVector sub(SBVector other) {
+        return new SBVector(
+                this.x - other.x,
+                this.y - other.y,
+                this.z - other.z
+        );
+    }
+    public SBVector translate(double dx, double dy, double dz) {
+        return new SBVector(
+                this.x + dx,
+                this.y + dy,
+                this.z + dz
+        );
     }
 
     @Override
